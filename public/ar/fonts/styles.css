@@ -1,0 +1,12 @@
+/* @font-face {
+  font-family: "AdvertisingMedium";
+src: url("AdvertisingMediumRegular.eot"); src: url("AdvertisingMediumRegular.eot?#iefix") format("embedded-opentype"), url("AdvertisingMediumRegular.woff2") format("woff2"), url("AdvertisingMediumRegular.woff") format("woff"), url("AdvertisingMediumRegular.ttf") format("truetype"), url("AdvertisingMediumRegular.svg#AdvertisingMedium") format("svg"); 
+  font-weight: normal;
+  font-style: normal;
+} */
+@font-face {
+  font-family: "Abdo Line";
+src: url("AbdoLine.ttf"); 
+  font-weight: normal;
+  font-style: normal;
+}

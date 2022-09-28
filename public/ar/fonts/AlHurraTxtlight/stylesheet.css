@@ -1,0 +1,14 @@
+
+
+@font-face {
+    font-family: 'AlHurraTxtlight';
+    src: url('AlHurraTxtlight.eot');
+    src: url('AlHurraTxtlight.eot?#iefix') format('embedded-opentype'),
+        url('AlHurraTxtlight.woff') format('woff'),
+        url('AlHurraTxtlight.ttf') format('truetype'),
+        url('AlHurraTxtlight.svg#AlHurraTxtlight') format('svg');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+

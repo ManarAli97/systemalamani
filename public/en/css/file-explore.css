@@ -1,0 +1,550 @@
+.file-list, .file-list ul{
+    list-style-type: none;
+    font-size:1em;
+    line-height:1.8em;
+    margin-left:20px;
+    padding-left:18px;
+    border-left:2px solid #6770aa;
+}
+
+.file-list li{
+    position: relative;
+    padding-left:25px;
+}
+.file-list li a{
+    text-decoration: none;
+    color:#444;  
+}
+
+
+
+.file-list li a:before{
+    display:block;
+    content: " ";
+    width:10px;
+    height:1px;
+    position:absolute;
+    border-bottom:2px dotted #273caa;
+    top:.6em;
+    left:-14px;
+}
+
+
+.file-list li:before{
+    list-style-type: none;
+    font-family: FontAwesome;
+    display:block;
+    content:'\f0f6';
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:20px;
+    height:20px;
+    font-size:1.3em;
+    color:#555;
+}
+.file-list .folder-root{
+    list-style-type: none;
+}
+.file-list .folder-root a{
+    text-decoration:none;
+    padding-left: 8px;
+}
+
+.file-list .folder-root span{
+    text-decoration:none;
+    padding-left: 8px;
+}
+
+/*news*/
+.file-list .news.folder-root:before{
+    color:#00BCD4;
+    content: "\f0ac";
+}
+
+.file-list .news.folder-root.open:before{
+    content: "\f0ac";
+    color: green;
+}
+
+
+.file-list .close_this_news.folder-root:before{
+    color:#00BCD4;
+    content: "\f0ac";
+}
+
+.file-list .close_this_news.folder-root.open:before{
+    content: "\f0ac";
+    color: green;
+}
+
+
+.file-list  .news li:before{
+    content:'\f1ea';
+    color: #d81542;
+}
+
+/*end news*/
+
+/*service*/
+.file-list .service.folder-root:before{
+    color:#00BCD4;
+    content: "\f0e8";
+}
+
+.file-list .service.folder-root.open:before{
+    content: "\f0e8";
+    color: green;
+}
+
+
+.file-list .close_this_service.folder-root:before{
+    color:#00BCD4;
+    content: "\f0e8";
+}
+
+.file-list .close_this_service.folder-root.open:before{
+    content: "\f0e8";
+    color: green;
+}
+
+
+.file-list  .service li:before{
+    content:'\f0e8';
+    color: #d81542;
+}
+
+/*end service*/
+
+/*infographic*/
+.file-list .infographic.folder-root:before{
+    color:#2a2fb6;
+    content: "\f1a8";
+}
+
+.file-list .infographic.folder-root.open:before{
+    content: "\f1a8";
+    color: #409595;
+}
+
+
+.file-list .close_this_infographic.folder-root:before{
+    color:#2a2fb6;
+    content: "\f1a8";
+}
+
+.file-list .close_this_infographic.folder-root.open:before{
+    content: "\f1a8";
+    color: #409595;
+}
+
+
+.file-list  .infographic li:before{
+    content:'\f1a8';
+    color: #d81542;
+}
+
+/*end infographic*/
+
+
+/*ma*/
+.file-list .ma.folder-root:before{
+    content: "\f080";
+    color: #F44336;
+}
+
+.file-list .ma.folder-root.open:before{
+    content: "\f080";
+    color: #1321ff;
+}
+
+
+.file-list .close_this_ma.folder-root:before{
+    color: #4387f4;
+    content: "\f080";
+}
+
+.file-list .close_this_ma.folder-root.open:before{
+    content: "\f080";
+}
+
+
+
+.file-list  .ma li:before{
+    content:'\f080';
+    color: #F44336;
+}
+
+/*end ma*/
+
+/*qq*/
+.file-list .qq.folder-root:before{
+    content: "\f0b0";
+    color:#8BC34A;
+}
+
+.file-list .qq.folder-root.open:before{
+    content: "\f0b0";
+    color:#009688;
+}
+
+
+.file-list .close_this_qq.folder-root:before{
+    color:#009688;
+    content: "\f0b0";
+}
+
+.file-list .close_this_qq.folder-root.open:before{
+    content: "\f0b0";
+    color:#009688;
+}
+
+.file-list  .qq li:before{
+    content:'\f0b0';
+    color:#009688;
+}
+
+/*end qq*/
+
+
+/*charts*/
+.file-list .charts.folder-root:before{
+    content: "\f201";
+    color: #979894;
+}
+
+.file-list .charts.folder-root.open:before{
+    content: "\f201";
+    color: #795548;
+}
+
+
+.file-list .close_this_charts.folder-root:before{
+    color:#009688;
+    content: "\f201";
+}
+
+.file-list .close_this_charts.folder-root.open:before{
+    content: "\f201";
+    color:#009688;
+}
+
+.file-list  .charts li:before{
+    content:'\f1fe';
+    color: #cd688afa;
+}
+
+/*end charts*/
+
+
+
+/*cs*/
+.file-list .cs.folder-root:before{
+    content: "\f200";
+    color: #03A9F4;
+}
+
+.file-list .cs.folder-root.open:before{
+    content: "\f200";
+    color: #2196F3;
+}
+
+
+.file-list .close_this_cs.folder-root:before{
+    content: "\f200";
+    color: #03A9F4;
+}
+
+.file-list .close_this_cs.folder-root.open:before{
+    content: "\f200";
+    color: #2196F3;
+}
+
+.file-list  .cs li:before{
+    content:'\f200';
+    color: #008000bd;
+}
+
+/*end cs*/
+
+
+
+/*nq*/
+.file-list .nq.folder-root:before{
+    content: "\f162";
+    color:#673AB7;
+}
+
+.file-list .nq.folder-root.open:before{
+    content: "\f162";
+    color: #9C27B0;
+}
+
+
+.file-list .close_this_nq.folder-root:before{
+    content: "\f162";
+    color:#673AB7;
+}
+
+.file-list .close_this_nq.folder-root.open:before{
+    content: "\f162";
+    color: #9C27B0;
+}
+
+.file-list  .nq li:before{
+    content:'\f162';
+    color: #ff0000;
+}
+
+/*end nq*/
+
+
+
+/*sc*/
+.file-list .sc.folder-root:before{
+    color:#FFD04E;
+    content: "\f07b";
+}
+
+.file-list .sc.folder-root.open:before{
+    content: "\f07c";
+}
+
+.file-list .close_this_sc.folder-root:before{
+    color:#FFD04E;
+    content: "\f07b";
+}
+
+.file-list .close_this_sc.folder-root.open:before{
+    content: "\f07c";
+}
+
+
+.file-list  .sc li:before{
+    content:'\f07b';
+    color: #2196F3;
+}
+
+/*end sc*/
+
+
+/*video*/
+
+
+.file-list .videos.folder-root:before{
+    color:#00BCD4;
+    content: "\f03d";
+}
+
+.file-list .videos.folder-root.open:before{
+    content: "\f03d";
+    color: green;
+}
+
+
+.file-list .close_this_videos.folder-root:before{
+    color:#00BCD4;
+    content: "\f03d";
+}
+
+.file-list .close_this_videos.folder-root.open:before{
+    content: "\f03d";
+    color: green;
+}
+
+
+.file-list  .videos li:before{
+    content:'\f1c8';
+    color: #d81542;
+}
+
+
+
+/*end video*/
+
+
+/*books*/
+
+
+.file-list .books.folder-root:before{
+    color:#E91E63;
+    content: "\f02d";
+}
+
+.file-list .books.folder-root.open:before{
+    content: "\f02d";
+    color: #b02b59;
+}
+
+
+.file-list .close_this_books.folder-root:before{
+    color:#00BCD4;
+    content: "\f02d";
+}
+
+.file-list .close_this_books.folder-root.open:before{
+    content: "\f02d";
+    color: green;
+}
+
+
+.file-list  .books li:before{
+    content:'\f02e';
+    color: #9C27B0;
+}
+
+
+
+/*end books*/
+
+/*gallery*/
+
+
+.file-list .gallery.folder-root:before{
+    color:#2196F3;
+    content: "\f083";
+}
+
+.file-list .gallery.folder-root.open:before{
+    content: "\f083";
+    color: #0353f0;
+}
+
+
+.file-list .close_this_gallery.folder-root:before{
+    color:#2196F3;
+    content: "\f083";
+}
+
+.file-list .close_this_gallery.folder-root.open:before{
+    content: "\f083";
+    color: #ff3643;
+}
+
+
+.file-list  .gallery li:before{
+    content:'\f1c5';
+    color: #447ff4;
+}
+
+
+
+
+
+
+
+
+
+
+
+/*end gallery*/
+
+
+
+
+/*group*/
+.file-list .group.folder-root:before{
+    color: #297eff;
+    content: "\f0c0";
+}
+
+.file-list .group.folder-root.open:before{
+    content: "\f0c0";
+}
+.file-list  .group li:before{
+    content:'\f0c0';
+    color: #4773ff;
+}
+/*end group*/
+
+/*setting*/
+
+.file-list  li.setting:before{
+    content:'\f085';
+    color: #f31a42;
+}
+/*end setting*/
+
+/*inbox*/
+
+.file-list  li.inbox:before{
+    content:'\f01c';
+    color: #ff470f;
+}
+/*end inbox*/
+
+
+
+/*languageSite*/
+
+.file-list  li.languageSite:before{
+    content:'\f1ab';
+    color: #3F51B5;
+}
+/*end languageSite*/
+
+
+/*poll*/
+
+.file-list  li.poll:before{
+    content:'\f0a1';
+    color: #3F51B5;
+}
+/*end poll*/
+
+/*tests_measurements*/
+
+.file-list  li.tests_measurements:before{
+    content:'\f058';
+    color: #3F51B5;
+}
+/*end tests_measurements*/
+
+
+/*opinion_matters*/
+
+.file-list  li.opinion_matters:before{
+    content:'\f044';
+    color: #15b50f;
+}
+/*end opinion_matters*/
+
+
+/*friendly_sites*/
+
+.file-list  li.friendly_sites:before{
+    content:'\f0c1';
+    color: #1835b5;
+}
+/*end friendly_sites*/
+
+
+/*map*/
+
+.file-list  li.map:before{
+    content:'\f278';
+    color: #238db5;
+}
+/*end map*/
+
+/*log*/
+
+.file-list  li.log:before{
+    content:'\f12a';
+    color: #238db5;
+}
+/*end map*/
+
+li.folder-root ul{
+    transition: all .3s ease-in-out;
+    overflow:hidden;
+}
+li.folder-root.closed>ul{
+   opacity:0;
+   max-height:0px;
+}
+li.folder-root.open>ul{
+   opacity:1;
+   display:block;
+   max-height:1000px;
+}

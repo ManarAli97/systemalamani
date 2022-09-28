@@ -1,0 +1,193 @@
+@font-face{font-family:'dinar';font-style: normal;font-weight: 300;src:url(GE_Dinar_One_Medium.otf) format('woff2');font-display:swap;}
+@font-face{font-family:'kufi';font-style: normal;font-weight: 300;src:url(DroidKufi-Regular.woff2) format('woff2');font-display:swap;}
+@font-face{font-family:'general';src:url(samim.woff) format('woff');font-style: normal;font-weight:300;font-display:swap;}
+@font-face{font-family:'hura';src:url(alhurra.ttf) format('ttf');}
+html,body{direction:rtl;}/*4EA770 to 6d0404*/
+body{font-family:'Droid Arabic Naskh','general',Arial!important;color:#111;font-size:.938em;line-height:190%!important;}
+.disf {display:flex;}
+a{color:#0488e5;transition: background-color 0.14s ease-in-out, color 0.14s ease-in-out, border-bottom-color 0.14s ease-in-out;}
+a:hover{color:#222;}
+h1,h2,h3,h4{line-height:150%!important;}
+h1,h2,h3,h4,h5,h6,.hfont,.title,nav.menu,.nav a,.head,.main-nav,.bg-ad,.news{font-family:'Droid Arabic kufi','kufi',arial!important;}
+h1{text-align: center;}
+.bg1,.stat span{background-color:#0d47a1 !important; color:#eee !important;}
+.bg1 a{color:#eee;}
+.bg04{background:rgba(31, 31, 31, 0.4) none repeat scroll 0 0 !important;}
+.bgw{background-color:#fff!important;}
+.color1{color:#208173 !important;}
+.color2,.callpage h4,form.askari input[type="submit"],.action-bar-link:hover{color:#eeb351 !important;}
+.color2 a.color2{color:#01826e}
+.color2 a:hover{color:#eeb351 !important;}
+a:hover .arrowleft:after, a:hover .arrowtop:after, a:hover .arrowbottom:after, a:hover .arrowright:after {
+		border-top: 0.14em solid #e74c3c;
+		border-right: 0.14em solid #e74c3c;
+}
+body {
+	background-color: #041549
+  }
+
+  .btn-warning {
+	background-color: #ffcd36;
+	border-color: #ffcd36
+  }
+
+  .title {
+	color: #fff;
+	border: 2px solid #fff;
+	border-radius: 50px;
+	padding: 10px 10px
+  }
+
+  .title h4 {
+	font-size: 25px;
+	font-weight: 900
+  }
+
+  .title::before {
+	content: '';
+	position: absolute;
+	background-image: url(../image/pattren.png);
+	width: 50px;
+	height: 80px;
+	background-size: 100%;
+	top: -25px;
+	left: -35px
+  }
+
+  .title h4 span {
+	color: #ffcd36
+  }
+
+  .vote-btn p {
+	background-image: url(../image/txt-bg.png);
+	width: 90px;
+	height: 40px;
+	background-size: 100%;
+	background-repeat: no-repeat;
+	background-position: center;
+	position: relative;
+	display: block;
+	margin: auto;
+	line-height: 1.8;
+	font-size: 20px;
+	font-weight: 900;
+	margin-top: 10px
+  }
+
+  .vote-btn {
+	margin-left: 2rem;
+	margin-right: 2rem
+  }
+
+  .vote-btn .img {
+	width: 100px;
+	height: 100px;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	position: relative;
+	display: block;
+	margin: auto
+  }
+
+  .vote-btn input {
+	opacity: 0
+  }
+
+  .checkedVote {
+	width: 110px !important;
+	height: 110px !important
+  }
+
+  @keyframes pulse {
+	100% {
+	  -moz-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.4);
+	  box-shadow: 0 0 0 0 rgba(204, 169, 44, 0.8);
+	}
+
+	30% {
+	  -moz-box-shadow: 0 0 0 10px rgba(204, 169, 44, 0);
+	  box-shadow: 0 0 0 10px rgba(204, 169, 44, 0);
+	}
+
+	0% {
+	  -moz-box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+	  box-shadow: 0 0 0 0 rgba(204, 169, 44, 0);
+	}
+  }
+
+  .logo {
+	animation: bounceIn .6s;
+	transform: rotate(0deg) scale(1) translateZ(0);
+	transition: all .4s cubic-bezier(.8, 1.8, .75, .75)
+  }
+
+  @keyframes bounceIn {
+	0% {
+	  opacity: 1;
+	  transform: scale(.3);
+	}
+
+	50% {
+	  opacity: 1;
+	  transform: scale(1.05);
+	}
+
+	70% {
+	  opacity: 1;
+	  transform: scale(.9);
+	}
+
+	100% {
+	  opacity: 1;
+	  transform: scale(1);
+	}
+  }
+
+  @media only screen and (max-width:760px) {
+	.vote-btn {
+	  margin-left: .8rem;
+	  margin-right: .8rem
+	}
+
+	.vote-btn .img {
+	  width: 75px;
+	  height: 75px
+	}
+
+	.vote-btn p {
+	  width: 75px
+	}
+
+	.title h4 {
+	  font-size: 14px
+	}
+
+	.title {
+	  margin: 15px
+	}
+
+	.title::before {
+	  top: -40px;
+	  left: -15px
+	}
+  }
+
+  .input {
+	width: 100%;
+	height: 50px;
+	border: 2px solid #eee;
+	padding: 10px;
+	font-size: 30px;
+	height: 77px
+  }
+
+  .num,
+  .big-btn {
+	font-size: 30px;
+	padding: 15px 30px
+  }
+  .white-text {
+	color: #fff
+}
+/* start website */

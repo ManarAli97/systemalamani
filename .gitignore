@@ -1,0 +1,12 @@
+public/ar/save_file
+note.md
+public/ar/content_img
+# ignore all jpg files in public/ar/content_img
+*.jpg
+*.png
+*.gif
+*.jpeg
+*.JPG
+*.PNG
+*.GIF
+*.JPEG

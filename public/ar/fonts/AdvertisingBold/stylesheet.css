@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'AdvertisingBold';
+    src: url('AdvertisingBold.eot');
+    src: url('AdvertisingBold.eot?#iefix') format('embedded-opentype'),
+        url('AdvertisingBold.woff') format('woff'),
+        url('AdvertisingBold.ttf') format('truetype'),
+        url('AdvertisingBold.svg#AdvertisingBold') format('svg');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+

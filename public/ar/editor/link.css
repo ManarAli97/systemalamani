@@ -1,0 +1,15 @@
+@import "froala/css/froala_editor.css";
+@import "froala/css/froala_style.css";
+@import "froala/css/plugins/code_view.css";
+@import "froala/css/plugins/colors.css";
+@import "froala/css/plugins/emoticons.css";
+@import "froala/css/plugins/image_manager.css";
+@import "froala/css/plugins/image.css";
+@import "froala/css/plugins/line_breaker.css";
+@import "froala/css/plugins/table.css";
+@import "froala/css/plugins/char_counter.css";
+@import "froala/css/plugins/video.css";
+@import "froala/css/plugins/fullscreen.css";
+@import "froala/css/plugins/file.css";
+@import "froala/css/plugins/quick_insert.css";
+@import "froala/css/plugins/codemirror.min.css";

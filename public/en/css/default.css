@@ -1,0 +1,17 @@
+
+@import "../fonts/styles.css";
+
+* {
+    font-family: 'DroidArabicKufi';
+
+}
+
+
+
+body
+{
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+

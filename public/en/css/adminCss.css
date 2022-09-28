@@ -1,0 +1,294 @@
+
+@import "../fonts/styles.css";
+
+* {
+    font-family: 'DroidArabicKufi';
+
+}
+
+body
+{
+    /*background:#a6f1fe ;*/
+    /*overflow-x: hidden;*/
+}
+
+
+
+.menu_control
+{
+    /*border: 1px solid red;*/
+}
+.menuControl
+{
+    border-radius:0 ;
+}
+.menuControl button.btn
+{
+    border-radius:0 ;
+    background:red;
+}
+.card
+{
+    margin-bottom: 25px;
+}
+
+.btn_edit,.btn_delete
+{
+    padding: 0;
+    background: transparent;
+    border: none;
+    position: relative;
+
+}
+.btn_edit:hover,.btn_edit:focus,
+.btn_delete:hover,.btn_delete:focus
+{
+    background: transparent;
+    border: none;
+    box-shadow:unset;
+}
+
+ .btn_edit:not(:disabled):not(.disabled):active,
+ .btn_delete:not(:disabled):not(.disabled):active
+{
+    background: transparent;
+     border: none;
+     box-shadow:unset;
+
+ }
+
+.imageCateg
+{
+    height: 255px;
+    max-width: 255px;
+   min-width: 255px;
+}
+
+
+
+
+.fieldsetCatg
+{
+    border: 1px solid #ddd !important;
+    margin: 0;
+    min-width: 0;
+    padding: 10px;
+    position: relative;
+    border-radius:4px;
+    background-color:#f5f5f5;
+    padding-right:10px!important;
+}
+
+.fieldsetCatg legend
+{
+    font-size:14px;
+    font-weight:bold;
+    margin-bottom: 0px;
+    width: fit-content;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 5px 5px 10px;
+    background-color: #ffffff;
+}
+
+.logoAdmin
+{
+    font-style: oblique;
+    font-size: 21px;
+    font-weight: bold;
+    border-right: 2px solid #cdcfd1;
+    padding-right: 13px;
+}
+
+
+/*---------------- toast  --------------------*/
+
+#snackbar {
+    visibility: hidden;
+    min-width: 250px;
+    margin-right: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    right: 50%;
+    bottom: 30px;
+    font-size: 17px;
+}
+
+#snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+
+
+/* -------------------------*/
+
+.IconGroup
+{
+    height: 215px;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 20px;
+}
+
+
+.menu_drop .dropdown-item
+{
+    white-space: unset;
+    padding: 0.25rem 0.5rem;
+}
+
+.fixed_button_form {
+    background: #272e38;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    padding: 8px 30% 8px 0;
+}
+
+.top_menu_admin
+{
+    height: 57px;
+}
+
+
+.down_fixed
+ {
+    height: 57px;
+ }
+
+.label_files
+{
+    float: left;
+    padding: 7px;
+    background: #eeeff0;
+}
+
+.label_image
+{
+    float: left;
+    padding: 7px;
+    background: #eeeff0;
+}
+
+
+.error_border_red
+{
+    border: 1px solid red !important;
+    box-shadow:0 0 0 0.2rem rgba(212, 10, 12, 0.17);
+}
+
+
+html, body {
+    min-height: 100% !important;
+    height: 100%;
+}
+.menuControl
+{
+    background: #15222f14;
+    border-left: 2px solid #d5d7d8;
+    padding: 11px;
+    overflow: hidden;
+    min-height: 881px;
+    width: 450px;
+
+}
+.select_this_item
+{
+    background: #acafb324;
+    padding: 0 8px;
+    border-radius: 25px;
+    border: 1px solid #d5d7d8;
+    cursor: pointer;
+    animation: pulse 2s infinite;
+}
+
+@keyframes  pulse {
+    0% {
+        -moz-box-shadow: 0 0 0 0 rgba(204,169,44, 0.4);
+        box-shadow:0 0 0 0 rgba(244, 67, 54, 0.28);
+    }
+    70% {
+        -moz-box-shadow: 0 0 0 30px rgba(204,169,44, 0);
+        box-shadow: 0 0 0 10px rgba(204,169,44, 0);
+    }
+    100% {
+        -moz-box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+        box-shadow: 0 0 0 0 rgba(204,169,44, 0);
+    }
+}
+
+
+li.folder-root.open>ul {
+    /*padding-top: 9px;*/
+    /*padding-bottom: 9px;*/
+}
+.file-list li {
+    margin: 10px 0;
+}
+
+.menu_toggle
+{
+    display: block;
+    margin-left: 35px;
+}
+
+@media (max-width: 991px) {
+    .menu_toggle {
+        display: block;
+    }
+
+    .menuControl {
+        width: 0;
+        padding: 0 !important;
+        border: 0 !important;
+        transition: 0.5s;
+        min-height: 0 !important;
+    }
+
+    body {
+        overflow: auto;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
