@@ -83,13 +83,13 @@
 					<?php   foreach ($requestPrint as $rows)  {  ?>
                         <tr class="not_prepared" >
                             <td style="font-size:20px" ><?php  echo $rows['code'] ?></td>
-                            <td  ><?php  echo $rows['title'] ?></td>
+                            <td  ><p id="title2"></p></td>
 
 
                             <?php if($rows['table'] == 'product_savers')  {?>
                                 <td><?php  echo $rows['name_device_customer'] ?></td>
-                            <?php } elseif(($rows['table'] == 'accessories') && ($rows['name_categ_acc_customer'] != '')) { ?>
-                                <td> <?php  echo $rows['name_categ_acc_customer'] ?> <br/><br/></td>
+                            <?php } elseif($rows['table'] == 'accessories') { ?>
+                                <td> <p id="title1"></p> <br/><br/></td>
                             <?php } else{  ?>
                                 <td></td>
                             <?php }?>
@@ -255,12 +255,12 @@
                     </tr>
                     <?php    foreach ($requestPrint as $key => $rows)  {  ?>
                         <tr  class="<?php  if ($rows['prepared']==1) echo 'not_prepared'?>" >
-                            <td style='padding : 0.65rem !important;font-size: 20px;'><?php  echo $rows['title'] ?></td>
+                            <td style='padding : 0.65rem !important;font-size: 20px;'><p id="title4"></p></td>
 
                             <?php if($rows['table'] == 'product_savers')  {?>
                                 <td><?php  echo $rows['name_device_customer'] ?></td>
-                            <?php } elseif(($rows['table'] == 'accessories') && ($rows['name_categ_acc_customer'] != '')) { ?>
-                                <td> <?php  echo $rows['name_categ_acc_customer'] ?> <br/><br/></td>
+                            <?php } elseif($rows['table'] == 'accessories') { ?>
+                                <td> <p id="title3"></p> <br/><br/></td>
                             <?php } else{  ?>
                                 <td></td>
                             <?php }?>
@@ -380,7 +380,7 @@
 
 
 
-
+<!-- manar -->
     <hr>
 <div class="row">
 
@@ -394,7 +394,8 @@
 
                 <tr style="background: #125da9;color: #ffffff">
                     <th scope="col">صورة</th>
-                    <th scope="col">اسم المنتج</th>
+                    <th  scope="col">اسم المنتج</th>
+                    <th scope="col"> نوع الجهاز </th>
                     <th scope="col">  القسم </th>
                     <th scope="col">code</th>
                     <th scope="col">القياس</th>
@@ -416,7 +417,7 @@
                 <?php   foreach ($request as $rows)  {  ?>
                     <tr class="retn" id="row_<?php  echo $rows['id'] ?>">
                         <td><img class="image_prod"   alt="image" title="image" style="display:block" src="<?php  echo $rows['img'] ?>"></td>
-                        <td><?php  echo $rows['title'] ?>
+                        <td><p id="title"></p>
 
                             <?php  if ($rows['offers']) {  ?>
                                 <div class="offers_" style="font-size: 10px; background: #8bc34a6b; border-radius: 5px;">
@@ -424,6 +425,23 @@
                                 </div>
                             <?php } ?>
                         </td>
+                        <?php if($rows['table'] == 'product_savers')  {?>
+                                <td><?php  echo $rows['name_device_customer'] ?></td>
+                            <?php } elseif(($rows['table'] == 'accessories') && (!empty($nameCatAcc))) { ?>
+                                <td>
+
+                                    <select class="custom-select dropdown_filter" name="category" id="category"  required>
+                                        <option value="">   نوع الجهاز  </option>
+                                        <?php foreach ($nameCatAcc as $key => $catg) {   ?>
+                                            <option    value="<?php  echo $catg['title']?>"><?php  echo $catg['title']?></option>
+                                        <?php  } ?>
+
+                                    </select>
+
+                                <br/><br/></td>
+                            <?php } else{  ?>
+                                <td></td>
+                            <?php }?>
                         <td><?php  echo $this->langControl($rows['table']) ?></td>
                         <td><?php  echo $rows['code'] ?></td>
                         <td><?php  echo $rows['size'] ?></td>
@@ -500,6 +518,29 @@
 
 <script>
 
+    $('#category').on('change',function() {
+        var nameGategory = $("#category").val();
+        $('#title').text(nameGategory);
+        $('#title1').text(nameGategory);
+        $('#title2').text(nameGategory);
+        $('#title3').text(nameGategory);
+        $('#title4').text(nameGategory);
+
+        if($("#category").val() != ''){
+            $("#bill_casher").attr("disabled", false);
+            $(".processing_request ").attr("disabled", false);
+        }else{
+            $("#bill_casher").attr("disabled", true);
+            $(".processing_request ").attr("disabled", true);
+        }
+    });
+    if($("#category").val() == ''){
+        $("#bill_casher").attr("disabled", true);
+        $(".processing_request ").attr("disabled", true);
+    }else{
+        $("#bill_casher").attr("disabled", false);
+        $(".processing_request ").attr("disabled", false);
+    }
 
     function edit_price (id_member_r1,id_item1,number_bill1,table1,code1,color_name1) {
         var new_price=$("#new_price_"+id_item1+table1+code1).val();

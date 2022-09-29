@@ -670,7 +670,7 @@ class Accessories extends Controller
         $data['bast_it']='';
         $data['serial_flag']='';
         $data['price_dollars']='';
-      
+
 		$data['enter_serial'] = '';
         $data['cuts']='';
         $data['price_cuts']='';
@@ -713,10 +713,10 @@ class Accessories extends Controller
                     ->val('strip_tags');
                 $form  ->post('price_dollars')
                     ->val('strip_tags');
-               
+
             	$form->post('is_service')
                     ->val('strip_tags');
-            
+
 				$form->post('enter_serial')
 					->val('strip_tags');
                 $form  ->post('name_color')
@@ -1002,13 +1002,13 @@ class Accessories extends Controller
                     ->val('strip_tags');
                 $form  ->post('price_dollars')
                     ->val('strip_tags');
-               
+
             	 $form->post('is_service')
                     ->val('strip_tags');
 
 				$form->post('enter_serial')
 					->val('strip_tags');
-            
+
                 $form  ->post('cuts')
                     ->val('strip_tags');
 
@@ -1093,7 +1093,7 @@ class Accessories extends Controller
                 {
                     $specifications='';
                 }
-                ;	
+                ;
 
 
                 $image_new=array();
@@ -1235,7 +1235,9 @@ class Accessories extends Controller
 					}
 				}
 			),
-			array(  'db' => 'id', 'dt'=>8)
+            array(  'db' => 'id_cat', 'dt'=>8),
+			array(  'db' => 'id', 'dt'=>9),
+
 
 
 		);
@@ -3292,7 +3294,7 @@ class Accessories extends Controller
 
 									$update = $this->db->prepare("UPDATE `{$this->table}`  SET  `is_delete`=0   WHERE id = ?  ");
                                     $update->execute(array($result['id']));
-                                
+
                                     $trace=new trace_site();
                                     $newData=$trace->neaw($result['id'],$this->folder);
                                     $trace->add($result['id'],$this->folder,'رفع سريع','',$rowData[0][0],'',$newData);
@@ -3867,7 +3869,7 @@ class Accessories extends Controller
                 $row_cont['color'] = $details['color'];
                 $row_cont['nameImage'] = $details['img'];
                 $row_cont['like'] = $this->ckeckLick($row_cont['id']);
-            
+
             	 // اذا كانت الفئة الرئيسية هي اللواصق يعرض اسم الفئة والا يعرض اسم اللاصق
                 $result_check = $this->check_id_catge($id);
                 if($result_check == 1){
@@ -3883,8 +3885,8 @@ class Accessories extends Controller
                     }
                 }else{
                     $row_cont['title'] = $row_cont['title'];
-                } 
-            
+                }
+
                 $table[] = $row_cont;
 
             }
@@ -3892,7 +3894,7 @@ class Accessories extends Controller
 
 
 
-       
+
     	$date = time();
         $stmtOffers=$this->db->prepare("SELECT offers.id, offers_item.code  FROM `offers` INNER JOIN `offers_item` ON offers.id = offers_item.id_offer  WHERE offers_item.model = ? AND offers.active=1 AND {$date} BETWEEN `fromdate` AND `todate`AND offers.delete =0");
         $stmtOffers->execute(array('accessories'));
@@ -4572,8 +4574,8 @@ class Accessories extends Controller
 
 
     function fixed_location() {
-		
-    
+
+
     	$this->AddToTraceByFunction($this->userid,'accessories','fixed_location');
         $stmt=$this->db->prepare("SELECT  code  FROM  location WHERE model='accessories' AND fixed_location=0 ");
         $stmt->execute();
@@ -4590,7 +4592,7 @@ class Accessories extends Controller
 
  function zero_location ($s=null)
     {
- 
+
  	$this->AddToTraceByFunction($this->userid,'accessories','zero_location/'.$s);
         if ($s) {
 

@@ -434,18 +434,34 @@ class direct extends Controller
             }
 
             if($row['table'] == 'accessories'){
+                // $result_check = $this->check_id_catge($item['id_cat']);
+                // if($result_check == 1){
+
+                //     $id_catg_acc =  $item['id_cat'];
+                //     $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
+                //     $row['name_categ_acc'] =  $name_categ_acc;
+
+                //     $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
+                //     $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
+                // }else{
+                //     $row['name_categ_acc'] = '';
+                //     $row['name_categ_acc_customer'] = '';
+                // }
+
+                $nameCatAcc= array();
                 $result_check = $this->check_id_catge($item['id_cat']);
                 if($result_check == 1){
-
-                    $id_catg_acc =  $item['id_cat'];
-                    $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
-                    $row['name_categ_acc'] =  $name_categ_acc;
-
-                    $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
-                    $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
-                }else{
-                    $row['name_categ_acc'] = '';
-                    $row['name_categ_acc_customer'] = '';
+                    $stmt_ch = $this->db->prepare("SELECT `ids` FROM `category_accessories_connect` WHERE  FIND_IN_SET(?,`ids`)  AND  active=1 LIMIT 1");
+                    $stmt_ch->execute(array($item['id_cat']));
+                    if($stmt_ch->rowCount() > 0){
+                        $row_ch = $stmt_ch->fetch(PDO::FETCH_ASSOC);
+                        $ids = $row_ch['ids'];
+                        $stmt_title = $this->db->prepare("SELECT `title` FROM `category_accessories` WHERE  id IN ($ids)");
+                        $stmt_title->execute(array($item['id_cat']));
+                        while ($row_title = $stmt_title->fetch(PDO::FETCH_ASSOC)) {
+                            $nameCatAcc[] = $row_title;
+                        }
+                    }
                 }
 
             }
@@ -520,21 +536,31 @@ class direct extends Controller
 
             }
 
-            if($row['table'] == 'accessories'){
-                $result_check = $this->check_id_catge($item['id_cat']);
-                if($result_check == 1){
-                    $id_catg_acc =  $item['id_cat'];
-                    $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
-                    $row['name_categ_acc'] =  $name_categ_acc;
+            // if($row['table'] == 'accessories'){
+            //     // $result_check = $this->check_id_catge($item['id_cat']);
+            //     // if($result_check == 1){
+            //     //     $id_catg_acc =  $item['id_cat'];
+            //     //     $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
+            //     //     $row['name_categ_acc'] =  $name_categ_acc;
 
-                    $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
-                    $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
-                }else{
-                    $row['name_categ_acc'] = '';
-                    $row['name_categ_acc_customer'] = '';
+            //     //     $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
+            //     //     $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
+            //     // }else{
+            //     //     $row['name_categ_acc'] = '';
+            //     //     $row['name_categ_acc_customer'] = '';
 
-                }
-            }
+            //     // }
+
+            //     $ids = '';
+
+            //     $stmt_ch = $this->db->prepare("SELECT `ids` FROM `category_accessories_connect` WHERE  FIND_IN_SET(?,`ids`)  AND  active=1 LIMIT 1");
+            //             $stmt_ch->execute(array($item['id_cat']));
+            //             if($stmt_ch->rowCount() > 0){
+            //                 $row_ch = $stmt_ch->fetch(PDO::FETCH_ASSOC);
+            //                 $ids = $row_ch['ids'];
+            //             }
+            //             $row['name_categ_acc_customer'] = $ids;
+            // }
 
             if ($row['direct']  > 0 || $row['user_direct'] !=0  )
             {
@@ -599,22 +625,30 @@ class direct extends Controller
 
             }
 
-            if($row['table'] == 'accessories'){
+            // if($row['table'] == 'accessories'){
 
-                $result_check = $this->check_id_catge($item['id_cat']);
-                if($result_check == 1){
-                    $id_catg_acc =  $item['id_cat'];
-                    $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
-                    $row['name_categ_acc'] =  $name_categ_acc;
-                    $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
-                    $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
+            //     // $result_check = $this->check_id_catge($item['id_cat']);
+            //     // if($result_check == 1){
+            //     //     $id_catg_acc =  $item['id_cat'];
+            //     //     $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
+            //     //     $row['name_categ_acc'] =  $name_categ_acc;
+            //     //     $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
+            //     //     $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
 
-                }else{
-                    $row['name_categ_acc'] = '';
-                    $row['name_categ_acc_customer'] = '';
-                }
+            //     // }else{
+            //     //     $row['name_categ_acc'] = '';
+            //     //     $row['name_categ_acc_customer'] = '';
+            //     // }
+            //     $ids = '';
 
-            }
+            //     $stmt_ch = $this->db->prepare("SELECT `ids` FROM `category_accessories_connect` WHERE  FIND_IN_SET(?,`ids`)  AND  active=1 LIMIT 1");
+            //             $stmt_ch->execute(array($item['id_cat']));
+            //             if($stmt_ch->rowCount() > 0){
+            //                 $row_ch = $stmt_ch->fetch(PDO::FETCH_ASSOC);
+            //                 $ids = $row_ch['ids'];
+            //             }
+            //             $row['name_categ_acc_customer'] = $ids;
+            // }
 
 
 
@@ -1059,7 +1093,7 @@ class direct extends Controller
 //             $count_active[]=$row;
 //         }
 //        echo  count($count_active);
- 
+
 //     H27
 //     11/6/2022
     	$c=implode(',',$this->catgUser);
@@ -1067,7 +1101,7 @@ class direct extends Controller
         $stmt->execute(array());
         $row =$stmt->fetch(PDO::FETCH_ASSOC);
         echo  $row['count'];
-    
+
 
     }
 
@@ -1096,10 +1130,10 @@ class direct extends Controller
 //         }
 //         echo  count($count_active);
 // /////
-    
+
 //     H27
 //     11/6/2022
-    
+
     	$c=implode(',',$this->catgUser);
 
         $stmt = $this->db->prepare("SELECT count( DISTINCT number_bill ) as count FROM `cart_shop_active` WHERE buy <> 0 AND `accountant` = 0 AND `cancel`=0 AND `cancel`=0 AND `table` IN ({$c})  ");
@@ -1125,8 +1159,8 @@ class direct extends Controller
 //             $count_active[]=$row;
 //         }
 //        echo  count($count_active);
-//        
-//        
+//
+//
 //     H27
 //     11/6/2022
      	$c=implode(',',$this->catgUser);
@@ -2639,7 +2673,7 @@ class direct extends Controller
                       <div>{$row_user['name']}  ({$row['number_bill']})  </div>
                         <div   style='direction: ltr;'>{$phone}</div>
                     </a>
-                                    
+
                 ";
             }
 
@@ -2720,7 +2754,7 @@ class direct extends Controller
                        <div>{$row_user['name']}  ({$row['number_bill']})  </div>
                        <div   style='direction: ltr;'>{$phone}</div>
                     </a>
-                                    
+
                 ";
             }
 
@@ -6392,7 +6426,7 @@ class direct extends Controller
                         <div>{$row['name']}</div>
                         <div   style='direction: ltr;'>{$phone}</div>
                     </a>
-                                   
+
                 ";
             }
 
@@ -6432,8 +6466,8 @@ class direct extends Controller
 				}
 				$count_active.="
                 <a class='infoCustomer ifactive' id='row{$row['number_bill']}' href='#' onclick='getOrder({$row['id']},{$row['number_bill']})'>
-                         
-                    <div class='row align-items-center justify-content-between'> 
+
+                    <div class='row align-items-center justify-content-between'>
                      <div class='col'>
                          <div>{$row['name']}  ({$row['number_bill']})  </div>
                         <div   style='direction: ltr;' >{$phone}</div>
@@ -6442,9 +6476,9 @@ class direct extends Controller
                             <div class='user_account'>   {$this->UserInfoBill($row['user_direct'])} </div>
                           </div>
                      </div>
-                        
+
                 </a>
-                                   
+
                 ";
 			}
 
@@ -6529,7 +6563,7 @@ class direct extends Controller
                         <div>{$row['name']}</div>
                         <div>{$row['phone']}</div>
                 </a>
-                                   
+
                 ";
 			}
 
@@ -6818,7 +6852,7 @@ class direct extends Controller
 						$check_review=$this->db->prepare("SELECT *FROM review_item WHERE   `id_cart`=? AND  `code`=?   AND   ( ( `active` = 1 AND cancel = 0 )  OR   (  `active` = 0 AND cancel = 0) )  ");
 						$check_review->execute(array($row['id'],$row['code']));
 					}
-                 
+
                     $required ='';
                     if ($this->check_serial_required($row['code'],'serial_rewind')==true)
                     {
@@ -6841,7 +6875,7 @@ class direct extends Controller
 
 						$row['content']='
 			 <tr id="x'.$c.'" class="'.$class_review_back.'">
-			 
+
 			 <td>'.$c.'</td>
 			 <td> '.$row['id'].' </td>
 			  <td>
@@ -6854,36 +6888,36 @@ class direct extends Controller
 			 	<td>'.$row['enter_serial'].'</td>
 			 <td>'.$row['name_color'].'</td>
 			 <td>  <span> سعر الاسترجاع: </span> <span>'.number_format($resultReview['price_new']).'</span>  د.ع </td>
-			   
+
 			    <td>'.$row['now_price'].'</td>
-			   
+
 			 <td> تاريخ الاسترجاع   '.date('Y-m-d h:i:s A',$resultReview['date']).'</td>
-	          <td>'.$resultReview['note'].'</td>	
+	          <td>'.$resultReview['note'].'</td>
 	 		 <td>  '.$typeRow.'   </td>
-			 
+
              </tr>
-			 
+
 			 ';
 					}else
 					{
 						$row['content']='
 			 <tr id="x'.$c.'" class="haveData_review">
-			 
+
 			 <td>'.$c.'</td>
 			 <td><input readonly name="idrow['.$row['id_member_r'].'][]" class="form-control" value="'.$row['id'].'"></td>
 			 <td>
-			  
+
 			  '. $this->nameCustomer($row['id_member_r']) . '
 			   <div class="input-group mb-2">
 					 <input name="id_customer['.$row['id_member_r'].']"  type="hidden"  value="'.$row['id_member_r'].'">
-					  
+
 			  </div>
-				 
+
                </td>
 			 <td><img width="40" src="'.$row['img'].'"></td>
 			 <td>'.$row['title'].'</td>
 			 <td>'.$row['code'].'</td>
-			  <td><input '.$required.'  name="serial['.$row['id_member_r'].'][]" class="form-control"  placeholder="سيريال"  ></td>	
+			  <td><input '.$required.'  name="serial['.$row['id_member_r'].'][]" class="form-control"  placeholder="سيريال"  ></td>
 			<td>'.$row['enter_serial'].'</td>
 			 <td>'.$row['name_color'].'</td>
 			 <td>
@@ -6893,22 +6927,22 @@ class direct extends Controller
 					  <div class="input-group-text">د.ع</div>
 					</div>
 			  </div>
-				 
+
 			   </td>
-			   
+
 			    <td>'.$row['now_price'].'</td>
-			   
+
 			 <td>'.date('Y-m-d h:i:s A',$row['date_accountant']).'</td>
 		     <td>'.$row['store'].'
-		     
+
 		       <input name="location['.$row['id_member_r'].'][]"  type="hidden"    value="'.trim($row['location']).'">
-		     
+
 		     </td>
-	          <td><textarea   name="note['.$row['id_member_r'].'][]" class="form-control" ></textarea></td>	
+	          <td><textarea   name="note['.$row['id_member_r'].'][]" class="form-control" ></textarea></td>
 	 		 <td><button type="button"  class="btn btn-danger" onclick="removerow('.$c.')"><i class="fa fa-times"></i> </button></td>
-			 
+
              </tr>
-			 
+
 			 ';
 
 
@@ -7070,7 +7104,7 @@ class direct extends Controller
 				$oldData[]=$rowt;
 			}
 
-			
+
 
 
 			$stmt = $this->db->prepare("UPDATE `cart_shop_active` SET `cancel` = 1  ,`status` = 2  , `buy` = 3, `why_rejected` = ?  , `date_d_r`= ? , `user_id`=?,`id_accountant_user`=?  WHERE  `buy` = ? AND `id_member_r`=? AND `number_bill`=?  ");
@@ -8313,7 +8347,7 @@ function load_order_acount()
                         <div>{$row['name']}</div>
                         <div   style='direction: ltr;' >{$phone}</div>
                     </a>
-                                   
+
                 ";
             }
 
@@ -8439,7 +8473,7 @@ function load_order_acount()
                         <div>{$row['name']}</div>
                         <div   style='direction: ltr;' >{$phone}</div>
                     </a>
-                                   
+
                 ";
             }
 
@@ -8825,7 +8859,7 @@ function load_order_acount()
                         <div>{$row['name']}</div>
                         <div   style='direction: ltr;' >{$phone}</div>
                     </a>
-                                   
+
                 ";
         }
 
@@ -9025,7 +9059,7 @@ function load_order_acount()
                         <div>{$row['name']}</div>
                         <div   style='direction: ltr;' >{$phone}</div>
                     </a>
-                                   
+
                 ";
             }
 

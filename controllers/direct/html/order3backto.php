@@ -371,8 +371,8 @@
                     <th scope="col">الموقع</th>
                     <th scope="col">صورة</th>
                     <th scope="col">اسم المنتج</th>
-                    <th scope="col">  نوع الجهاز </th>
-                    <th scope="col">  القسم </th>
+                    <th scope="col">    القسم </th>
+                    <th scope="col"> نوع الجهاز </th>
                     <th scope="col">code</th>
                     <th scope="col">السيريلات المقترحة</th>
                     <th scope="col">القياس</th>
@@ -405,7 +405,7 @@
                                     <tbody>
                                     <tr>
                                         <td style="background: #ffc107 !important;">   م </td>
-                                        <td  style="background: #ffc107 !important;">  ك </td
+                                        <td  style="background: #ffc107 !important;">  ك </td>
                                     </tr>
 									<?php foreach ($rows['location'] as $loct) {    ?>
                                         <tr>

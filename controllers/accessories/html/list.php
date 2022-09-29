@@ -103,6 +103,7 @@
                     <th>تعديل</th>
                     <th>تكرار</th>
                     <th>حذف</th>
+                    <th>id_cat</th>
 
                 </tr>
                 </thead>
