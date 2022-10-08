@@ -433,20 +433,51 @@ class direct extends Controller
 
             }
 
+//             if($row['table'] == 'accessories'){
+//                 $result_check = $this->check_id_catge($item['id_cat']);
+//                 if($result_check == 1){
+
+//                     $id_catg_acc =  $item['id_cat'];
+//                     $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
+//                     $row['name_categ_acc'] =  $name_categ_acc;
+
+//                     $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
+//                     $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
+//                 }else{
+//                     $row['name_categ_acc'] = '';
+//                     $row['name_categ_acc_customer'] = '';
+//                 }
+
+//             }
+        
+        	
             if($row['table'] == 'accessories'){
                 $result_check = $this->check_id_catge($item['id_cat']);
                 if($result_check == 1){
 
-                    $id_catg_acc =  $item['id_cat'];
-                    $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
-                    $row['name_categ_acc'] =  $name_categ_acc;
+         
 
-                    $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
-                    $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
-                }else{
-                    $row['name_categ_acc'] = '';
-                    $row['name_categ_acc_customer'] = '';
+                $row['category']= array();
+                $result_check = $this->check_id_catge($item['id_cat']);
+                if($result_check == 1){
+                    $stmt_ch = $this->db->prepare("SELECT `ids` FROM `category_accessories_connect` WHERE  FIND_IN_SET(?,`ids`)  AND  active=1 LIMIT 1");
+                    $stmt_ch->execute(array($item['id_cat']));
+                    if($stmt_ch->rowCount() > 0){
+                        $row_ch = $stmt_ch->fetch(PDO::FETCH_ASSOC);
+                        $ids = $row_ch['ids'];
+                        $stmt_title = $this->db->prepare("SELECT `title` FROM `category_accessories` WHERE  id IN ($ids)");
+                        $stmt_title->execute(array($item['id_cat']));
+                        while ($row_title = $stmt_title->fetch(PDO::FETCH_ASSOC)) {
+                            $row['category'][] = $row_title;
+                            $row['check_s'] = true;
+                        }
+                    }
                 }
+
+                }else{
+                    $nameCatAcc= array();
+                    $row['check_s'] = false;
+               }
 
             }
 
@@ -520,20 +551,50 @@ class direct extends Controller
 
             }
 
-            if($row['table'] == 'accessories'){
+//             if($row['table'] == 'accessories'){
+//                 $result_check = $this->check_id_catge($item['id_cat']);
+//                 if($result_check == 1){
+//                     $id_catg_acc =  $item['id_cat'];
+//                     $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
+//                     $row['name_categ_acc'] =  $name_categ_acc;
+
+//                     $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
+//                     $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
+//                 }else{
+//                     $row['name_categ_acc'] = '';
+//                     $row['name_categ_acc_customer'] = '';
+
+//                 }
+//             }
+        
+        		 if($row['table'] == 'accessories'){
                 $result_check = $this->check_id_catge($item['id_cat']);
                 if($result_check == 1){
-                    $id_catg_acc =  $item['id_cat'];
-                    $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
-                    $row['name_categ_acc'] =  $name_categ_acc;
 
-                    $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
-                    $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
-                }else{
-                    $row['name_categ_acc'] = '';
-                    $row['name_categ_acc_customer'] = '';
+         
 
+                $row['category']= array();
+                $result_check = $this->check_id_catge($item['id_cat']);
+                if($result_check == 1){
+                    $stmt_ch = $this->db->prepare("SELECT `ids` FROM `category_accessories_connect` WHERE  FIND_IN_SET(?,`ids`)  AND  active=1 LIMIT 1");
+                    $stmt_ch->execute(array($item['id_cat']));
+                    if($stmt_ch->rowCount() > 0){
+                        $row_ch = $stmt_ch->fetch(PDO::FETCH_ASSOC);
+                        $ids = $row_ch['ids'];
+                        $stmt_title = $this->db->prepare("SELECT `title` FROM `category_accessories` WHERE  id IN ($ids)");
+                        $stmt_title->execute(array($item['id_cat']));
+                        while ($row_title = $stmt_title->fetch(PDO::FETCH_ASSOC)) {
+                            $row['category'][] = $row_title;
+                            $row['check_s'] = true;
+                        }
+                    }
                 }
+
+                }else{
+                    $nameCatAcc= array();
+                    $row['check_s'] = false;
+               }
+
             }
 
             if ($row['direct']  > 0 || $row['user_direct'] !=0  )
@@ -599,20 +660,35 @@ class direct extends Controller
 
             }
 
-            if($row['table'] == 'accessories'){
 
+        
+        	 if($row['table'] == 'accessories'){
                 $result_check = $this->check_id_catge($item['id_cat']);
                 if($result_check == 1){
-                    $id_catg_acc =  $item['id_cat'];
-                    $name_categ_acc= $this->type_device($id_catg_acc,'category_accessories');
-                    $row['name_categ_acc'] =  $name_categ_acc;
-                    $name_categ_acc_customer= $this->type_device_customer($id_catg_acc,$number_bill,'category_accessories');
-                    $row['name_categ_acc_customer'] =  $name_categ_acc_customer;
+
+         
+
+                $row['category']= array();
+                $result_check = $this->check_id_catge($item['id_cat']);
+                if($result_check == 1){
+                    $stmt_ch = $this->db->prepare("SELECT `ids` FROM `category_accessories_connect` WHERE  FIND_IN_SET(?,`ids`)  AND  active=1 LIMIT 1");
+                    $stmt_ch->execute(array($item['id_cat']));
+                    if($stmt_ch->rowCount() > 0){
+                        $row_ch = $stmt_ch->fetch(PDO::FETCH_ASSOC);
+                        $ids = $row_ch['ids'];
+                        $stmt_title = $this->db->prepare("SELECT `title` FROM `category_accessories` WHERE  id IN ($ids)");
+                        $stmt_title->execute(array($item['id_cat']));
+                        while ($row_title = $stmt_title->fetch(PDO::FETCH_ASSOC)) {
+                            $row['category'][] = $row_title;
+                            $row['check_s'] = true;
+                        }
+                    }
+                }
 
                 }else{
-                    $row['name_categ_acc'] = '';
-                    $row['name_categ_acc_customer'] = '';
-                }
+                    $nameCatAcc= array();
+                    $row['check_s'] = false;
+               }
 
             }
 
@@ -1307,7 +1383,7 @@ class direct extends Controller
             $row['color_name']=$row['name_color'];
 
 
-            $row['location']=$this->get_location($row['table'],$row['code'],null,1);
+            $row['location']=$this->get_location($row['table'],$row['code'],null);
 
 
             if ($this->chPrp($id_user,$row['code'],$n_bill,$row['table'],1))
@@ -1661,7 +1737,7 @@ class direct extends Controller
             $row['color_name']=$row['name_color'];
 
 
-            $row['location']=$this->get_location($row['table'],$row['code'],null,1);
+            $row['location']=$this->get_location($row['table'],$row['code'],null);
 
             if ($this->chPrp($id_user,$row['code'],$n_bill,$row['table'],1))
 			{
@@ -1965,7 +2041,7 @@ class direct extends Controller
                 }
             }
 
-            $row['location']=$this->get_location($row['table'],$row['code'],null,1);
+            $row['location']=$this->get_location($row['table'],$row['code'],null);
 
 
 

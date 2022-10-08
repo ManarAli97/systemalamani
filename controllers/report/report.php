@@ -49,15 +49,26 @@ class report extends Controller
         if (isset($_GET['out'])) {
             if (!empty($_GET['out'])) {
                 $out = $_GET['out'];
-                for ($i = 0; $i < count($out); $i++) {
-                    $out_id .= $this->get_ids_cat($cat,$out[$i]);
-                    if ($i == count($out)){
-                        $out_id .= ',';
+                if($cat!='savers'){
+
+                    for ($i = 0; $i < count($out); $i++) {
+                        $out_id .= $this->get_ids_cat($cat, $out[$i]);
+                        if ($i == count($out)) {
+                            $out_id .= ',';
+                        }
                     }
+                    // $out = $out_id;
+                }else 
+                {
+                    $out_id = implode(',', $out);
                 }
                 // 
-                // $out_id = implode(',', $out);
+                // $out = implode(',', $out);
             }
+            
+                $out = implode(',', $out);
+                // $out_id = $out;
+        
         }
         if (isset($_GET['fromdate'])) {
             $fromdate = $_GET['fromdate'];
@@ -167,12 +178,12 @@ class report extends Controller
                 'charset' => 'utf8'
             );
             if (!empty($out)) {
-                $join = " inner JOIN product_savers ON product_savers.id = cart_shop_all.id_item   inner JOIN name_device ON name_device.id = product_savers.id_device   inner JOIN category_savers ON category_savers.id = name_device.id_cat ";
+                $join = " inner JOIN product_savers ON product_savers.id = cart_shop_all.id_item inner JOIN type_device ON type_device.id = product_savers.id_device  inner JOIN name_device ON name_device.id = type_device.id_device   inner JOIN category_savers ON category_savers.id = name_device.id_cat ";
                 if (!empty($fromtime_stamp) && !empty($totime_stamp)) {
                     $whereAll = array("category_savers.`id` IN ({$out}) ",   "cart_shop_all.`table` = 'product_savers' ", " cart_shop_all.`number`  > 0  ", " cart_shop_all.`cancel`  = 0  ", " cart_shop_all.`accountant`  = 1  ", "cart_shop_all.`date_accountant`  BETWEEN {$fromtime_stamp}  AND {$totime_stamp} ");
                 }
             } else {
-                $join = " inner JOIN product_savers ON product_savers.id = cart_shop_all.id_item   inner JOIN name_device ON name_device.id = product_savers.id_device ";
+                $join = " inner JOIN product_savers ON product_savers.id = cart_shop_all.id_item   inner JOIN type_device ON type_device.id = product_savers.id_device  inner JOIN name_device ON name_device.id = type_device.id_device  ";
                 if (!empty($fromtime_stamp) && !empty($totime_stamp)) {
                     $whereAll = array("cart_shop_all.`table` = 'product_savers' ", " cart_shop_all.`number`  > 0  ", " cart_shop_all.`cancel`  = 0  ", " cart_shop_all.`accountant`  = 1  ", "cart_shop_all.`date_accountant`  BETWEEN {$fromtime_stamp}  AND {$totime_stamp} ");
                 }
@@ -390,11 +401,11 @@ class report extends Controller
         $table .= '<th>الكمية</th>';
         $table .= '</tr>';
         $table .= '</thead>';
-    	if($model=='product_savers'){
-            $model='savers';
+        if ($model == 'product_savers') {
+            $model = 'savers';
         }
         $stmt = $this->db->prepare("SELECT `location`,quantity FROM `location` where code = ? and model =? UNION SELECT 'مواد بانتضار التاكيد',quantity from location_confirm where code = ? and model =?;");
-        $stmt->execute(array($code, $model,$code, $model));
+        $stmt->execute(array($code, $model, $code, $model));
         $stmt_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $table .= '<tbody>';
         $sum = 0;
@@ -879,49 +890,53 @@ class report extends Controller
             return '';
         }
     }
-    function report_point_sales(){
+    function report_point_sales()
+    {
 
-        $this->checkPermit('report_point_sales','reports');
+        $this->checkPermit('report_point_sales', 'reports');
         $this->adminHeaderController('تقرير نقاط المبيعات');
 
         require($this->render($this->folder, 'html', 'report_point_sales', 'php'));
         $this->adminFooterController();
     }
 
-    function get_point($model,$fromdate_normal,$todate_normal){
+    function get_point($model, $fromdate_normal, $todate_normal)
+    {
 
-        if($model == 'mobile'){
+        if ($model == 'mobile') {
             $this->model = 'mobile';
             $this->code = 'code';
         }
-        if($model == 'games'){
+        if ($model == 'games') {
             $this->model = 'games';
-            $this->code = 'code_'.$model;
+            $this->code = 'code_' . $model;
         }
-        if($model == 'computer'){
-            $this->model = 'computer' ;
-            $this->code = 'color_'.$model;
+        if ($model == 'computer') {
+            $this->model = 'computer';
+            $this->code = 'color_' . $model;
         }
-        if($model == 'accessories'){
-            $this->model = 'accessories' ;
+        if ($model == 'accessories') {
+            $this->model = 'accessories';
             $this->code = 'color_accessories';
         }
-        if($model == 'savers'){
+        if ($model == 'savers') {
             $this->model = 'product_savers';
             $this->code = 'product_savers';
         }
 
-        $this->fromdate_normal = $fromdate_normal ;
-        $this->todate_normal = $todate_normal ;
+        $this->fromdate_normal = $fromdate_normal;
+        $this->todate_normal = $todate_normal;
 
         $table = "cart_shop_active";
         $primaryKey = 'cart_shop_active.id';
         $columns = array(
             array('db' => 'user.username', 'dt' => 0),
-            array('db' => 'cart_shop_active.user_direct', 'dt' => 1,
-                 'formatter' => function( $user_id) {
-                return $this->count_point($user_id,$this->code,$this->model,$this->fromdate_normal,$this->todate_normal);
-            }),
+            array(
+                'db' => 'cart_shop_active.user_direct', 'dt' => 1,
+                'formatter' => function ($user_id) {
+                    return $this->count_point($user_id, $this->code, $this->model, $this->fromdate_normal, $this->todate_normal);
+                }
+            ),
         );
 
         $sql_details = array(
@@ -932,36 +947,35 @@ class report extends Controller
             'charset' => 'utf8'
         );
         $join = "  INNER JOIN user on cart_shop_active.user_direct = user.id ";
-        $whereAll = "(`cart_shop_active`.`table`='{$model}') and (cart_shop_active.date BETWEEN ".strtotime($fromdate_normal)." and ".strtotime($todate_normal)." ) and (cart_shop_active.user_direct != 'null' ) and ( cart_shop_active.buy = 2)";
-        $group = " GROUP BY user.username" ;
+        $whereAll = "(`cart_shop_active`.`table`='{$model}') and (cart_shop_active.date BETWEEN " . strtotime($fromdate_normal) . " and " . strtotime($todate_normal) . " ) and (cart_shop_active.user_direct != 'null' ) and ( cart_shop_active.buy = 2)";
+        $group = " GROUP BY user.username";
         echo json_encode(
-            SSP::complex_join($_GET, $sql_details, $table, $primaryKey, $columns, $join, null, $whereAll, null,$group )
+            SSP::complex_join($_GET, $sql_details, $table, $primaryKey, $columns, $join, null, $whereAll, null, $group)
         );
     }
 
-    function count_point($user_id,$code,$model,$fromdate_normal,$todate_normal){
-        $stmt = $this->db->prepare("SELECT  code,`table` FROM `cart_shop_active`  where cart_shop_active.user_direct = $user_id  and cart_shop_active.date BETWEEN ".strtotime($fromdate_normal)." and ".strtotime($todate_normal)."   and  cart_shop_active.buy = 2");
+    function count_point($user_id, $code, $model, $fromdate_normal, $todate_normal)
+    {
+        $stmt = $this->db->prepare("SELECT  code,`table` FROM `cart_shop_active`  where cart_shop_active.user_direct = $user_id  and cart_shop_active.date BETWEEN " . strtotime($fromdate_normal) . " and " . strtotime($todate_normal) . "   and  cart_shop_active.buy = 2");
         $stmt->execute();
         // echo "SELECT  `point` FROM `cart_shop_active` INNER JOIN {$code} on cart_shop_active.code = {$code}.code where cart_shop_active.user_direct = $user_id and `cart_shop_active`.`table`='{$model}' and cart_shop_active.date BETWEEN ".strtotime($fromdate_normal)." and ".strtotime($todate_normal)."   and  cart_shop_active.buy = 2";
-        $sum=0;
+        $sum = 0;
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $code = 'code';
-        
-       
-        if($row['table'] == 'games' || $row['table'] == 'computer'  ){
+            $code = 'code';
 
-            $this->code = 'code_'.$row['table'];
-        }
-        else if($row['table'] == 'accessories'){
-           $code= 'color_accessories';
-        }
-        else if($row['table'] == 'product_savers'){
-            
-            $code = 'product_savers';
-        }
+
+            if ($row['table'] == 'games' || $row['table'] == 'computer') {
+
+                $this->code = 'code_' . $row['table'];
+            } else if ($row['table'] == 'accessories') {
+                $code = 'color_accessories';
+            } else if ($row['table'] == 'product_savers') {
+
+                $code = 'product_savers';
+            }
             // $codes += ','.$row['code'];
             $stmt_p = $this->db->prepare("SELECT `point` FROM {$code}  where code = '{$row['code']}'");
-     
+
             $stmt_p->execute();
             $row_p = $stmt_p->fetch(PDO::FETCH_ASSOC);
             $sum += $row_p['point'];
@@ -969,6 +983,6 @@ class report extends Controller
         // $stmt_p = $this->db->prepare("SELECT `point` FROM {$code}  where cart_shop_active.user_direct = $user_id and `cart_shop_active`.`table`='{$model}' and cart_shop_active.date BETWEEN ".strtotime($fromdate_normal)." and ".strtotime($todate_normal)."   and  cart_shop_active.buy = 2");
         // $stmt_p->execute();
         // $count = $stmt->fetch(PDO::FETCH_ASSOC) ;
-        return $sum ;
+        return $sum;
     }
 }

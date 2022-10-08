@@ -183,11 +183,6 @@
                     </td>
                     <td>
                         <p id = 'category_val_1'>موبايل</p> <input type='hidden' name="category[1]" id="category_1" value="mobile" />
-                        <!-- <select name="category[1]" class=" dropdown_filter selectpicker" data-live-search="true"  id="category_1" required >
-                            < ?php foreach ($this->category_website as $key => $value) {   ?>
-                                <option value="< ?=$key?>">< ?= $value?></option>
-                            < ?php  } ?>
-                        </select> -->
                     </td>
                     <td> <input type="text"  name="code[1]" class="form-control" id="code_1" autocomplete="off" style="width:120px"></td>
                     <td> <input type="text" name="quantity[1]" class="form-control" id="quantity_1" autocomplete="off" style="width:120px"></td>
@@ -221,14 +216,13 @@
                     <input type="hidden" name="total-price"  value="0" id="total-price" >
                 </div>
 
-                <div class="col-lg-3 col-md-2" style ="margin-top:35px">
-                    <p  class='text_total'>   المجموع الكلي  بالدولار: <span class ='price' id ='totalpricedollars' name='totalpricedollars' >0</span></p>
-                    <input type="hidden"  name="total_price_dollars"  value="0" id="total_price_dollars" >
+            	<div class="col-lg-3 col-md-2" style ="margin-top:35px">
+                    <p  class='text_total'>  المجموع الكلي + التكلفة الاضافية : <span class ='price' id ='priceandcost' name='priceandcost' >0</span></p>
+                    <input type="hidden"  name="total_price_cost"  value="0" id="total_price_cost" >
                 </div>
-
-
+            
                 <div class="col-lg-3 col-md-2" style ="margin-top:35px">
-                    <p  class='text_total'>    التكلفة الاضافية + المجموع الكلي  بالدولار: <span class ='price' id ='totalpricedollars' name='totalpricedollars' >0</span></p>
+                    <p  class='text_total'>    المجموع الكلي المدفوع : <span class ='price' id ='totalpricedollars' name='totalpricedollars' >0</span></p>
                     <input type="hidden"  name="total_price_dollars"  value="0" id="total_price_dollars" >
                 </div>
 
@@ -248,7 +242,7 @@
 
 
                     <div class="col-lg-2 col-md-2  mb-4 mr-2">
-                        <label class="mr-sm-2" for="currency_1">عملة الشراء  </label>
+                        <label class="mr-sm-2" for="currency_1">عملة </label>
                         <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="currency_cost[1]" id="currency_1">
                             <option value = '' name= ''> اختر اسم</option>
                             <?php foreach ($currency as $key => $name) {   ?>
@@ -311,22 +305,6 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="part_4">
-            <div class="form-row row  mb-4  mr-4 part">
-                <div class="col-lg-6 col-md-2 mr-4">
-                    <P class="text_total"> السعر الاجمالي :  <span class ='price' id ='price_purchase'></span></P>
-
-                </div>
-            </div>
-            <div class="form-row row  mb-4  mr-4 part">
-                <div class="col-lg-4 col-md-2 mr-4">
-                    <P class="text_total">السعر المدفوع : <span id="price_"></span></P>
-
-                </div>
-
-            </div>
-        </div> -->
-
 
         <div class="row justify-content-md-center  mb-4" style="clear: both;">
             <input class="btn btn-primary" id="save_bill" value="<?php  echo $this->langControl('save') ?>"  type="submit" name="submit">
@@ -593,6 +571,7 @@
                         $('#wholesale_price2_sale_'+id).val('');
                         title = '';
                         code = '';
+                     	break;
                     }
                 }
             }
@@ -840,6 +819,28 @@
                     }
 
                 }
+            }
+
+
+            //
+
+            var cost = 0;
+        	var priceAndCost = 0;
+            $('#priceandcost').text(0);
+            $('#total_price_cost').val(0);
+         
+        	if($('#total-price').val() != 0){
+            var totalPrice =  $('#total-price').val() / $('#price_exchange_order').val();
+            for(var i=1; i<= countCost;i++){
+                if($('#cost_'+i).val() != '' && $('#price_exchange_cost_'+i).val() != ''){
+                    cost += $('#cost_'+i).val() / $('#price_exchange_cost_'+i).val();
+                }
+            }
+            priceAndCost = totalPrice + cost;
+            priceAndCost = parseFloat(priceAndCost * $('#price_exchange_order').val()).toFixed(2);
+        
+            $('#priceandcost').text(priceAndCost);   //total_price_cost
+            $('#total_price_cost').val(priceAndCost);
             }
         }, 1000);
 

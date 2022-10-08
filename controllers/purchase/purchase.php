@@ -106,7 +106,7 @@ class purchase extends Controller {
             `idcompany_shipping`   SMALLINT(2) Unsigned,
             `iduser`  int(4)  NOT NULL,
             `idcurrency`  TINYINT(1) Unsigned,
-            `bill_crystal` varchar(255) NOT NULL DEFAULT ' ',
+            `bill_crystal` varchar(255),
             `add_to_excel` TINYINT(1) Unsigned  NULL DEFAULT '0',
             `state_order` varchar(150),
             `date_request` bigint(20) NOT NULL DEFAULT '0',
@@ -696,6 +696,9 @@ class purchase extends Controller {
                 $form->post('total_price_dollars')
                     ->val('strip_tags');
 
+                $form->post('total_price_cost')
+                    ->val('strip_tags');
+
                 $form->post('cost')
                     ->val('is_array')
                     ->val('strip_tags');
@@ -774,27 +777,27 @@ class purchase extends Controller {
                                 $sumTotal += $subtotals[$i];
 
                             }
-                            if($sumTotal ==  $data['total-price']){
+                            if($sumTotal ==  $data['total_price_cost']){
                                 for($i= 0 ; $i <= count($subtotals); $i++){
                                     $priceExchangeItem +=  $subtotals[$i] * $priceExchange[$i];
                                 }
-                                $priceExchangeItem = $priceExchangeItem / $data['total-price'];
-                                $priceExchangeItem =  round($priceExchangeItem, 1);
+                                $priceExchangeItem = $priceExchangeItem / $data['total_price_cost'];
+                                $priceExchangeItem =  round($priceExchangeItem, 2);
 
                             }
 
-                            if($sumTotal <  $data['total-price']){
-                                $min = $data['total-price'] - $sumTotal;
+                            if($sumTotal <  $data['total_price_cost']){
+                                $min = $data['total_price_cost'] - $sumTotal;
                                 for($i= 0 ; $i <= count($subtotals); $i++){
                                     $priceExchangeItem +=  $subtotals[$i] * $priceExchange[$i];
                                 }
                                 $priceExchangeItem +=  $min * $data['price_exchange_order'];
-                                $priceExchangeItem = $priceExchangeItem / $data['total-price'];
-                                $priceExchangeItem =  round($priceExchangeItem, 1);
+                                $priceExchangeItem = $priceExchangeItem / $data['total_price_cost'];
+                                $priceExchangeItem =  round($priceExchangeItem, 2);
 
                             }
 
-                            if($sumTotal > $data['total-price']){
+                            if($sumTotal > $data['total_price_cost']){
                                 $sumPrice = 0;
                                 for($i= 0 ; $i <= count($subtotals); $i++){
                                     $sumPrice +=  $subtotals[$i];
@@ -807,8 +810,8 @@ class purchase extends Controller {
                                     }
                                 }
 
-                                $priceExchangeItem = $priceExchangeItem / $data['total-price'];
-                                $priceExchangeItem =  round($priceExchangeItem, 1);
+                                $priceExchangeItem = $priceExchangeItem / $data['total_price_cost'];
+                                $priceExchangeItem =  round($priceExchangeItem, 2);
                             }
                         }
                     }
@@ -843,8 +846,8 @@ class purchase extends Controller {
                     $data['date_arrival_warehouse'] = strtotime($data['date_arrival_warehouse']);
                     $data['date_reminder'] = strtotime($data['date_reminder']);
 
-                    $stmt = $this->db->prepare("INSERT INTO `{$this->purchase_order}` (`idsupplier`,`idsource_request`,`idtype_shipping`,`idcompany_shipping`,`iduser`,`idcurrency`,`state_order` ,`date_request`,`iduser_date_request`,`price_exchange`,`total-price`,`total_price_dollars`,`note`,`created`) VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                    $stmt->execute(array($data['name_supplier'],$data['source_request'],$data['type_shipping'],$data['company_shipping'],$this->userid,$data['currency'],'on_request',$data['date_request'],$this->userid,$data['price_exchange_order'],$data['total-price'], $data['total_price_dollars'],$data['note_order'] ,time()));
+                    $stmt = $this->db->prepare("INSERT INTO `{$this->purchase_order}` (`idsupplier`,`idsource_request`,`idtype_shipping`,`idcompany_shipping`,`iduser`,`idcurrency`,`state_order` ,`date_request`,`iduser_date_request`,`price_exchange`,`total-price`,`total_price_dollars`,`note`,`bill_crystal`,`created`) VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    $stmt->execute(array($data['name_supplier'],$data['source_request'],$data['type_shipping'],$data['company_shipping'],$this->userid,$data['currency'],'on_request',$data['date_request'],$this->userid,$data['price_exchange_order'],$data['total-price'], $data['total_price_dollars'],$data['note_order'] ,'NULL',time()));
 
                     $getLastId = $this->db->prepare("SELECT `id` FROM `{$this->purchase_order}` WHERE `iduser`=? ORDER BY `id` DESC");
                     $getLastId->execute(array($this->userid));
@@ -1040,8 +1043,8 @@ class purchase extends Controller {
             ),
             array( 'db' => 'purchase_order.bill_crystal', 'dt' => 4,
                 'formatter' => function($id, $row) {
-                    if($row[4] == ''){
-                    return "<input type='text' class='form-control-md' name='bill_crystal'  id='bill_crystal_".$row[0]."' />";
+                    if($row[4] == 'NULL'){
+                       return "<input type='text' class='form-control-md' name='bill_crystal'  id='bill_crystal_".$row[0]."' />";
                     }else{
                         return $row[4];
                     }
@@ -1484,6 +1487,9 @@ class purchase extends Controller {
                 $form->post('total_price_dollars')
                     ->val('strip_tags');
 
+                $form->post('total_price_cost')
+                ->val('strip_tags');
+
                 $form->post('idcost')
                     ->val('is_array')
                     ->val('strip_tags');
@@ -1599,27 +1605,27 @@ class purchase extends Controller {
                                 $sumTotal += $subtotals[$i];
 
                             }
-                            if($sumTotal ==  $data['total-price']){
+                            if($sumTotal ==  $data['total_price_cost']){
                                 for($i= 0 ; $i <= count($subtotals); $i++){
                                     $priceExchangeItem +=  $subtotals[$i] * $priceExchange[$i];
                                 }
-                                $priceExchangeItem = $priceExchangeItem / $data['total-price'];
-                                $priceExchangeItem =  round($priceExchangeItem, 1);
+                                $priceExchangeItem = $priceExchangeItem / $data['total_price_cost'];
+                                $priceExchangeItem =  round($priceExchangeItem, 2);
 
                             }
 
-                            if($sumTotal <  $data['total-price']){
-                                $min = $data['total-price'] - $sumTotal;
+                            if($sumTotal <  $data['total_price_cost']){
+                                $min = $data['total_price_cost'] - $sumTotal;
                                 for($i= 0 ; $i <= count($subtotals); $i++){
                                     $priceExchangeItem +=  $subtotals[$i] * $priceExchange[$i];
                                 }
                                 $priceExchangeItem +=  $min * $data['price_exchange_order'];
-                                $priceExchangeItem = $priceExchangeItem / $data['total-price'];
-                                $priceExchangeItem =  round($priceExchangeItem, 1);
+                                $priceExchangeItem = $priceExchangeItem / $data['total_price_cost'];
+                                $priceExchangeItem =  round($priceExchangeItem, 2);
 
                             }
 
-                            if($sumTotal > $data['total-price']){
+                            if($sumTotal > $data['total_price_cost']){
                                 $sumPrice = 0;
                                 for($i= 0 ; $i <= count($subtotals); $i++){
                                     $sumPrice +=  $subtotals[$i];
@@ -1632,8 +1638,8 @@ class purchase extends Controller {
                                     }
                                 }
 
-                                $priceExchangeItem = $priceExchangeItem / $data['total-price'];
-                                $priceExchangeItem =  round($priceExchangeItem, 1);
+                                $priceExchangeItem = $priceExchangeItem / $data['total_price_cost'];
+                                $priceExchangeItem =  round($priceExchangeItem, 2);
                             }
                         }
                     }
@@ -2288,8 +2294,8 @@ class purchase extends Controller {
     // تكرار فاتورة شراء
     function copy_row($id)
     {
-        $stmt=$this->db->prepare("INSERT INTO `{$this->purchase_order}` (`iduser`,`created`) VALUES (?,?) ");
-        $stmt->execute(array($this->userid,time()));
+        $stmt=$this->db->prepare("INSERT INTO `{$this->purchase_order}` (`iduser`,`created`,`bill_crystal`) VALUES (?,?,?) ");
+        $stmt->execute(array($this->userid,time(),'NULL'));
 
         $idpurchase = $this->db->lastInsertId();
         // $stmt_update = $this->db->prepare("UPDATE `{$this->purchase_order}` SET `created`= ? WHERE `id`=?");
@@ -2491,19 +2497,6 @@ class purchase extends Controller {
     }
 
 
-    // // insert  or update payment
-    // function updatePayment($idpurchase,$payment,$id = 0){
-    //     if($id != 0){
-    //         $update_payment = $this->db->prepare("UPDATE `payment_purchase` SET `payment` = ? WHERE `idpurchase` = ? AND `id` = ?");
-    //         $update_payment->execute(array($payment,$idpurchase,$id));
-    //         if ($update_payment->rowCount() > 0)
-    //         {
-    //             echo 1;
-    //         }else{
-    //             echo 0;
-    //         }
-    //     }
-    // }
 
     // حذف كلفة شحن اضافية او دفعة
     function deletePayment($model,$idpurchase,$id){

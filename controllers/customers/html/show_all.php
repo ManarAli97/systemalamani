@@ -34,6 +34,8 @@
                     <th>اسم موظف المبيعات</th>
                     <th>ملاحظة موظف المبيعات</th>
                     <th>الحالة</th>
+                    <th>ملاحظة الاتصال بعد التعويض</th>
+
                 </tr>
             </thead>
         </table>
@@ -81,6 +83,22 @@
         bInfo: true,
         });
     });
+
+        /**@abstract
+     *  تضيف قيمة لحقل ملاحظات الكول سنتر في جدول اطلب ما  لم تجده
+     */
+    function addNoteCalled(note,id)
+    {
+        $.ajax({
+        type: "POST",
+        url:  "<?php echo url .'/'.$this->folder ?>/addNoteCalled/",
+        data: 'value1='+note+'&value2='+id,
+
+        success: function(data){}
+
+        });
+         
+    }
 </script>
 <style>
     table thead tr {

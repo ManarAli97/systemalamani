@@ -447,7 +447,7 @@ class prepared extends Controller
             $row['color_name']=$row['name_color'];
 
 
-            $row['location']=$this->get_location($row['table'],$row['code'],null,1);
+            $row['location']=$this->get_location($row['table'],$row['code'],null);
 
 
 
@@ -4289,7 +4289,7 @@ class prepared extends Controller
                     }
                 }
 
-                $row['location']=$this->get_location($row['table'],$row['code'],null,1);
+                $row['location']=$this->get_location($row['table'],$row['code'],null);
 
 
 

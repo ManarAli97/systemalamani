@@ -349,6 +349,7 @@
 							</thead>
 							<tbody>
 							<?php foreach ($data as $ta)  { ?>
+                                <div id="div_<?php echo $ta['id'] ?>">
 								<tr id="row_db_<?php echo $ta['id'] ?>">
 									<td> <?php echo $this->langControl($ta['model'] ) ?> </td>
 									<td> <?php echo $ta['title'] ?> </td>
@@ -422,6 +423,7 @@
 
 
 								</tr>
+                                </div>
 							<?php } ?>
 							</tbody>
 						</table>
@@ -536,7 +538,21 @@
                     {
                         $('#location_quantity').val(0).removeClass('error_quantity')
                         $('#location_code').select().val('');
-                        $('.resultLocation').html(data);
+                        // ajax to get id of transport
+                        // $.get( "<?php echo url . '/' . $this->folder ?>/get_id_location_transport/", function( data ) {
+                        //     $('#table_location_convert').html(data);
+                        // });
+                        // convert data to string
+                        var respon=data.toString();
+                        // get index of <tr> in respon
+                        var id=  respon.slice(0,respon.indexOf("<"));
+                        var last = respon.slice(respon.indexOf("<"),respon.length);
+                        console.log(last);
+                        console.log(id);
+                         
+                        $('#row_db_'+id).empty();   
+                        $('#row_db_'+id).html(last);
+                        
                         $('#alert_over_q').empty();
                     }
                   }
@@ -562,7 +578,15 @@
             {
                 alert('فشل الحذف')
             }else {
-                $('.resultLocation').html(data);
+                var respon=data.toString();
+                        // get index of <tr> in respon
+                        var id=  respon.slice(0,respon.indexOf("<"));
+                        var last = respon.slice(respon.indexOf("<"),respon.length);
+                        console.log(last);
+                        console.log(id);
+                         
+                        $('#row_db_'+id).empty();   
+                        $('#row_db_'+id).html(last);
 
             }
         });
@@ -579,7 +603,15 @@
                 window.location='<?php echo url .'/'.$this->folder ?>/transport_not_confirm'
             } else
 			{
-                $('.resultLocation').html(data);
+                var respon=data.toString();
+                        // get index of <tr> in respon
+                        // var id=  respon.slice(0,respon.indexOf("<"));
+                        // var last = respon.slice(respon.indexOf("<"),respon.length);
+                        // console.log(last);
+                        // console.log(id);
+                         
+                        $('#row_db_'+respon).empty();   
+                        // $('#row_db_'+id).html(last);
 			}
         });
         }return false

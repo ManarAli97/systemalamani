@@ -292,9 +292,10 @@ public function processing_index()
     public function get_quantity_error_count()
     {
         // $this->checkPermit('add_winners','coupon');
-        $stmt = $this->db->prepare("SELECT count(quantity_error.id) as count_ FROM `quantity_error` INNER JOIN quantity_change_control on quantity_error.id_QCC = quantity_change_control.id where quantity_error.repaired =0 and (quantity_change_control.model='accessories' or quantity_change_control.model='savers');");
-        $stmt->execute();
-        $stmt_data = $stmt->fetch(PDO::FETCH_ASSOC);
-        echo $stmt_data['count_'];
+        // $stmt = $this->db->prepare("SELECT count(quantity_error.id) as count_ FROM `quantity_error` INNER JOIN quantity_change_control on quantity_error.id_QCC = quantity_change_control.id where quantity_error.repaired =0 and (quantity_change_control.model='accessories' or quantity_change_control.model='savers');");
+        // $stmt->execute();
+        // $stmt_data = $stmt->fetch(PDO::FETCH_ASSOC);
+        // echo $stmt_data['count_'];
+    	echo 0;
     }
 }

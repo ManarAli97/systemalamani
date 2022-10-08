@@ -5973,7 +5973,7 @@ function x()
         $primaryKey = 'product_savers.id';
         $tableJoin = 'type_device';
         $columns = array(
-            array( 'db' => 'product_savers.code', 'dt' => 0 ),
+            array( 'db' => 'product_savers.code', 'dt' => 0),
             array( 'db' => 'product_savers.img', 'dt' => 1,
                 'formatter' => function ($img, $row) {
                     if ($img)
@@ -5991,92 +5991,104 @@ function x()
                      return  date('Y-m-d h:i:s A',$date);
                   }
             ),
-            array( 'db' => 'product_savers.code', 'dt' => 5 ,
+            array( 'db' => 'product_savers.code', 'dt' =>5,
                 'formatter' => function ($code,$row) {
                     return $this->sale($code,$this->date_start,$this->date_end);
                 }
             ),
-            array( 'db' => 'product_savers.code', 'dt' => 6 ,
+            array( 'db' => 'product_savers.code', 'dt' =>6,
                 'formatter' => function ($code, $row) {
                     return $this->insideQuantity($code,$this->date_start,$this->date_end);
                 }
             ),
-            array( 'db' => 'product_savers.code', 'dt' => 7 ,
+            array( 'db' => 'product_savers.code', 'dt' =>7,
                 'formatter' => function ($code,$row) {
                     return $this->currentQuantity($code);
                 }
             ),
-            array( 'db' => 'product_savers.code', 'dt' => 8 ,
-                'formatter' => function ($code, $row) {
-                    return  $this->nextQuantity($code);
-                }
-            ),
-            array( 'db' => 'product_savers.code', 'dt' =>9 ,
-                'formatter' => function ($code, $row) {
-                    return $this->stateOrder($code);
-                }
-            ),
-            array( 'db' => 'product_savers.code', 'dt' =>10 ,
-                'formatter' => function ($code, $row) {
-                    return $this->dateArrival($code);
-                }
-            ),
-             array('db' => 'product_savers.note', 'dt' =>11,
-                'formatter' => function ($note, $row) {
-                    return "<input type='text' onchange='update_rate(this.value,$row[38])' class='note' name='note'  value='{$note}'/>";
-                }
-            ),
-            array('db' => 'product_savers.id', 'dt' =>12,
+         
+            array('db' => 'product_savers.id', 'dt' =>8,
                 'formatter' => function ($id, $row) {
-                return $this->typeSavers($row[16],$row[17],$row[18]);
+                return $this->typeSavers($row[9],$row[10],$row[11]);
                 }
             ),
-            array( 'db' => 'product_savers.note', 'dt' => 13,
-                'formatter' => function ($rate, $row) {
-                    return $this->getRateMore70($this->model,$rate);
+            array('db' => 'product_savers.cover_material', 'dt' =>9,
+            'formatter' => function ($id, $row) {
+                 if($id != ''){
+                    return "<button type='button' onclick='edit_cover_material($row[0])' class='btn btn-sm'  id='edit-cover-material-{$row[0]}' style = 'background-color : #008CBA;color: #FFF;'> <i class='fa fa-pencil' ></i></button>"."<div  class='edit-cover-material-{$row[0]}'  style='display:none'>".$this->data->cover_material($id,$row[0])."</div>";
                 }
-            ),
-            array( 'db' => 'product_savers.note', 'dt' => 14,
-                'formatter' => function ($rate, $row) {
-                    return $this->getRateBetween60And70($this->model,$rate);
+                else{
+                    return $this->data->cover_material($id, $row[0]);
                 }
+            }
             ),
-            array( 'db' => 'product_savers.note', 'dt' => 15,
-                'formatter' => function ($rate, $row) {
-                    return $this->getRateLess60($this->model,$rate);
-                }
-            ),
-            array('db' => 'product_savers.cover_material', 'dt' =>16,
-                'formatter' => function ($id, $row) {
-                     if($id != ''){
-                        return "<button type='button' onclick='edit_cover_material($row[0])' class='btn btn-sm'  id='edit-cover-material-{$row[0]}' style = 'background-color : #008CBA;color: #FFF;'> <i class='fa fa-pencil' ></i></button>"."<div  class='edit-cover-material-{$row[0]}'  style='display:none'>".$this->data->cover_material($id,$row[0])."</div>";
-                    }
-                    else{
-                        return $this->data->cover_material($id, $row[0]);
-                    }
-                }
-            ),
-            array('db' => 'product_savers.type_cover', 'dt' => 17,
+            array('db' => 'product_savers.type_cover', 'dt' => 10,
                 'formatter' => function ($id, $row) {
                     if($id != ''){
                         return "<button type='button' onclick='edit_type_cover($row[0])' class='btn btn-sm '   id='edit-type-cover-{$row[0]}' style = 'background-color : #008CBA;color: #FFF;'> <i class='fa fa-pencil' ></i></button>"."<div  class='edit-type-cover-{$row[0]}'  style='display:none'>".$this->data->type_cover($id,$row[0])."</div>";
                     }else{
-                       return $this->data->type_cover($id, $row[0]);
+                    return $this->data->type_cover($id, $row[0]);
                     }
                 }
             ),
-            array('db' => 'product_savers.feature_cover', 'dt' => 18,
+            array('db' => 'product_savers.feature_cover', 'dt' => 11,
                 'formatter' => function ($id, $row) {
-                  if($id != ''){
+                if($id != ''){
                         return "<button type='button' onclick='edit_feature_cover($row[0])' class='btn btn-sm'  id='edit-feature-cover-{$row[0]}' style = 'background-color : #008CBA;color: #FFF;'> <i class='fa fa-pencil' ></i></button>"."<div class='edit-feature-cover-{$row[0]}'  style='display:none'>".$this->data->feature_cover($id,$row[0])."</div>";
                     }else{
                         return  $this->data->feature_cover($id, $row[0]);
                     }
                 }
             ),
-            array( 'db' => 'product_savers.id', 'dt' => 19,
+            array('db' => 'product_savers.note', 'dt' =>12,
+                'formatter' => function ($note, $row) {
+                    return "<input type='text' onchange='update_rate(this.value,$row[38])' class='note' name='note'  value='{$note}' style='width:80px;height:30px; font-size:14px'/>";
+                }
+            ),
+            array( 'db' => 'product_savers.code', 'dt' => 13,
+                'formatter' => function ($code, $row) {
+                    return $this->quantInViewOrStore($code,' `sequence` BETWEEN 4 AND 100');
+                }
+            ),
+            array( 'db' => 'product_savers.code', 'dt' => 14,
+                'formatter' => function ($code, $row) {
+                    return  $this->quantInViewOrStore($code,' (`sequence` < 4 OR `sequence` > 100 ) ');
+                }
+            ),
+           array( 'db' => 'product_savers.code', 'dt' => 15,
+                'formatter' => function ($code, $row) {
+                    return  $this->nextQuantity($code);
+                }
+            ),
+            array( 'db' => 'product_savers.code', 'dt' =>16,
+                'formatter' => function ($code, $row) {
+                    return $this->stateOrder($code);
+                }
+            ),
+            array( 'db' => 'product_savers.code', 'dt' =>17,
+                'formatter' => function ($code, $row) {
+                    return $this->dateArrival($code);
+                }
+            ),
+            array( 'db' => 'product_savers.note', 'dt' => 18,
+                'formatter' => function ($rate, $row) {
+                    return $this->getRateMore70($this->model,$rate);
+                }
+            ),
+            array( 'db' => 'product_savers.note', 'dt' => 19,
+                'formatter' => function ($rate, $row) {
+                    return $this->getRateBetween60And70($this->model,$rate);
+                }
+            ),
+            array( 'db' => 'product_savers.note', 'dt' => 20,
+                'formatter' => function ($rate, $row) {
+                    return $this->getRateLess60($this->model,$rate);
+                }
+            ),
+
+            array( 'db' => 'product_savers.id', 'dt' => 21,
                 'formatter' => function ($id, $row) {
-                    $key = $row[16].$row[17].$row[18];
+                    $key = $row[9].$row[10].$row[11];
                     if($this->quantSaleAllType[$key] != ''){
                         return  $this->quantSaleAllType[$key];
                     }else{
@@ -6084,9 +6096,9 @@ function x()
                     }
                 }
             ),
-            array( 'db' => 'product_savers.id', 'dt' => 20,
+            array( 'db' => 'product_savers.id', 'dt' => 22,
                 'formatter' => function ($id, $row) {
-                    $key = $row[16].$row[17].$row[18];
+                    $key = $row[9].$row[10].$row[11];
                     if($this->quantInsideAllType[$key] != ''){
                         return  $this->quantInsideAllType[$key];
                     }else{
@@ -6094,9 +6106,9 @@ function x()
                     }
                 }
             ),
-            array( 'db' => 'product_savers.id', 'dt' => 21,
+            array( 'db' => 'product_savers.id', 'dt' =>23,
                 'formatter' => function ($id, $row) {
-                    $key = $row[16].$row[17].$row[18];
+                    $key = $row[9].$row[10].$row[11];
                     if($this->quantTotalAllType[$key] != ''){
                         return  $this->quantTotalAllType[$key];
                     }else{
@@ -6105,9 +6117,9 @@ function x()
 
                 }
             ),
-            array( 'db' => 'product_savers.id', 'dt' => 22,
+            array( 'db' => 'product_savers.id', 'dt' => 24,
                 'formatter' => function ($id, $row) {
-                    $key = $row[16].$row[17].$row[18];
+                    $key = $row[9].$row[10].$row[11];
                     if($this->quantNextAllType[$key] != ''){
                         return  $this->quantNextAllType[$key];
                     }else{
@@ -6115,28 +6127,18 @@ function x()
                     }
                 }
             ),
-
-            array( 'db' => 'product_savers.code', 'dt' => 23 ,
-                'formatter' => function ($code, $row) {
-                    return $this->quantInViewOrStore($code,' `sequence` BETWEEN 4 AND 100');
-                }
-            ),
-            array( 'db' => 'product_savers.code', 'dt' => 24 ,
+            array( 'db' => 'product_savers.code', 'dt' => 25,
                 'formatter' => function ($code, $row) {
                     return $this->lastSaleFromViewOrStore($code,'`sequence` BETWEEN 4 AND 100');
                 }
             ),
-            array( 'db' => 'product_savers.code', 'dt' => 25 ,
-                'formatter' => function ($code, $row) {
-                    return  $this->quantInViewOrStore($code,' (`sequence` < 4 OR `sequence` > 100 ) ');
-                }
-            ),
-            array( 'db' => 'product_savers.code', 'dt' => 26 ,
+
+            array( 'db' => 'product_savers.code', 'dt' => 26,
                 'formatter' => function ($code, $row) {
                     return $this->lastSaleFromViewOrStore($code,' (`sequence` < 4 OR `sequence` > 100 ) ');
                 }
             ),
-            array( 'db' => 'product_savers.code', 'dt' => 27 ,
+            array( 'db' => 'product_savers.code', 'dt' => 27,
                 'formatter' => function ($code, $row) {
                     return $this->lastTransferViewOrStore($code,'`sequence` BETWEEN 4 AND 100 ');
                 }
@@ -6151,7 +6153,7 @@ function x()
                     return $this->lastOffers($code);
                 }
             ),
-            array( 'db' => 'product_savers.code', 'dt' =>30 ,
+            array( 'db' => 'product_savers.code', 'dt' =>30,
                 'formatter' => function ($code, $row) {
                     $data = $this->lastJard($code);
                     if($data != false){
@@ -6161,7 +6163,7 @@ function x()
                     }
                 }
             ),
-            array( 'db' => 'product_savers.code', 'dt' => 31 ,
+            array( 'db' => 'product_savers.code', 'dt' => 31,
                 'formatter' => function ($code, $row) {
                     $data = $this->lastJard($code);
                     if($data != false){
@@ -6171,17 +6173,17 @@ function x()
                     }
                 }
             ),
-            array( 'db' => 'product_savers.id', 'dt' =>32 ,
+            array( 'db' => 'product_savers.id', 'dt' =>32,
                 'formatter' => function ($id, $row) {
                     return '-';
                 }
             ),
-            array( 'db' => 'product_savers.id', 'dt' =>33 ,
+            array( 'db' => 'product_savers.id', 'dt' =>33,
                 'formatter' => function ($id, $row) {
                     return '-';
                 }
             ),
-            array( 'db' => 'product_savers.id', 'dt' =>34 ,
+            array( 'db' => 'product_savers.id', 'dt' =>34,
                 'formatter' => function ($id, $row) {
                     return ' - ';
                 }

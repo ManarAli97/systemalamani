@@ -1,6 +1,6 @@
 <?php
 class customers extends Controller
-{
+{ 
     function __construct()
     {
         parent::__construct();
@@ -689,11 +689,7 @@ class customers extends Controller
                 while ($row = $stmt1->fetch(PDO::FETCH_ASSOC)) {
                     $table = $row['table'];
                     $number = $row['number'];
-                	// $stmt_get = $this->db->prepare("SELECT `id` FROM {$row['table']} WHERE id = ? and is_service =0  ");
-                	// $stmt_get->execute(array($row['id_item']));
-                	// if ($stmt_get->rowCount() > 0) {
-                    	$this->set_quantity_order($table, $row['id_item'], $row['code'], $number);
-                    //}
+                    $this->set_quantity_order($table, $row['id_item'], $row['code'], $number);
                     $stmt_get_item = $this->db->prepare("SELECT *FROM `{$row['table']}` WHERE id = ?  LIMIT 1");
                     $stmt_get_item->execute(array($row['id_item']));
                     $item = $stmt_get_item->fetch();
@@ -966,6 +962,15 @@ class customers extends Controller
                     }
                 }
             ),
+            array( 
+                'db' => 'note_after_compensation',
+                'dt' =>10,
+                'formatter' => function($id, $row ) {
+                    return $this->noteCalled($row[11],$id);
+                }
+            ),
+            // get id from database to use it above
+            array('db' => 'id', 'dt' => 11),
         );
         // SQL server connection information
         $sql_details = array(
@@ -979,6 +984,62 @@ class customers extends Controller
             SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns)
         );
     }
+
+    /**
+     * هاي الدالة تضيف ملاحظة الكول سنتر ويتم استدعاؤها عن طريق اجاكس
+     */
+    function addNoteCalled()
+    {
+        $note = $_POST['value1'];
+        $id = $_POST['value2'];
+        
+        $sqlQ = $this->db->prepare("SELECT * FROM customers_compensation  WHERE `id`=?");
+        $sqlQ->execute(array($id));
+      
+        $stmt = $this->db->prepare("update  customers_compensation set note_after_compensation=? where id=?");
+        $stmt->execute(array($note,$id));
+        $this->addFoundTracking($id,"note_after_compensation",$note);
+    }
+    
+    /**
+     * هاي الدالة تضيف اي حركة صارت على جدول اطلب مالم تجده 
+     *  */ 
+    public function addFoundTracking($IdFound,$actionType,$theValue)
+    {
+        $stmt = $this->db->prepare("INSERT INTO `found_tracking`( `id_found`, `action_type`, `user_id`,the_value) VALUES (?,?,?,?)");
+        $stmt->execute(array($IdFound,$actionType, $this->userid,$theValue));
+    }
+
+    /**
+     * هاي الدالة تخلي حقل الملاحظة عباره عن مربع نص
+     */
+    function noteCalled($row,$id)
+    {
+        return "
+            <div class='col-xs-2'>
+                <textarea  onfocusout='addNoteCalled(this.value,$row)' class='form-control '  type='text' rows='3' >$id</textarea> <p style='font-size:10px;' >{$this->getUser($row,'note_after_compensation')}</P>
+            </div>
+        ";
+    }
+
+    /**
+     *   هاي الدالة ترجع اسم المستخدم الي نفذ اجراء معين على جدول اطلب مالم تجده
+     * وبيها رابط حتى نشوف كل التعديلات السابقة
+     */
+    public function getUser($idFound,$actionType)
+    {
+        $found = $this->db->prepare("SELECT * FROM `found_tracking`  WHERE `id_found`=? and action_type=? ORDER BY `found_tracking`.`id` DESC" );
+        $found->execute(array($idFound,$actionType));
+        if($found_data = $found->fetch(PDO::FETCH_ASSOC))
+            return  "
+            <div style='text-align: center;font-size: 18px;'>
+                <span>{$this->UserInfo( $found_data['user_id'])}</span> 
+            </div> " 
+            ;
+        else 
+            return "";
+    }
+
     function add_customers_compensation()
     {
         $this->checkPermit('add_customers_compensation', 'customers');
@@ -1021,6 +1082,491 @@ class customers extends Controller
             // message error
             $this->error_form = "حدث خطأ ما ادخل البيانات مرة اخرى";
             $sendProd = false;
+        }
+    }
+
+    function checklogin(){
+
+        if(isset($_POST['username']) && isset($_POST['password'])){
+            $username = $_POST['username'];
+            $password =  $_POST['password'];
+
+            $stmt = $this->db->prepare("SELECT id FROM `user`  WHERE  username = ? and password = ?");
+            $stmt->execute(array($username,$this->HASH_key('sha256', $password . trim($username), HASH_PASSWORD_KEY)));
+            if ($stmt->rowCount() > 0) 
+            {
+                $id=$stmt->fetch(PDO::FETCH_ASSOC);
+                $data = ["id" => $id['id'] ];
+                $JSON_data = json_encode($data);
+                print_r($JSON_data);
+            }
+            else 
+            {
+                $data = ["id" => "0" ];
+                $JSON_data = json_encode($data);
+                print_r($JSON_data);
+            }
+        }
+    }
+
+    function insert_phone_customer()
+    {
+        if(isset($_POST['phone']) && isset($_POST['userid'])){
+            $data['date'] = time();
+            $data['phone'] = $_POST['phone'];
+            $data['userid'] = $_POST['userid']; 
+            $stmt = $this->db->insert('customer_con', $data);
+        	echo json_encode($data['userid']);
+        }
+    }
+
+    function customer_report()
+    {
+        $this->checkPermit('customer_report', 'customers');
+        $this->adminHeaderController("تقرير الزبائن");
+
+        require($this->render($this->folder, 'html', 'customer_report', 'php'));
+        $this->adminFooterController();
+    }
+    
+    function search_phone_customer()
+    {
+        $stmt = $this->db->prepare("SELECT phone  FROM `customer_con`  WHERE userid =? ORDER BY `id` DESC limit 1");
+        $stmt->execute(array($this->userid));
+        if ($stmt->rowCount() > 0 ) {
+            $stmt_ = $stmt->fetch(PDO::FETCH_ASSOC);
+            echo $stmt_['phone'];
+        }
+    }
+
+    function register_user($id_cus)
+    {
+        $table = "register_user";
+        $primaryKey = 'id';
+        $columns = array(
+            array('db' => 'name', 'dt' => 0),
+            array('db' => 'username', 'dt' => 1),
+            array('db' => 'city', 'dt' => 2),
+            array('db' => 'year', 'dt' => 3),
+            array('db' => 'note', 'dt' => 4),
+            array('db' => 'type_customer', 'dt' => 5),
+            array('db' => 'date', 'dt' => 6,
+                'formatter' => function ($d, $row) {
+                        return date('Y-m-d', $d);
+                    }
+            )
+        );
+        $sql_details = array(
+            'user' => DB_USER,
+            'pass' => DB_PASS,
+            'db'   => DB_NAME,
+            'host' => DB_HOST,
+            'charset' => 'utf8'
+        );
+        $whereall ="`id` IN ({$id_cus})";
+        echo json_encode(
+            SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns , null ,$whereall)
+        );
+        
+    }
+
+    function staff_evaluation($id_cus)
+    {
+        $table = 'staff_evaluation';
+        $primaryKey = 'staff_evaluation.id';
+
+        $columns = array(
+
+            array( 'db' => 'user.username', 'dt' => 0 ),
+            array('db' =>'staff_evaluation.number_smile', 'dt' => 1,
+                'formatter' => function( $d, $row ) {
+                    if ($d == 1) {
+                        return '<i class="fa fa-smile-o"  style="font-size: 20px;color: green;"></i>';
+                    } else if ($d == 2) {
+                        return '<i class="fa fa-meh-o"  style="font-size: 20px;color: orange;"></i>';
+                    } else if ($d == 3) {
+                        return '<i class="fa fa-frown-o" style="font-size: 20px;color: red;"></i>';
+                    } else {
+                        return '';
+                    }
+                }
+            ),
+
+            array( 'db' =>'staff_evaluation.note', 'dt' => 2 ),
+
+            array('db' =>'staff_evaluation.date', 'dt' => 3,
+                'formatter' => function( $d, $row ) {
+
+                    return date('Y-m-d h:i:s a',$d);
+                }
+            ),
+
+
+        );
+
+        $sql_details = array(
+            'user' => DB_USER,
+            'pass' => DB_PASS,
+            'db'   => DB_NAME,
+            'host' => DB_HOST,
+            'charset' => 'utf8'
+        );
+
+
+        $join = " LEFT JOIN user ON user.number = staff_evaluation.number_employee ";
+        $whereAll = "staff_evaluation.id_customer IN ({$id_cus})";
+
+
+        echo json_encode(SSP::complex_join($_GET, $sql_details, $table, $primaryKey, $columns, $join, null, $whereAll,null,null,1));
+        
+    }
+
+    function note_user($id_cus)
+    {
+        $table = 'note_user';
+        $primaryKey = 'note_user.id';
+
+        $columns = array(
+            array( 'db' => 'user.username', 'dt' => 0 ),
+            array( 'db' =>'note_user.note', 'dt' => 1 ),
+            array( 'db' =>'usergroup.name', 'dt' => 2 ),
+            array('db' =>'note_user.date', 'dt' => 3,
+                'formatter' => function( $d, $row ) {
+
+                    return date('Y-m-d h:i:s a',$d);
+                }
+            ),
+
+
+        );
+
+        $sql_details = array(
+            'user' => DB_USER,
+            'pass' => DB_PASS,
+            'db'   => DB_NAME,
+            'host' => DB_HOST,
+            'charset' => 'utf8'
+        );
+
+
+        $join = " INNER JOIN user ON user.id =note_user.userid  INNER JOIN usergroup ON usergroup.id = note_user.user_group";
+        $whereAll = "note_user.id_customer IN ({$id_cus})";
+
+
+        echo json_encode(SSP::complex_join($_GET, $sql_details, $table, $primaryKey, $columns, $join, null, $whereAll,null,null,1));
+    }
+
+    function found($phone)
+    {
+        $table = "found";
+        $primaryKey = 'id';
+        $columns = array(
+            array('db' => 'content', 'dt' => 0),
+            array('db' => 'called', 'dt' => 1,
+                'formatter' => function ($d, $row) {
+                    if($d == 1)
+                            return 'تم التواصل مع الزبون' ;
+                        else
+                            return ' لم يتم التواصل مع الزبون ' ;
+                }),
+
+            array('db' => 'note_called', 'dt' => 2),
+            array('db' => 'date', 'dt' => 3,
+                'formatter' => function ($d, $row) {
+                        return date('Y-m-d', $d);
+                    }
+            )
+        );
+        $sql_details = array(
+            'user' => DB_USER,
+            'pass' => DB_PASS,
+            'db'   => DB_NAME,
+            'host' => DB_HOST,
+            'charset' => 'utf8'
+        );
+        $whereall ="`title` like '%{$phone}%'";
+
+        echo json_encode(
+            SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns , null ,$whereall)
+        );
+    }
+
+    function customers_compensation($phone)
+    {
+        $table = "customers_compensation";
+        $primaryKey = 'id';
+        $columns = array(
+            array('db' => 'customer_name', 'dt' => 0),
+            array('db' => 'customer_number', 'dt' => 1),
+            array('db' => 'id_bill', 'dt' => 2),
+            array(
+                'db' => 'date_called', 'dt' => 3,
+                'formatter' => function ($d, $row) {
+                    return date('Y-m-d h:i A', $d);
+                }
+            ),
+            array('db' => 'user_called', 'dt' => 4,
+            'formatter' => function ($d, $row) {
+                return $this->UserInfo($d);
+                
+            }
+            ),
+            array('db' => 'note_called', 'dt' => 5),
+            array(
+                'db' => 'date_check', 'dt' => 6,
+                'formatter' => function ($d, $row) {
+                    if ($d == 0) {
+                        return '';
+                    } else {
+                        return date('Y-m-d h:i A', $d);
+                    }
+                }
+            ),
+            array('db' => 'user_check', 'dt' => 7
+            ,
+            'formatter' => function ($d, $row) {
+                return $this->UserInfo($d);
+                
+            }),
+            array('db' => 'note_check', 'dt' => 8),
+            array(
+                'db' => 'check', 'dt' => 9,
+                'formatter' => function ($d, $row) {
+                    if ($d == 0) {
+                        return 'لم يتم التعويض';
+                    } else {
+                        return 'تم التعويض';
+                    }
+                }
+            ),
+        );
+        // SQL server connection information
+        $sql_details = array(
+            'user' => DB_USER,
+            'pass' => DB_PASS,
+            'db'   => DB_NAME,
+            'host' => DB_HOST,
+            'charset' => 'utf8'
+        );
+        $whereall ="`customer_number` like '%{$phone}%'";
+        echo json_encode(
+            SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns ,null ,$whereall)
+        );
+    }
+
+    function coupon($phone){
+        $table = "user_coupon";
+        $primaryKey = 'user_coupon.id';
+        $columns = array(
+            array( 'db' => 'user_coupon.id_coupon', 'dt' => 0 ,
+                'formatter' => function( $d, $row ) {
+                    return $this->group_coupon($d) ;
+                }
+            ),
+            array( 'db' => 'user_coupon.id_user', 'dt' => 1,
+                'formatter' => function( $d, $row ) {
+                    return $this->name_user_coupon($d) ;
+                }
+            ),
+            array( 'db' => 'register_user.phone', 'dt' => 2 ,
+                'formatter' => function( $d, $row ) {
+                    return $this->count_used_coupon($d) ;
+                }
+            ),
+            array( 'db' => 'user_coupon.date', 'dt' => 3 ,
+            'formatter' => function( $d, $row ) {
+                return date( 'Y-m-d h:i A', $d);
+            }
+        ),
+        );
+
+        $sql_details = array(
+            'user' => DB_USER,
+            'pass' => DB_PASS,
+            'db'   => DB_NAME,
+            'host' => DB_HOST,
+            'charset' => 'utf8'
+        );
+        $join = " INNER JOIN  register_user ON user_coupon.id_customer = register_user.id ";
+        $whereAll = " register_user.phone like '%{$phone}%' ";
+        $group="GROUP BY user_coupon.id_customer";
+        echo json_encode(
+            SSP::complex_join( $_GET, $sql_details, $table, $primaryKey, $columns,$join, null, $whereAll , null,$group)
+        );
+    }
+
+    function count_used_coupon($phone)
+    {
+        $stmt = $this->db->prepare("SELECT count(user_coupon.id) as count_ FROM `user_coupon` ,register_user where  user_coupon.id_customer = register_user.id and user_coupon.state=0 and register_user.phone = ? ;");
+        $stmt->execute(array($phone));
+        $stmt_data = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt_data['count_'];
+    }
+
+    function name_user_coupon($id_user)
+    {
+        $stmt = $this->db->prepare("SELECT `username` FROM `user` WHERE `id` = ?");
+        $stmt->execute(array($id_user));
+        $stmt_data = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt_data['username'];
+    }
+
+    function group_coupon($id_coupon)
+    {
+        $stmt = $this->db->prepare("SELECT `name_group` FROM `coupon` INNER JOIN  groups_coupons ON coupon.id_group = groups_coupons.id WHERE groups_coupons.id = ?");
+        $stmt->execute(array($id_coupon));
+        $stmt_data = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt_data['name_group'];
+    }
+
+    function purchase_customer($id_cus)
+    {
+        $table = "purchase_customer_item";
+        $primaryKey = 'id';
+        $columns = array(
+            array('db' => 'table', 'dt' => 0,
+                'formatter' => function ($d, $row) {
+                        return $this->name_item($d, $row[5]);
+                    }
+            ),
+            array('db' => 'number_bill', 'dt' => 1),
+            array('db' => 'price_purchase', 'dt' => 2),
+            array('db' => 'price_sale', 'dt' => 3),
+            array('db' => 'date', 'dt' => 4,
+                'formatter' => function ($d, $row) {
+                        return date('Y-m-d', $d);
+                }
+            ),
+            array('db' => 'id_item', 'dt' => 5)
+
+        );
+        $sql_details = array(
+            'user' => DB_USER,
+            'pass' => DB_PASS,
+            'db'   => DB_NAME,
+            'host' => DB_HOST,
+            'charset' => 'utf8'
+        );
+        $whereall ="`id_customer` IN ({$id_cus})";
+        echo json_encode(
+            SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns , null ,$whereall)
+        );
+    }
+
+    function name_item($table,$id_item)
+    {
+        if($table == 'savers') $table = 'product_savers' ;
+
+        $stmt = $this->db->prepare("SELECT `title` FROM `{$table}`  WHERE id = ?");
+        $stmt->execute(array($id_item));
+        $stmt_data = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt_data['title'];
+    }
+
+     function cart_shop($id_cus)
+    {
+        $table = 'cart_shop_all';
+        $primaryKey = 'cart_shop_all.id';
+
+        $columns = array(
+
+            array( 'db' => 'cart_shop_all.number_bill', 'dt' => 0 ),
+            array('db' =>'cart_shop_all.number_bill', 'dt' => 1,
+                'formatter' => function( $d, $row ) {
+                    return $this->all_orders_bill($d,$row[4]);
+                }
+            ),
+
+            array('db' =>'cart_shop_all.number_bill', 'dt' => 2,
+                'formatter' => function( $d, $row ) {
+                    return $this->sum_price($d);
+                }
+            ),
+
+            array('db' =>'cart_shop_all.date', 'dt' => 3,
+                'formatter' => function( $d, $row ) {
+
+                    return date('Y-m-d h:i:s a',$d);
+                }
+            ),
+            array( 'db' => 'cart_shop_all.table', 'dt' => 4)
+
+
+        );
+
+        $sql_details = array(
+            'user' => DB_USER,
+            'pass' => DB_PASS,
+            'db'   => DB_NAME,
+            'host' => DB_HOST,
+            'charset' => 'utf8'
+        );
+
+
+        $join = null ;
+        $whereAll = "cart_shop_all.id_member_r IN ({$id_cus})";
+        $group="GROUP BY cart_shop_all.number_bill";
+
+        echo json_encode(SSP::complex_join($_GET, $sql_details, $table, $primaryKey, $columns, $join, null, $whereAll,null,$group,1));
+        
+    }
+
+    function sum_price($number_bill)
+    {
+        $stmt = $this->db->prepare("SELECT  `price_dollars`,`dollar_exchange` FROM `cart_shop_all` WHERE `number_bill`=?");
+        $stmt->execute(array($number_bill));
+        $data= array();
+        while($row=$stmt->fetch(PDO::FETCH_ASSOC))
+        {
+            $data[] = str_replace(',','',$this->price_dollarsAdmin($row['price_dollars'], $row['dollar_exchange']));
+        }
+        return number_format(array_sum($data));
+    }
+
+    function all_orders_bill($number_bill,$table){
+        $stmt = $this->db->prepare("SELECT `cart_shop_all`.* ,title FROM `cart_shop_all` inner JOIN {$table} ON  `cart_shop_all`.id_item = $table.id WHERE `number_bill`=?");
+        $stmt->execute(array($number_bill));
+        $result = '<table  style="background: #e0e0eb; border: 2px solid #f2f2f2;"> 
+                    <tr style="background: #f2f2f2;">
+                        <td>اسم المنتج</td>
+                        <td>القسم</td>
+                        <td>الكود</td>
+                        <td>اللون</td>
+                        <td>العدد</td>
+                        <td>السعر</td>
+                        <td>التاريخ والوقت</td>
+                    </tr> ';
+
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC) )
+        {
+            $result .= '<tr style="background: #fff;">
+                            <td>'.$row['title'].'</td>
+                            <td>'.$row['table'].'</td>
+                            <td>'.$row['code'].'</td>
+                            <td>'.$row['color'].'</td>
+                            <td>'.$row['number'].'</td>
+                            <td>'.$row['price'].'</td>
+                            <td>'.date('Y-m-d h:i:s a',$row['date']).'</td>
+                        </tr> ';
+        }
+
+        $result .= '</table>' ;
+        return $result ;
+    }
+
+    function get_id_customer($phone)
+    {
+        $stmt = $this->db->prepare("SELECT id  FROM `register_user`  WHERE phone =? ");
+        $stmt->execute(array($phone));
+        $data = "";
+        if ($stmt->rowCount() > 0) {
+            while($row = $stmt->fetch(PDO::FETCH_ASSOC))
+            {
+                $data .= $row['id']. ",";
+            }
+            echo $data;
+        }else{
+            echo $data;
         }
     }
 }

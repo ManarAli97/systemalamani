@@ -1,4 +1,3 @@
-
 <div class="row">
     <div class="col-sm-12">
         <div class="print_bill_sale">
@@ -70,7 +69,7 @@
                     <tr>
                         <td style="width: 100px;">  رمز المادة </td>
                         <td>اسم المادة</td>
-                        <th style='padding : 0.65rem !important;font-weight: bold;font-size: 20px;'>  نوع الجهاز </th>
+                        <td>  نوع الجهاز </td>
                         <td style="width: 40px;"> حجم الذاكرة  </td>
                         <td style="width: 40px;"> اللون  </td>
                         <td style="width: 40px;">  الكمية </td>
@@ -83,13 +82,17 @@
 					<?php   foreach ($requestPrint as $rows)  {  ?>
                         <tr class="not_prepared" >
                             <td style="font-size:20px" ><?php  echo $rows['code'] ?></td>
-                            <td  ><?php  echo $rows['title'] ?></td>
+                            <?php if(($rows['table'] == 'accessories') && (!empty($rows['category'])) && $rows['check_s']) { ?>
+                                <td> <p id="namedevice1_<?php  echo $rows['id'] ?>"></p> <br/><br/></td>
+                            <?php } else{  ?>
+                                <td><?php  echo $rows['title'] ?></td>
+                            <?php }?>
 
 
-                            <?php if($rows['table'] == 'product_savers')  {?>
+                            <?php if($rows['table'] == 'product_savers')  { ?>
                                 <td><?php  echo $rows['name_device_customer'] ?></td>
-                            <?php } elseif(($rows['table'] == 'accessories') && ($rows['name_categ_acc_customer'] != '')) { ?>
-                                <td> <?php  echo $rows['name_categ_acc_customer'] ?> <br/><br/></td>
+                            <?php } elseif(($rows['table'] == 'accessories')  && (!empty($rows['category'])) && $rows['check_s']) { ?>
+                                <td> <p id="namedevice2_<?php  echo $rows['id'] ?>"></p> <br/><br/></td>
                             <?php } else{  ?>
                                 <td></td>
                             <?php }?>
@@ -219,7 +222,7 @@
 
                     <tr>
 
-                        <td style="text-align: right;;font-size: 18px; "  >
+                        <td style="text-align: right;font-size: 18px; "  >
                             <div class="date_bill">  <span>التاريخ: </span>  <span> <?php echo date('d-m-Y',$date)  ?> </span> </div>
                             <div class="time_bill"><span>الوقت:</span> <span> <?php echo date('H:i',$date)  ?> </span> </div>
                         </td>
@@ -242,11 +245,11 @@
 
 
 
-                <table border='1' class="  tableBill  tableBill_casher  table-bordered  "  style="width: 100%;border-collapse: collapse;"  >
+                <table border='1' class=" tableBill  tableBill_casher  table-bordered  "  style="width:  100%; border-collapse: collapse; "  >
                     <tbody>
                     <tr>
                         <td style='padding : 0.65rem !important;font-weight: bold;font-size: 20px;'>اسم المادة</td>
-                        <th style='padding : 0.65rem !important;font-weight: bold;font-size: 20px;'>  نوع الجهاز </th>
+                        <td style='padding : 0.65rem !important;font-weight: bold;font-size: 20px;'>  نوع الجهاز </td>
                         <td style='padding : 0.65rem !important;font-weight: bold;font-size: 20px;'>  حجم الذاكره </td>
                         <td style='padding : 0.65rem !important;font-weight: bold;font-size: 20px;'>  اللون </td>
                         <td style='padding : 0.65rem !important;font-weight: bold;font-size: 20px;'>  الكمية  </td>
@@ -255,14 +258,27 @@
                     </tr>
                     <?php    foreach ($requestPrint as $key => $rows)  {  ?>
                         <tr  class="<?php  if ($rows['prepared']==1) echo 'not_prepared'?>" >
-                            <td style='padding : 0.65rem !important;font-size: 20px;'><?php  echo $rows['title'] ?></td>
+                        <?php if(($rows['table'] == 'accessories') && (!empty($rows['category'])) && $rows['check_s']) { ?>
+                                <td style='padding : 0.65rem !important;font-size: 20px;'>
+                                <p id="namedevice3_<?php  echo $rows['id'] ?>"></p> <br/><br/>
+                                </td>
+                            <?php } else{  ?>
+                                <td style='padding : 0.65rem !important;font-size: 20px;'>
+                                    <?php  echo $rows['title'] ?>
+                                </td>
+                            <?php }?>
+
 
                             <?php if($rows['table'] == 'product_savers')  {?>
-                                <td><?php  echo $rows['name_device_customer'] ?></td>
-                            <?php } elseif(($rows['table'] == 'accessories') && ($rows['name_categ_acc_customer'] != '')) { ?>
-                                <td> <?php  echo $rows['name_categ_acc_customer'] ?> <br/><br/></td>
+                                <td>
+                                    <?php  echo $rows['name_device_customer'] ?>
+                                </td>
+                            <?php } elseif(($rows['table'] == 'accessories') && (!empty($rows['category'])) && $rows['check_s']){ ?>
+                                <td style='padding : 0.65rem !important;font-size: 20px;'>
+                                    <p id="namedevice4_<?php  echo $rows['id'] ?>"></p>
+                                </td>
                             <?php } else{  ?>
-                                <td></td>
+                                <td style='padding : 0.65rem !important;font-size: 20px;'></td>
                             <?php }?>
 
 
@@ -280,7 +296,7 @@
                 <table style="width: 100%;border-collapse: collapse;">
                     <tbody>
                     <tr>
-                        <td  > <span>    عدد المواد: </span> <span>  <?php echo  $number_typeOffer ?>  </span></td>
+                        <td > <span>    عدد المواد: </span> <span>  <?php echo  $number_typeOffer ?>  </span></td>
                         <td><span>     مجموع الكمية : </span> <span>  <?php echo  $sum_materialOffer ?>  </span></td>
                         <td><span>البائع:</span> <span>  <?php echo $_SESSION['usernamelogin'] ?>  </span></td>
                     </tr>
@@ -395,6 +411,7 @@
                 <tr style="background: #125da9;color: #ffffff">
                     <th scope="col">صورة</th>
                     <th scope="col">اسم المنتج</th>
+                    <th scope="col"> نوع الجهاز </th>
                     <th scope="col">  القسم </th>
                     <th scope="col">code</th>
                     <th scope="col">القياس</th>
@@ -416,14 +433,35 @@
                 <?php   foreach ($request as $rows)  {  ?>
                     <tr class="retn" id="row_<?php  echo $rows['id'] ?>">
                         <td><img class="image_prod"   alt="image" title="image" style="display:block" src="<?php  echo $rows['img'] ?>"></td>
-                        <td><?php  echo $rows['title'] ?>
+                        <?php if(($rows['table'] == 'accessories') && (!empty($rows['category'])) && $rows['check_s']) { ?>
+                            <td><p id="namedevice5_<?php  echo $rows['id'] ?>"></p> <br/><br/></td>
+                            <?php } else{  ?>
+                                <td><?php  echo $rows['title'] ?></td>
+                            <?php }?>
 
                             <?php  if ($rows['offers']) {  ?>
                                 <div class="offers_" style="font-size: 10px; background: #8bc34a6b; border-radius: 5px;">
                                     <?php  echo  $this->details_offer($rows['id_offer'],'title')?>
                                 </div>
                             <?php } ?>
-                        </td>
+
+                        <?php if($rows['table'] == 'product_savers')  {?>
+                                <td><?php  echo $rows['name_device_customer'] ?></td>
+                            <?php } elseif(($rows['table'] == 'accessories') && (!empty($rows['category']))) { ?>
+                                <td>
+
+                                    <select class="custom-select dropdown_filter category"   name="<?php  echo $rows['id'] ?>" id="category"  required>
+                                        <option value="">   نوع الجهاز  </option>
+                                        <?php foreach ($rows['category'] as $key => $catg) {   ?>
+                                            <option    value="<?php  echo $catg['title']?>"  name="<?php  echo $rows['id'] ?>"><?php  echo $catg['title']?></option>
+                                        <?php  } ?>
+
+                                    </select>
+
+                                <br/><br/></td>
+                            <?php } else{  ?>
+                                <td></td>
+                            <?php }?>
                         <td><?php  echo $this->langControl($rows['table']) ?></td>
                         <td><?php  echo $rows['code'] ?></td>
                         <td><?php  echo $rows['size'] ?></td>
@@ -499,7 +537,31 @@
 
 
 <script>
+     $('.category').on('change',function() {
+       var id = $(this).find('option:selected').attr("name");
+        var nameGategory = $(this).val();
+      
+        $('#namedevice1_'+id).text(nameGategory);
+        $('#namedevice2_'+id).text(nameGategory);
+        $('#namedevice3_'+id).text(nameGategory);
+        $('#namedevice4_'+id).text(nameGategory);
+        $('#namedevice5_'+id).text(nameGategory);
 
+        if($("#category").val() != ''){
+            $("#bill_casher").attr("disabled", false);
+            $(".processing_request ").attr("disabled", false);
+        }else{
+            $("#bill_casher").attr("disabled", true);
+            $(".processing_request ").attr("disabled", true);
+        }
+    });
+    if($("#category").val() == ''){
+        $("#bill_casher").attr("disabled", true);
+        $(".processing_request ").attr("disabled", true);
+    }else{
+        $("#bill_casher").attr("disabled", false);
+        $(".processing_request ").attr("disabled", false);
+    }
 
     function edit_price (id_member_r1,id_item1,number_bill1,table1,code1,color_name1) {
         var new_price=$("#new_price_"+id_item1+table1+code1).val();

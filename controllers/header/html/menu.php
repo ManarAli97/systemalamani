@@ -1935,6 +1935,9 @@
             <?php  if ($this->permit('show_all_customers_compensation','customers')) {  ?>
                 <li class="customers_compensation"> <a  class="customers_compensation" href="<?php  echo url ?>/customers/show_all_customers_compensation"> <?php  echo  $this->langControl('show_all_customers_compensation')  ?> </a> </li>
             <?php  } ?>
+         	<?php  if ($this->permit('customer_report','customers')) {  ?>
+                <li class="customers_compensation"> <a  class="customers_compensation" href="<?php  echo url ?>/customers/customer_report"> <?php  echo  $this->langControl('customer_report')  ?> </a> </li>
+            <?php  } ?>
         </ul>
     </li>
     <?php } ?>

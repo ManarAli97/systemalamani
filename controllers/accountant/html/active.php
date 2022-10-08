@@ -87,7 +87,7 @@ function  sun_total_money () {
                 <div class="row" id="listRoll">
                     <?php  foreach ($count_active as $result )  { ?>
                     <div class="col-12 " >
-                        <a style="position: relative" class="infoCustomer row<?php echo $result['id_member_r'] ?> ifactive <?php  if ($result['direct'] ==3)echo 'direct_bill' ?>  " id="row<?php echo $result['number_bill'] ?>" href="#" onclick="getOrder(<?php  echo $result['id']  ?>,'<?php  echo $result['number_bill']  ?>')">
+                       <a style="position: relative ;<?php if($result['quantity']==0) echo 'background-color: red !important;' ;?>" class="infoCustomer row<?php echo $result['id_member_r'] ?> ifactive <?php  if ($result['direct'] ==3)echo 'direct_bill' ?>  " id="row<?php echo $result['number_bill'] ?>" href="#" onclick="getOrder(<?php  echo $result['id']  ?>,'<?php  echo $result['number_bill']  ?>')">
 
                             <div class='row align-items-center justify-content-between'>
                                 <div class='col'>

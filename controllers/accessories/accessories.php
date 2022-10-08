@@ -2140,8 +2140,10 @@ class Accessories extends Controller
                     $stmt_order = $this->db->prepare("SELECT   SUM(`number`)as num ,`dollar_exchange` FROM `cart_shop_active` WHERE `code` =?  AND  `buy` = 0 AND `status` = 0    AND `table`=?  AND  `id_member_r` = ?");
                     $stmt_order->execute(array($result['code'],$this->table,$data['id_member_r']));
                     $only_order=$stmt_order->fetch(PDO::FETCH_ASSOC);
-                     $q= $result['quantity']  - $only_order['num'];
-
+                
+                    $q= $result['quantity']  - $only_order['num'];
+					// $data['cost_price'] = $price_2D['cost_price'];
+                
                     if ($q >= $data['number']) {
 
                         $data['code'] = $result_color['code'];
@@ -2153,7 +2155,7 @@ class Accessories extends Controller
                         $stmt_item = $this->db->prepare("SELECT * from `{$this->table}` WHERE  `id`=?  ");
                         $stmt_item->execute(array($id));
                         $result_item = $stmt_item->fetch(PDO::FETCH_ASSOC);
-
+	
                         if ($result_item['cuts']== 1)
                         {
                             $data['price'] = $result_item['price_cuts'];
@@ -2316,7 +2318,7 @@ class Accessories extends Controller
                 $stmt_order->execute(array($data['code'], $this->table, $data['id_member_r']));
                 $only_order = $stmt_order->fetch(PDO::FETCH_ASSOC);
                 $q = $price_2D['quantity'] - $only_order['num'];
-
+				 // $data['cost_price'] = $price_2D['cost_price'];
                 if ($q >= $data['number']) {
 
                     $data['table'] = $this->table;
@@ -2335,6 +2337,7 @@ class Accessories extends Controller
                             if ($result_item['price_dollars'] == 1 )
                             {
                                 $data['price'] = $this->price_dollars($price_2D['price_dollars']);
+                            
                             }else
                             {
                                 $data['price'] = $price_2D['wholesale_price'];
@@ -2379,11 +2382,14 @@ class Accessories extends Controller
                         } else {
                             $data['price_dollars'] = $price_2D['price_dollars'];
                         }
+                    	
                     }else
                     {
                         $data['price_dollars'] = $price_2D['price_dollars'];
+                    	
+                    	
                     }
-
+	
 					$stmt_chx = $this->db->prepare("SELECT   * FROM `cart_shop_active` WHERE `id_item` =?  AND `code` =?  AND  `buy` = 0 AND `status` = 0    AND `table`=?  AND  `id_member_r` = ? AND `name_color`=?  AND  price_type=? ");
 					$stmt_chx->execute(array($data['id_item'],$data['code'], $this->table, $data['id_member_r'], $data['name_color'], $data['price_type']));
 					if ($stmt_chx->rowCount() > 0)

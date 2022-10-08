@@ -289,66 +289,75 @@ trait transport_not_confirm
                 }
                 $color = 'بلا';
 
-
-                $stmtxm = $this->db->prepare("SELECT *FROM `location_model`  WHERE `location`=?  AND `model` =?  ");
+                
+                $stmtxm = $this->db->prepare("SELECT `sequence` FROM `location_model`  WHERE `location`=?  AND `model` =?  ");
                 $stmtxm->execute(array($location, $model));
                 if ($stmtxm->rowCount() > 0) {
+                    //  اذا كان الموقع مضاف 
                     $location_model=$stmtxm->fetch(PDO::FETCH_ASSOC);
 
-
+                    // ناخذ من المناقلة
                     $stmt_check_q = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 1 AND code=?  AND model=? AND transport=?  LIMIT 1");
                     $stmt_check_q->execute(array($code, $model, $transport ));
                     $result_location= $stmt_check_q->fetch(PDO::FETCH_ASSOC);
 
-
-                    $stmtins = $this->db->prepare("SELECT *FROM location WHERE `model`=? AND location  = ?   AND `code` =? ");
+                    // نشوف اذا الموقع مضاف للمادة
+                    $stmtins = $this->db->prepare("SELECT id FROM location WHERE `model`=? AND location  = ? AND `code` =? ");
                     $stmtins->execute(array($model, $location, $code));
                     if ($stmtins->rowCount() < 1) {
+                        // اذا ما كان مضاف نضيفه
                         $stmtins = $this->db->prepare("INSERT INTO location (`model` , location  , `code` ,quantity,userid ,date,`new_location`,`sequence`) values (?,?,?,?,?,?,?,?)");
                         $stmtins->execute(array($model, $location, $code, 0, $this->userid, time(), 1,$location_model['sequence']));
+                        // get last id 
+                        // $last_id = $this->db->lastInsertId();
                     }
 
 
 
+                    // مره لخ نرجع نشوف الموقع
+                    // هذا راح الغي لان ماله داعي
+                    // $stmtchq = $this->db->prepare("SELECT *FROM location WHERE `model`=? AND location =  ? AND `code`=? ");
+                    // $stmtchq->execute(array($model, $location, $code));
 
-                    $stmtchq = $this->db->prepare("SELECT *FROM location WHERE `model`=? AND location =  ? AND `code`=? ");
-                    $stmtchq->execute(array($model, $location, $code));
+                    if ($stmtins->rowCount() > 0) {
+                        // اذا كان مضاف  
 
-                    if ($stmtchq->rowCount() > 0) {
-
-
-                        $stmtlocation = $this->db->prepare("SELECT *FROM location WHERE `model`=? AND location  = ?   AND `code` =? AND quantity >= ? ");
+                        // نشوف اذا كان كمية المادة اكبر من الكمية الموجودة في المناقلة
+                        $stmtlocation = $this->db->prepare("SELECT * FROM location WHERE `model`=? AND location  = ?   AND `code` =? AND quantity >= ? ");
                         $stmtlocation->execute(array($model, $result_location['location'], $code,$result_location['quantity']));
                         if ($stmtlocation ->rowCount() ) {
-
+                            // اذا كانت كمية المادة اكبر من الكمية الموجودة في المناقلة
                             $q = true;
-                            $stmtx1 = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 1 AND code=?  AND model=? AND transport=?");
-                            $stmtx1->execute(array($code, $model, $transport));
-                            if ($stmtx1->rowCount() > 0) {
-                                $sum_q = 0;
-                                while ($row = $stmtx1->fetch(PDO::FETCH_ASSOC)) {
-                                    $sum_q = $sum_q + $row['quantity'];
-                                }
-                                if ($quantity <= $sum_q) {
+                            // مره لخ يرجع يسوي ركوست على هاي 
+                            // هذا راح الغي لان ماله داعي 
+                            // 
+                            // $stmtx1 = $this->db->prepare("SELECT * FROM location_transport WHERE  `active` = 1 AND code=?  AND model=? AND transport=?");
+                            // $stmtx1->execute(array($code, $model, $transport));
+                            // if ($stmtx1->rowCount() > 0) {
+                                // $sum_q = 0;
+                                // while ($row = $stmtx1->fetch(PDO::FETCH_ASSOC)) {
+                                //     $sum_q = $sum_q + $row['quantity'];
+                                // }
+                                if ($quantity <= $result_location['quantity']) {
+                                    //  هذا هم ماله داعي
+                                    // $stmt_check = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 1 AND code=?  AND model=? AND transport = ? AND quantity >  0 ORDER BY id ASC LIMIT 1");
+                                    // $stmt_check->execute(array($code, $model, $transport));
+                                    if ($result_location['quantity'] > 0) {
+                                        // $result = $stmt_check->fetch(PDO::FETCH_ASSOC);
 
-                                    $stmt_check = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 1 AND code=?  AND model=? AND transport = ? AND quantity >  0 ORDER BY id ASC LIMIT 1");
-                                    $stmt_check->execute(array($code, $model, $transport));
-                                    if ($stmt_check->rowCount() > 0) {
-                                        $result = $stmt_check->fetch(PDO::FETCH_ASSOC);
+                                        if ($result_location['quantity'] >= $quantity) {
 
-                                        if ($result['quantity'] >= $quantity) {
-
-                                            $stmtch = $this->db->prepare("SELECT *FROM location_transport_convert WHERE  `active` = 1 AND location = ? AND code=? AND model=? AND transport=? AND from_location=?");
-                                            $stmtch->execute(array($location, $code, $model, $transport, $result['location']));
+                                            $stmtch = $this->db->prepare("SELECT *FROM   WHERE  `active` = 1 AND location = ? AND code=? AND model=? AND transport=? AND from_location=?");
+                                            $stmtch->execute(array($location, $code, $model, $transport, $result_location['location']));
                                             if ($stmtch->rowCount() > 0) {
 //
                                                 $stmtchup = $this->db->prepare("UPDATE    location_transport_convert SET  quantity=quantity+?,quantity_trans=quantity_trans+?,userid=?,`date` =?,user_pull=?,serial=? WHERE  `active` = 1 AND location = ? AND code=?  AND model=? AND transport=? AND from_location=?");
-                                                $stmtchup->execute(array($quantity, $quantity, $this->userid, time(), $result['userid'], $result['serial'], $location, $code, $model, $transport, $result['location']));
+                                                $stmtchup->execute(array($quantity, $quantity, $this->userid, time(), $result_location['userid'], $result_location['serial'], $location, $code, $model, $transport, $result_location['location']));
                                                 if ($stmtchup->rowCount() > 0) {
                                                     $stmtup_trans = $this->db->prepare("UPDATE    location_transport SET  quantity=quantity - ? WHERE  `active` = 1 AND code=?  AND model=? AND transport = ? AND `location` =?  ");
-                                                    $stmtup_trans->execute(array($quantity, $code, $model, $transport, $result['location']));
+                                                    $stmtup_trans->execute(array($quantity, $code, $model, $transport, $result_location['location']));
 
-                                                    $this->date_transport_not_confirm($transport);
+                                                    $this->date_transport_not_confirm($transport,$result_location['id']);
                                                 } else {
                                                     //echo  $q='   لم يتم النقل    ';
                                                     echo $q = 'quantity_over';
@@ -356,12 +365,12 @@ trait transport_not_confirm
                                             } else {
 
                                                 $stmt = $this->db->prepare("INSERT INTO location_transport_convert ( model, location, code, quantity, transport, active, date, userid,from_location,quantity_trans,user_pull,serial)values (?,?,?,?,?,?,?,?,?,?,?,?)");
-                                                $stmt->execute(array($model, $location, $code, $quantity, $transport, 1, time(), $this->userid, $result['location'], $quantity, $result['userid'], $result['serial']));
+                                                $stmt->execute(array($model, $location, $code, $quantity, $transport, 1, time(), $this->userid, $result_location['location'], $quantity, $result_location['userid'], $result_location['serial']));
                                                 if ($stmt->rowCount() > 0) {
                                                     $stmtup_trans = $this->db->prepare("UPDATE    location_transport SET  quantity=quantity - ? WHERE  `active` = 1 AND code=?  AND model=? AND transport = ? AND `location` =?  ");
-                                                    $stmtup_trans->execute(array($quantity, $code, $model, $transport, $result['location']));
+                                                    $stmtup_trans->execute(array($quantity, $code, $model, $transport, $result_location['location']));
 
-                                                    $this->date_transport_not_confirm($transport);
+                                                    $this->date_transport_not_confirm($transport,$result_location['id']);
                                                 } else {
                                                     // echo  $q='   لم يتم النقل    ';
                                                     echo $q = 'quantity_over';
@@ -381,7 +390,7 @@ trait transport_not_confirm
                                     echo $q = 'quantity_over';
                                 }
 
-                            }
+                            // }
 
                         }else
                         {
@@ -411,14 +420,14 @@ trait transport_not_confirm
 
 
 
-    function date_transport_not_confirm($transport)
+    function date_transport_not_confirm($transport,$id)
     {
 
 
         if ($this->handleLogin()) {
 
-            $stmtdata = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 1 AND `transport`=? ");
-            $stmtdata->execute(array($transport));
+            $stmtdata = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 1 AND `transport`=? and id =? ");
+            $stmtdata->execute(array($transport,$id));
             $data = array();
 
             while ($row = $stmtdata->fetch(PDO::FETCH_ASSOC)) {
@@ -466,18 +475,20 @@ trait transport_not_confirm
 
 
                 $row['tolocation'] = array();
-                $stmt_to_location = $this->db->prepare("SELECT location,id,quantity_trans as quantity FROM location_transport_convert WHERE  `transport`=?  AND code=?  AND  model =? AND from_location=? ");
+                $stmt_to_location = $this->db->prepare("SELECT location,id,quantity_trans as quantity,quantity as sum_q FROM location_transport_convert WHERE  `transport`=?  AND code=?  AND  model =? AND from_location=? ");
                 $stmt_to_location->execute(array($transport, $row['code'], $row['model'], $row['location']));
+                $sum_q=0;
                 while ($rowL = $stmt_to_location->fetch(PDO::FETCH_ASSOC)) {
                     $row['tolocation'][] = $rowL;
+                    $sum_q+=(int)$rowL['quantity'];
                 }
 
 
-                $stmt_quantity = $this->db->prepare("SELECT SUM(quantity) as quantity FROM location_transport_convert WHERE  `transport`=?  AND code=? AND  model =?  AND from_location=?");
-                $stmt_quantity->execute(array($transport, $row['code'], $row['model'], $row['location']));
-                $row['toquantity'] = $stmt_quantity->fetch(PDO::FETCH_ASSOC)['quantity'];
+                // $stmt_quantity = $this->db->prepare("SELECT SUM(quantity) as quantity FROM location_transport_convert WHERE  `transport`=?  AND code=? AND  model =?  AND from_location=?");
+                // $stmt_quantity->execute(array($transport, $row['code'], $row['model'], $row['location']));
+                $row['toquantity'] = $sum_q;
 
-                $row['quantity'] = (int)$row['quantity'];
+                // $row['quantity'] = $sum_q;
 
 
 
@@ -492,14 +503,22 @@ trait transport_not_confirm
 
 
 
-                $data[] = $row;
+                $data = $row;
             }
-
+            echo $id;
             if ($data) {
                 require($this->render($this->folder, 'transport_not_confirm', 'html/data', 'php'));
             }
         }
 
+    }
+    // get id from location_transport by code and model and transport
+    function get_id_location_transport($code,$model,$transport)
+    {
+        $stmt = $this->db->prepare("SELECT id FROM location_transport WHERE code=? AND model=? AND transport=? ");
+        $stmt->execute(array($code,$model,$transport));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['id'];
     }
 
 
@@ -519,7 +538,7 @@ trait transport_not_confirm
                     $stmt2 = $this->db->prepare("DELETE FROM location_transport_convert WHERE  `id` = ? AND transport=?  ");
                     $stmt2->execute(array($id, $transport));
 
-                    $this->date_transport_not_confirm($transport);
+                    $this->date_transport_not_confirm($transport, $this->get_id_location_transport($result['code'],$result['model'],$transport));
                 }else
                 {
                     echo 'false';
@@ -712,7 +731,7 @@ trait transport_not_confirm
             if ($resultd['c'] == 0) {
                 echo '0';
             } else {
-                $this->date_transport_not_confirm($transport);
+                $this->date_transport_not_confirm($transport,$id);
             }
 
 

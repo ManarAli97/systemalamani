@@ -3043,7 +3043,7 @@ class Controller
                     'model' => $table_name,
                     'method' => 'add_color_item'
                 );
-                $this->add_to_sync_log($id,$id_row,$table_name,'add_color_item','send to server : - id '.$row_color['id'].' - color '.$row_color['color'].' - code_color '.$row_color['code_color'].' - id_item '.$id_item.'  - date '.$row_color['date'].' - code '.$row_color['code'].' - model '.$table_name);
+                $this->add_to_sync_log($id,$id_row,$table_name,'add_color_item','send to server : - id '.$row_color['color'].' - color '.$row_color['color'].' - code_color '.$row_color['code_color'].' - id_item '.$id_item.'  - date '.$row_color['date'].' - code '.$row_color['code'].' - model '.$table_name);
                 // echo "<br> array data color item";
                 // print_r($array_data);
                 $id_color= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
@@ -3056,7 +3056,7 @@ class Controller
                 if($id_color==0)
                 {
                     $this->add_to_sync_log($id,$id_row,$table_name,'add_color_item','fild to color');
-                    $this->update_code_in_sync('error - id '.$row_color['id'].' - color '.$row_color['color'].' - code_color '.$row_color['code_color'].' - id_item '.$id_item.'  - date '.$row_color['date'].' - code '.$row_color['code'].' - model '.$table_name,$id);
+                    $this->update_code_in_sync('error - id '.$id_color.' - color '.$row_color['color'].' - code_color '.$row_color['code_color'].' - id_item '.$id_item.'  - date '.$row_color['date'].' - code '.$row_color['code'].' - model '.$table_name,$id);
                     return 0;
                 }
                 $this->add_to_sync_log($id,$id_row,$table_name,'add_code_item','start');
@@ -3072,7 +3072,7 @@ class Controller
                         'date' => $row_code['date'],
                         'serial' => $row_code['serial'],
                         'location' => $row_code['location'],
-                      'is_delete' => $row_code['is_delete'],
+                       'is_delete' => $row_code['is_delete'],
                         'model' => $table_name,
                         'method' => 'add_code_item'
 
@@ -4921,16 +4921,19 @@ function delete_category_savers_send($id,$id_row,$table_name){
     ////////////////////////////////////////////
     /////////////////////////////////////////////////////
 
-
+	// تم  التعديل بحيث يعيد اللون هذه المره
     function tamayaz_locations($id)
     {
 
 
-        $stmt=$this->db->prepare("SELECT location FROM tamayaz_locations WHERE `location`=?  ");
+        $stmt=$this->db->prepare("SELECT location,color FROM tamayaz_locations WHERE `location`=?  ");
         $stmt->execute(array(trim($id)));
+
         if ($stmt->rowCount() >0)
         {
-            return "<span style='color:red;font-weight: bold'>{$id}</span>";
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $color = $row['color'];
+            return "<span style='color:{$color};font-weight: bold'>{$id}</span>";
         }else
         {
             return $id;
@@ -5859,6 +5862,54 @@ function set_quantity_order($table,$id_item,$code,$number)
         $stmt->execute();
      	
      
+    }
+/**
+     * check if the item that ordered in cart_shop_active there are the 0 quantity in excel table
+     * @param $number_bill
+     * @return bool
+     */
+    public function checkQuantity($number_bill)
+    {
+        $stmt=$this->db->prepare("SELECT code,`table`,`number` FROM cart_shop_active WHERE number_bill=? order by `number` desc");
+        $stmt->execute(array($number_bill));
+        // $count=$stmt->rowCount();
+        if($stmt->rowCount())
+        {
+            $result=$stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach($result as $row)
+            {
+                $code=$row['code'];
+                $table=$row['table'];
+                // $number=$row['number'];
+                $excel = 'excel';
+                if($table=='product_savers')
+                {
+                    $excel = 'excel_savers';
+                }else if($table!='mobile')
+                {
+                    $excel = $excel.'_'.$table;
+                }
+
+
+                $stmt=$this->db->prepare("SELECT quantity FROM {$excel} WHERE code=?");
+                $stmt->execute(array($code));
+                // $count=$stmt->rowCount();
+                if($stmt->rowCount())
+                {
+                    $result=$stmt->fetch(PDO::FETCH_ASSOC);
+                    // $quantity=$result['quantity'];
+                    if($result['quantity']<=0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 }

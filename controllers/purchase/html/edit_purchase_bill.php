@@ -249,12 +249,19 @@
                     <p  class='text_total'>  المجموع الكلي : <span class ='price' id ='totalprice' name='totalprice'> <?php echo  $bill_purchase[0]['total-price']. ' ' .$nameCurrency  ?> </span></p>
                     <input type="hidden"  value="<?php echo $bill_purchase[0]['total-price'] ?>" name="total-price"  id="total-price" >
                 </div>
-
+            
+            	 <div class="col-lg-3 col-md-2" style ="margin-top:35px">
+                    <p  class='text_total'>  المجموع الكلي + التكلفة الاضافية : <span class ='price' id ='priceandcost' name='priceandcost' >0</span></p>
+                    <input type="hidden"  name="total_price_cost"  value="0" id="total_price_cost" >
+                </div>
+            
                 <div class="col-lg-3 col-md-2" style ="margin-top:35px">
                 <!-- < ?php echo  $bill_purchase[0]['total_price_dollars'] ?> -->
-                    <p  class='text_total'>   المجموع الكلي  بالدولار: <span class ='price' id ='totalpricedollars' name='totalpricedollars' > </span></p>
-                    <input type="hidden"  value="<?php echo $bill_purchase[0]['total_price_dollars'] ?>" name="total_price_dollars"  id="total_price_dollars" >
+                    <p  class='text_total'>   المجموع الكلي المدفوع : <span class ='price' id ='totalpricedollars' name='totalpricedollars' ></span></p>
+                    <input type="hidden"  value="" name="total_price_dollars"  id="total_price_dollars" >
                 </div>
+            
+            	
 
             </div>
 
@@ -309,7 +316,7 @@
                             </div>
 
                             <div class="col-lg-2 col-md-2  mb-4 mr-2">
-                                <label class="mr-sm-2" for="currency_<?php echo $c ?>">عملة الشراء  </label>
+                                <label class="mr-sm-2" for="currency_<?php echo $c ?>">عملة   </label>
                                 <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="currency_cost[<?php echo $c ?>]" id="currency_<?php echo $c ?>" >
                                     <option value = '' name= ''> اختر اسم</option>
                                     <?php foreach ($currency as $key => $name) {   ?>
@@ -407,8 +414,8 @@
                     </div>
 
                     <div class="col-lg-2 col-md-2  ml-4">
-                        <label class="mr-sm-2" for="price_exchange"> سعر التصريف  بالدولار   </label>
-                        <input type="text" name="price_exchange[<?php echo $i ?>]" class="form-control price_exchange" id="price_exchange_<?php echo $i ?>" autocomplete="off" >
+                        <label class="mr-sm-2" for="price_exchange_<?php echo $i ?>"> سعر التصريف  بالدولار  </label>
+                        <input type="text" name="price_exchange[<?php echo $i ?>]" value="0" class="form-control price_exchange" id="price_exchange_<?php echo $i ?>" autocomplete="off" >
                     </div>
 
                     <div class="col-lg-2 col-md-2  ml-4">
@@ -428,7 +435,7 @@
         <div class="part_4">
             <div class="form-row row   mr-4">
                 <div class="col-lg-12 col-md-2 mr-4 ml-4">
-                    <P class="text_total" style="color:#283581"> السعر الاجمالي :  <span class ='price' id ='price_purchase'><?php echo  $bill_purchase[0]['total-price'] . ' ' .$nameCurrency ?></span></P>
+                    <P class="text_total" style="color:#283581"> السعر الاجمالي :  <span class ='price' id ='price_purchase'>0</span><?php echo   ' ' .$nameCurrency ?></P>
 
                 </div>
             </div>
@@ -474,7 +481,7 @@
 
             <div class="form-row row mr-4">
                 <div class="col-lg-12 col-md-2 mr-4 ml-4">
-                    <P class="text_total" style="color:#283581">  المبلغ المتبقي  :  <span class ='price' id ='price_purchase'><?php echo  $bill_purchase[0]['total-price']  - $allPayment . ' ' .$nameCurrency  ?></span></P>
+                    <P class="text_total" style="color:#283581">  المبلغ المتبقي  :  <span class ='price price_sub' id ='price_purchase'></span><?php echo $nameCurrency  ?></P>
                 </div>
             </div>
         </div>
@@ -584,7 +591,7 @@
         // disabled اذا فاتورة كرستال مدخله البوتون يصير
         var bill_purchase = <?php echo json_encode($bill_crystal) ?>;
         console.log(bill_purchase);
-        if(bill_purchase != ' '){
+        if(bill_purchase != 'NULL'){
             $('#save_bill').attr('disabled','disabled');
             $('.add_new_sub_row').attr('disabled','disabled');
             $('.remove_sub_row').attr('disabled','disabled');
@@ -1011,12 +1018,12 @@
             $('#total_price_dollars').val(0);
             for(var i=1; i<= countClass;i++){
                var subtotal = $('.subtotal_'+i).val();
-               console.log("subtotal" + subtotal);
+             
                if(subtotal == undefined){
                 subtotal = 0;
                }
                totalInCurrency += parseFloat(subtotal);
-               console.log("totalInCurrency" + totalInCurrency);
+             
                var  price_exchange = $('#price_exchange_'+i).val();
                // السعر حسب عملة الشراء
                var price_total = $('#total-price').val();
@@ -1037,6 +1044,32 @@
                     }
 
                 }
+            }
+        
+        
+        
+        
+          // التكلفة + المجموع الكلي
+         
+           var cost = 0;
+           var priceAndCost = 0;
+        	var subtotal = <?php echo $allPayment ?>;
+            $('#priceandcost').text(0);
+            $('#total_price_cost').val(0);
+        	if($('#total-price').val() != 0){
+            	var totalPrice =  $('#total-price').val() / $('#price_exchange_order').val();
+            	for(var i=1; i<= countCost;i++){
+                	if($('#cost_'+i).val() != '' && $('#price_exchange_cost_'+i).val() != ''){
+                    	cost += $('#cost_'+i).val() / $('#price_exchange_cost_'+i).val();
+                	}
+            	}
+            	priceAndCost = totalPrice + cost;
+            	priceAndCost = parseFloat(priceAndCost * $('#price_exchange_order').val()).toFixed(2);
+            	$('#priceandcost').text(priceAndCost);   //total_price_cost
+            	$('#total_price_cost').val(priceAndCost);
+         		$('#price_purchase').text(priceAndCost);
+            	$('.price_sub').text(priceAndCost - subtotal);
+            	
             }
         }, 1000);
 

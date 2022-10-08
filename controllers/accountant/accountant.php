@@ -71,7 +71,7 @@ class Accountant extends Controller
 				$row_user['number_bill']=$row['number_bill'];
 				// $row_user['sumbill']=$this->sunBill($row_user['id'],$row['number_bill']);
 				$row_user['date_order']=date('Y-m-d h:i A',$row['date_req']);
-
+				$row['quantity']=$this->checkQuantity($row['number_bill']);
 				$row_user['direct']=$row['direct'];
 				$row_user['user_direct']= $row['user_direct'];
 				$count_active[]=$row_user;
@@ -94,10 +94,26 @@ class Accountant extends Controller
 
                 // $row['sumbill']=$this->sunBill($row['id_member_r'],$row['number_bill']);
                 $row['date_order']=date('Y-m-d h:i A',$row['date_req']);
-
+        		// H27
+				$row['quantity']=$this->checkQuantity($row['number_bill']);
 				$count_active[]=$row;
 
 		}
+    	// الفكره هنا انه نخلي الطلبات الي تحتوي على اخر قطع للطلبات تصعد اول شي وتصير حمره
+		$sroted = array();
+		
+		foreach ($count_active as  $row)
+		{
+			if($row['quantity']==0)
+			{
+				array_unshift($sroted,$row);
+			}
+			else
+			{
+				array_push($sroted,$row);
+			}
+		}
+		$count_active=$sroted;
 
 
 
@@ -150,6 +166,8 @@ class Accountant extends Controller
                 $row_user['number_bill']=$row['number_bill'];
                 // $row_user['sumbill']=$this->sunBill($row_user['id'],$row['number_bill']);
                 $row_user['date_order']=date('Y-m-d h:i A',$row['date_req']);
+            	//H27
+            	$row_user['quantity']=$this->checkQuantity($row['number_bill']);
 
                 $row_user['direct']=$row['direct'];
                 $row_user['user_direct']= $row['user_direct'];
@@ -179,10 +197,25 @@ class Accountant extends Controller
                 $row_user['date_order']=date('Y-m-d h:i A',$row['date_req']);
                 $row_user['direct']=$row['direct'];
                 $row_user['user_direct']=$row['user_direct'];
+            	//H27
+            	$row_user['quantity']=$this->checkQuantity($row['number_bill']);
                 $count_active[]=$row_user;
             }
 
         }
+    	$sroted = array();
+		foreach ($count_active as  $row)
+		{
+			if($row['quantity']==0)
+			{
+				array_unshift($sroted,$row);
+			}
+			else
+			{
+				array_push($sroted,$row);
+			}
+		}
+		$count_active=$sroted;
 
         if (!empty($count_active))
         {

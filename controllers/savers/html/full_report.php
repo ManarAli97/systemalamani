@@ -131,24 +131,24 @@
                 <th> الكمية الخارجة <span id="total-sale" class="number">(0)</span></th>
                 <th> الكمية الداخلة <span id="total-inside" class="number">(0)</span></th>
                 <th> الكمية الحالية <span id="total" class="number">(0)</span> </th>
-                <th>  الكمية القادمة <span id="total-next" class="number">(0)</span></th>
-                <th> حالة الطلب </th>
-                <th>  الوقت المقدر للاستلام </th>
-                <th> نسبة الجمالية </th>
                 <th>التصنيف</th>
-                <th>نسبة الجمالية الى العدد 70% فمافوق</th>
-                <th>نسبة الجمالية الى العدد 60% الى اقل 70%</th>
-                <th> نسبة الجمالية الى العدد اقل من 60% </th>
                 <th> نوع المادة </th>
                 <th> نوع الحافظة  </th>
                 <th> الميزة </th>
+                <th> نسبة الجمالية </th>
+                <th> الكمية الحالية في مواقع العرض في المبيع </th>
+                <th>الكمية الحالية في مواقع الخزن في المبيع</th>
+             	<th>  الكمية القادمة <span id="total-next" class="number">(0)</span></th>
+                <th> حالة الطلب </th>
+                <th>  الوقت المقدر للاستلام </th>
+                <th>نسبة الجمالية الى العدد 70% فمافوق</th>
+                <th>نسبة الجمالية الى العدد 60% الى اقل 70%</th>
+                <th> نسبة الجمالية الى العدد اقل من 60% </th>
                 <th>الكمية الخارجة حسب التصنيف الكلي</th>
                 <th>الكمية الداخلة حسب التصنيف الكلي</th>
                 <th>الكمية الحالية حسب التصنيف الكلي</th>
                 <th>الكمية القادمة حسب التصنيف الكلي</th>
-                <th> الكمية الحالية في مواقع العرض في المبيع </th>
                 <th> تاريخ اخر مبيع من  الكمية الحالية في مواقع العرض </th>
-                <th>الكمية الحالية في مواقع الخزن في المبيع</th>
                 <th> تاريخ اخر مبيع من الحالية في مواقع الخزن </th>
                 <th> تاريخ اخر مناقلة الى الحالية في مواقع العرض </th>
                 <th> تاريخ اخر مناقلة الى الحالية في مواقع الخزن </th>
@@ -247,12 +247,11 @@
                     "fnCreatedRow": function( nRow, aData, iDataIndex ) {
                         $(nRow).attr('id','row_'+ aData[7]);
                     },
-
-                    'columnDefs': [{
+ 
+                   'columnDefs': [{
                         "targets": [0],
                         "orderable": false
                     }],
-
                     aLengthMenu: [ 50,100, 200, 300,-1],
                     oLanguage: {
                         sLoadingRecords: "تحميل ...",
@@ -279,16 +278,7 @@
                     bFilter: true, bInfo: true,
 
                 });
-                $('a.toggle-vis').on( 'click', function (e) {
-                    e.preventDefault();
-
-                    // Get the column API object
-                    var column = table.column( $(this).attr('data-column') );
-
-                    // Toggle the visibility
-                    column.visible( ! column.visible() );
-
-                });
+               
                 // end datatable
 
                 setTimeout( function(){
@@ -490,7 +480,7 @@
     {
         position: sticky !important;
         top: 0px;
-        z-index: 99;
+        z-index: 10;
         background-color: white;
         box-shadow: 0px 5px 5px 0px rgba(82, 63, 105, 0.08);
         white-space: nowrap;

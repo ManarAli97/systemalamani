@@ -19,7 +19,8 @@ class api extends Controller
               // $stmtInst->execute(array(1));
             // $this->synchronization();
       	// $this->add_cart_shop_all();
-       $this->testConnection();
+       // $this->testConnection();
+       echo  ROOT_FILES_h27;
 
 
       }

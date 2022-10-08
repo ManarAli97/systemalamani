@@ -1,6 +1,6 @@
 <?php  foreach ($count_active as $result )  { ?>
     <div class="col-12 " >
-        <a style="position: relative" class="infoCustomer ifactive <?php  if ($result['direct'] ==3)echo 'direct_bill' ?>  " id="row<?php echo $result['number_bill'] ?>" href="#" onclick="getOrder(<?php  echo $result['id']  ?>,'<?php  echo $result['number_bill']  ?>')">
+        <a style="position: relative;<?php if($result['quantity']==0) echo 'background-color: red !important;' ;?>" class="infoCustomer ifactive <?php  if ($result['direct'] ==3)echo 'direct_bill' ?>  " id="row<?php echo $result['number_bill'] ?>" href="#" onclick="getOrder(<?php  echo $result['id']  ?>,'<?php  echo $result['number_bill']  ?>')">
 
             <div class='row align-items-center justify-content-between'>
                 <div class='col'>

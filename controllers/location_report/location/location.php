@@ -459,9 +459,9 @@ trait location
 //			}
 
             $group = $_POST['group'] ;
-             $from= $_POST['from'];
-             $to = $_POST['to'];
-             $all = $_POST['all'];
+             $from= trim($_POST['from']);
+             $to = trim($_POST['to']);
+             $all = trim($_POST['all']);
 
             if ($all==0) {
 
@@ -472,6 +472,11 @@ trait location
                     if (!empty($myArray)) {
 
                         $Ids = implode(',', $myArray);
+
+
+                        $stmtUpdate = $this->db->prepare("UPDATE location  SET  `group_location`=?,userid=? WHERE `id`   IN ({$Ids})   AND `model`= ?   ");
+                        $stmtUpdate->execute(array(0, $this->userid, $model));
+
 
                         $stmt = $this->db->prepare("UPDATE location  SET  `group_location`=?,userid=? WHERE `id`   IN ({$Ids})   AND `model`= ?   ");
                         $stmt->execute(array($group, $this->userid, $model));
@@ -495,6 +500,12 @@ trait location
                 }
             }else
             {
+
+
+
+                $stmtUpdate = $this->db->prepare("UPDATE location  SET  `group_location`=?,userid=? WHERE   `model`= ?  AND  `sequence`  between {$from} AND  {$to}  ");
+                $stmtUpdate->execute(array(0, $this->userid, $model));
+
 
 
                  $stmt = $this->db->prepare("UPDATE location  SET  `group_location`=?,userid=? WHERE   `model`= ?  AND  `sequence`  between {$from} AND  {$to}  ");

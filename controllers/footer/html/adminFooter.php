@@ -1,10 +1,13 @@
-
 </div>
 </div>
 </div>
 
 
 <style>
+
+ .select_drop .bootstrap-select .dropdown-menu {
+        min-width: auto !important;
+    }
 
     .print_bill_casher
     {
