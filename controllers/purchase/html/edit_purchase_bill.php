@@ -166,6 +166,8 @@
                     <th> الكلفة الاجمالية</th>
                     <th>سعر الشراء$</th>
                     <th>صورة المادة</th>
+                    <th>الاسم اللاتيني </th>
+                    <th> الفئة</th>
                     <th> سعر البيع $</th>
                     <th> سعر البيع جملة $</th>
                     <th> سعر البيع جملة الجملة $</th>
@@ -181,24 +183,20 @@
                                 <td>
                                     <input  type="text" value="<?php echo $value['title'] ?>" name="title[<?php echo $index?>]" class="form-control"  id="title_<?php echo $index ?>" list='list1_<?php echo $index ?>' autocomplete="off" style="width:330px;height:40px; font-size:14px">
                                     <datalist id="list1_<?php echo $index ?>"> </datalist>
-                                    <p  name="size[<?php echo $index ?>]"  id="size_<?php echo $index ?>" style="margin-top:10px;"> الحجم : <?php echo $value['size'] ?></p> <input   name="size_val[<?php echo $index ?>]"  value="<?php echo $value['size'] ?>" type="hidden"  class=""    id= 'size_val_<?php echo $index ?>' />
-                                    <p  name="type[<?php echo $index ?>]" id="type_<?php echo $index ?>" style="margin-top:10px;"> التصنيف :<?php echo $value['type'] ?> </p> <input  value="<?php echo $value['type'] ?>"  name="type_val[<?php echo $index ?>]" type="hidden"  class=""    id= 'type_val_<?php echo $index ?>'/>
-                                    <p  name="rate[<?php echo $index ?>]"  id="rate_<?php echo $index ?>" style="margin-top:10px;">النسبة :<?php echo $value['rate'] ?></p> <input   name="rate_val[<?php echo $index ?>]"  value="<?php echo $value['rate'] ?>" type="hidden"  class=""    id= 'rate_val_<?php echo $index ?>' />
+                                    <p  name="size[<?php echo $index ?>]"  id="size_<?php echo $index ?>" style="margin-top:10px;"> الحجم : <?php echo $value['size'] ?></p>
+                                    <p  name="type[<?php echo $index ?>]" id="type_<?php echo $index ?>" style="margin-top:10px;"> التصنيف :<?php echo $value['type'] ?> </p>
+                                    <p  name="rate[<?php echo $index ?>]"  id="rate_<?php echo $index ?>" style="margin-top:10px;">النسبة :<?php echo $value['rate'] ?></p>
                                 </td>
                                 <td>
-                                <p id = 'category_val_<?php echo $index?>'><?php echo $this->langControl($value['model'])?></p> <input type='hidden' name="category[<?php echo $index?>]" id="category_<?php echo $index?>" value="<?php echo $value['model']?>"/>
-                                    <!-- <select name="category[< ?php echo $index ?>]" class=" dropdown_filter selectpicker" data-live-search="true"  id="category_< ?php echo $index ?>" >
-                                        < ?php foreach ($this->category_website as $key => $cat) {   ?>
-                                            <option value="< ?=$key?>" name="< ?php  echo $cat?>" < ?php  if ($cat==$this->langControl($value['model']))  echo 'selected' ?> >< ?= $cat?></option>
-                                        < ?php  } ?>
-                                    </select> -->
-                                </td>
+                                <p id = 'category_val_<?php echo $index?>'><?php echo $this->langControl($value['model'])?></p> <input type='hidden' name="category[<?php echo $index?>]" id="category_<?php echo $index?>" value="<?php echo $value['model']?>"/></td>
                                 <td> <input type="text"   value="<?php echo $value['code'] ?>" name="code[<?php echo $index?>]" class="form-control" id="code_<?php echo $index ?>" autocomplete="off" style="width:120px"></td>
                                 <td> <input type="text" value="<?php echo $value['quantity'] ?>"   name="quantity[<?php echo $index ?>]" class="form-control" id="quantity_<?php echo $index ?>" autocomplete="off" style="width:120px"></td>
                                 <td> <input type="text" value="<?php echo $value['price_purchase'] ?>" name="price_purchase[<?php echo $index ?>]"  class="form-control" id="price_purchase_<?php echo $index ?>" autocomplete="off" style="width:170px"></td>
                                 <td ><p  name="price_total[<?php echo $index ?>]" id="price_total_<?php echo $index ?>" ><?php echo $value['quantity'] *  $value['price_purchase']  . ' ' .$nameCurrency  ?></p></td>
                                 <td ><p  name="price_dollars[<?php echo $index ?>]" id="price_dollars_<?php echo $index ?>" ><?php echo $value['price_dollars']?></p></td>
-                                <td><img src="<?php echo $this->save_file . $value['image'] ?>" name="img[<?php echo $index ?>]"  alt="لا توجد صورة"  id='img_<?php echo $index ?>' width='150px' height='150px' ><input   name="image[<?php echo $index ?>]" type="hidden"  value = "<?php echo $value['image'] ?>" id='image_<?php echo $index ?>' /></td>
+                                <td><img src="<?php echo $this->save_file . $value['image'] ?>" name="img[<?php echo $index ?>]"  alt="لا توجد صورة"  id='img_<?php echo $index ?>' width='150px' height='150px' > </td>
+                                <td><p  name="latiniin[<?php echo $index ?>]"  id="latiniin_<?php echo $index ?>"> <?php echo $value['latiniin'] ?></p></td>
+                                <td> <p  name="catg[<?php echo $index ?>]"  id="catg_<?php echo $index ?>"> <?php echo $value['catg'] ?></p></td>
                                 <td> <input type="text" value="<?php echo $value['price_sale'] ?>" name="sale_price[<?php echo $index ?>]" class="form-control" id="sale_price_<?php echo $index ?>" autocomplete="off" style="width:170px"></td>
                                 <td> <input type="text" value="<?php echo $value['wholesale_price_sale'] ?>"  name="wholesale_price_sale[<?php echo $index?>]" class="form-control" id="wholesale_price_sale_<?php echo $index ?>" autocomplete="off" style="width:170px"></td>
                                 <td> <input type="text" value="<?php echo $value['wholesale_price2_sale'] ?>" name="wholesale_price2_sale[<?php echo $index ?>]" class="form-control" id="wholesale_price2_sale_<?php echo $index ?>" autocomplete="off" style="width:170px"></td>
@@ -212,23 +210,19 @@
                         <td>
                             <input  type="text" value="" name="title[<?php echo $index?>]" class="form-control-md"  id="title_<?php echo $index ?>" list='list1_<?php echo $index ?>' autocomplete="off" style="width:330px;height:40px; font-size:14px">
                             <datalist id="list1_<?php echo $index ?>"> </datalist>
-                            <p  name="size[<?php echo $index ?>]"  id="size_<?php echo $index ?>" style="margin-top:10px;"> الحجم : </p> <input   name="size_val[<?php echo $index ?>]"  type="hidden"  class=""    id= 'size_val_<?php echo $index ?>' />
-                            <p  name="type[<?php echo $index ?>]" id="type_<?php echo $index ?>" style="margin-top:10px;">التصنيف :</p> <input   name="type_val[<?php echo $index ?>]" type="hidden"  class=""    id= 'type_val_<?php echo $index ?>'/>
-                            <p  name="rate[<?php echo $index ?>]"  id="rate_<?php echo $index ?>" style="margin-top:10px;">النسببة :</p> <input   name="rate_val[<?php echo $index ?>]" type="hidden"  class=""    id= 'rate_val_<?php echo $index ?>' />
+                            <p  name="size[<?php echo $index ?>]"  id="size_<?php echo $index ?>" style="margin-top:10px;"> الحجم : </p>
+                            <p  name="type[<?php echo $index ?>]" id="type_<?php echo $index ?>" style="margin-top:10px;">التصنيف :</p>
+                            <p  name="rate[<?php echo $index ?>]"  id="rate_<?php echo $index ?>" style="margin-top:10px;">النسببة :</p>
                         </td>
-                        <td><p id = 'category_val_1'>موبايل</p> <input type='hidden' name="category[1]" id="category_1" value="mobile"/>
-                            <!-- <select name="category[< ?php echo $index ?>]" class=" dropdown_filter selectpicker" data-live-search="true"  id="category_< ?php echo $index ?>" >
-                                < ?php foreach ($this->category_website as $key => $cat) {   ?>
-                                    <option value="< ?=$key?>" name="< ?php  echo $cat?>">< ?= $cat?></option>
-                                < ?php  } ?>
-                            </select> -->
-                        </td>
+                        <td><p id = 'category_val_1'>موبايل</p> <input type='hidden' name="category[1]" id="category_1" value="mobile"/></td>
                         <td> <input type="text"  name="code[<?php echo $index?>]" class="form-control" id="code_<?php echo $index ?>" autocomplete="off" style="width:120px"></td>
                         <td> <input type="text"  name="quantity[<?php echo $index ?>]" class="form-control" id="quantity_<?php echo $index ?>" autocomplete="off" style="width:120px"></td>
                         <td> <input type="text" name="price_purchase[<?php echo $index ?>]"  class="form-control" id="price_purchase_<?php echo $index ?>" autocomplete="off" style="width:170px"></td>
                         <td ><p  name="price_total[<?php echo $index ?>]" id="price_total_<?php echo $index ?>" ></p></td>
                         <td ><p  name="price_dollars[<?php echo $index ?>]" id="price_dollars_<?php echo $index ?>" ><?php echo $value['price_dollars']?></p></td>
-                        <td><img src="" name="img[<?php echo $index ?>]"  alt="لا توجد صورة"  id='img_<?php echo $index ?>' width='150px' height='150px' ><input   name="image[<?php echo $index ?>]" type="hidden"  value = "" id='image_<?php echo $index ?>' /></td>
+                        <td><img src="" name="img[<?php echo $index ?>]"  alt="لا توجد صورة"  id='img_<?php echo $index ?>' width='150px' height='150px' ></td>
+                        <td ><p  name="latiniin[<?php echo $index ?>]"  id="latiniin_<?php echo $index ?>"> <?php echo $value['latiniin'] ?></p></td>
+                        <td > <p  name="catg[<?php echo $index ?>]"  id="catg_<?php echo $index ?>"> <?php echo $value['catg'] ?></p></td>
                         <td> <input type="text" name="sale_price[<?php echo $index ?>]" class="form-control" id="sale_price_<?php echo $index ?>" autocomplete="off" style="width:170px"></td>
                         <td> <input type="text"  name="wholesale_price_sale[<?php echo $index?>]" class="form-control" id="wholesale_price_sale_<?php echo $index ?>" autocomplete="off" style="width:170px"></td>
                         <td> <input type="text"  name="wholesale_price2_sale[<?php echo $index ?>]" class="form-control" id="wholesale_price2_sale_<?php echo $index ?>" autocomplete="off" style="width:170px"></td>
@@ -249,19 +243,18 @@
                     <p  class='text_total'>  المجموع الكلي : <span class ='price' id ='totalprice' name='totalprice'> <?php echo  $bill_purchase[0]['total-price']. ' ' .$nameCurrency  ?> </span></p>
                     <input type="hidden"  value="<?php echo $bill_purchase[0]['total-price'] ?>" name="total-price"  id="total-price" >
                 </div>
-            
+
             	 <div class="col-lg-3 col-md-2" style ="margin-top:35px">
                     <p  class='text_total'>  المجموع الكلي + التكلفة الاضافية : <span class ='price' id ='priceandcost' name='priceandcost' >0</span></p>
                     <input type="hidden"  name="total_price_cost"  value="0" id="total_price_cost" >
                 </div>
-            
+
                 <div class="col-lg-3 col-md-2" style ="margin-top:35px">
-                <!-- < ?php echo  $bill_purchase[0]['total_price_dollars'] ?> -->
                     <p  class='text_total'>   المجموع الكلي المدفوع : <span class ='price' id ='totalpricedollars' name='totalpricedollars' ></span></p>
                     <input type="hidden"  value="" name="total_price_dollars"  id="total_price_dollars" >
                 </div>
-            
-            	
+
+
 
             </div>
 
@@ -414,8 +407,8 @@
                     </div>
 
                     <div class="col-lg-2 col-md-2  ml-4">
-                        <label class="mr-sm-2" for="price_exchange_<?php echo $i ?>"> سعر التصريف  بالدولار  </label>
-                        <input type="text" name="price_exchange[<?php echo $i ?>]" value="0" class="form-control price_exchange" id="price_exchange_<?php echo $i ?>" autocomplete="off" >
+                        <label class="mr-sm-2" for="price_exchange_<?php echo $i ?>"> سعر التصريف  بالدولار   </label>
+                        <input type="text" name="price_exchange[<?php echo $i ?>]" value="1" class="form-control price_exchange" id="price_exchange_<?php echo $i ?>" autocomplete="off" >
                     </div>
 
                     <div class="col-lg-2 col-md-2  ml-4">
@@ -521,6 +514,9 @@
         });
 
         $('#example').DataTable( {
+            // scrollY: "310px",
+            // scrollX: true,
+            // scrollCollapse: true,
             // scrollX: true,
             // responsive: true,
             info:false,
@@ -537,7 +533,7 @@
                 "orderable": false
             }],
             "order": [[ 0, 'desc'] ],
-            // aLengthMenu: [ 50,100, 200, 300,-1],
+            aLengthMenu: [ 50,100, 200, 300,-1],
             oLanguage: {
                 sLoadingRecords: "تحميل ...",
                 sProcessing: " معالجة ...",
@@ -617,9 +613,9 @@
             countLine++;
             newRow = `<tr id='${countLine}' class="remove_sub_row_${countLine}"><td>  <button type="button" id="button_${countLine}" class="btn remove_sub_row" onclick="remove_sub_row(${countLine})"> <i class="fa fa-minus"></i> </button></td>
                 <td><input type="text" name="title[${countLine}]" class="form-control"   id="title_${countLine}" list='list1_${countLine}' autocomplete="off" style="font-size:14px"><datalist id="list1_${countLine}"></datalist>
-                    <p  name ="size[${countLine}]" id="size_${countLine}" style="margin-top:10px;"></p><input   name="size_val[${countLine}]" type="hidden"   id="size_val_${countLine}">
-                    <p name ="type[${countLine}]" id="type_${countLine}" style="margin-top:10px;"></p> <input   name="type_val[${countLine}]" type="hidden"    id="type_val_${countLine}">
-                    <p  name ="rate[${countLine}]" id="rate_${countLine}" style="margin-top:10px;"></p><input   name="rate_val[${countLine}]" type="hidden"   id="rate_val_${countLine}">
+                    <p  name ="size[${countLine}]" id="size_${countLine}" style="margin-top:10px;"> </p>
+                    <p name ="type[${countLine}]" id="type_${countLine}" style="margin-top:10px;"></p>
+                    <p  name ="rate[${countLine}]" id="rate_${countLine}" style="margin-top:10px;"></p>
                 </td>
                 <td><p id = 'category_val_${countLine}'>${nameGatAribic}</p> <input type='hidden' name="category[${countLine}]" id="category_${countLine}" value="${nameGategory}"/></td>
                 <td> <input type="text" name ="code[${countLine}]"  class="form-control" id="code_${countLine}" autocomplete="off" ></td>
@@ -627,7 +623,9 @@
                 <td> <input type="text" name="price_purchase[${countLine}]"  class="form-control" id="price_purchase_${countLine}" autocomplete="off"></td>>
                 <td><p name="price_total[${countLine}]" id="price_total_${countLine}"></p></td>
                 <td ><p  name="price_dollars[${countLine}]" id="price_dollars_${countLine}" ></p></td>
-                <td><img src=""  name ="img[${countLine}]" alt="لاتوجد صورة" id='img_${countLine}' width='150px' height='150px' ><input   name="image[${countLine}]" type="hidden"   id="image_${countLine}" /></td>
+                <td><img src=""  name ="img[${countLine}]" alt="لاتوجد صورة" id='img_${countLine}' width='150px' height='150px' ></td>
+                <td ><p  name="latiniin[${countLine}]"  id="latiniin_${countLine}"></p></td>
+                <td > <p  name="catg[${countLine}]"  id="catg_${countLine}"> </p></td>
                 <td> <input type="text" name ="sale_price[${countLine}]"  class="form-control" id="sale_price_${countLine}" autocomplete="off"></td>
                 <td> <input type="text" name ="wholesale_price_sale[${countLine}]" class="form-control" id="wholesale_price_sale_${countLine}" autocomplete="off"></td>
                 <td> <input type="text" name ="wholesale_price2_sale[${countLine}]" class="form-control" id="wholesale_price2_sale_${countLine}" autocomplete="off"></td>
@@ -781,18 +779,16 @@
                         $('#code_'+id).val('');
                         $('#title_'+id).val('');
                         $('#img_'+id).attr('src','');
-                        $('#image_'+id).val('');
                         $('#size_'+id).html('');
-                        $('#size_val_'+id).val('');
                         $('#type_'+id).val('');
-                        $('#type_val_'+id).val('');
-                        $('#rate_val_'+id).val('');
                         $('#quantity_'+id).val('');
                         $('#sale_price_'+id).val('');
                         $('#wholesale_price_sale_'+id).val('');
                         $('#wholesale_price2_sale_'+id).val('');
+
                         title = '';
                         code = '';
+                        break;
                     }
                 }
             }
@@ -807,28 +803,26 @@
                             $('#img_'+id).attr('src','<?php echo $this->save_file?>'+value[0].img);
                             $('#image_'+id).val(value[0].img);
                             $('#size_'+id).html( "الحجم : "+ value[0].size);
-                            $('#size_val_'+id).val(value[0].size);
+                            $('#latiniin_'+id).html(value[0].latiniin);
+                            $('#catg_'+id).html(value[0].catg);
+                            $('#latiniin_'+id).html( "الحجم : "+ value[0].size);
                             $('#type_'+id).html("التصنيف : "+ value[0].type);
-                            $('#type_val_'+id).val(value[0].type);
                             $('#rate_'+id).html( "نسبة : "+ value[0].rate);
-                            $('#rate_val_'+id).val(value[0].rate);
                             $('#quantity_'+id).val(value[0].quantity);
                             $('#sale_price_'+id).val(value[0].price_dollars);
                             $('#wholesale_price_sale_'+id).val(value[0].wholesale_price);
                             $('#wholesale_price2_sale_'+id).val(value[0].wholesale_price2);
+
 
                             var  urlEdit = '<?php echo url.'/' ?>'+category+'/edit_'+model+'/'+value[0].id;
                             $('#edit_item_'+id).attr("href", urlEdit);
                         }else{
                             alert(' الباركود غير موجود اضف بطاقة مادة اولا');
                             $('#code_'+id).val('');
-                            $('#title_'+id).val('');
                             $('#image_'+id).val('');
-                            $('#img_'+id).attr('src','');
                             $('#type_'+id).html('');
                             $('#rate_'+id).html('');
-                            $('#rate_val_'+id).val('');
-                            $('#type_val_'+id).val('');
+
                         }
                     });
                 }
@@ -861,9 +855,7 @@
             $('#title_'+id).keyup(function() {
                 $('#code_'+id).val('');
                 $('#img_'+id).attr('src','');
-                $('#image_'+id).val('');
                 $('#type_'+id).html('');
-
                 $('#rate_'+id).html('');
                 $('#quantity_'+id).val('');
                 $('#sale_price_'+id).val('');
@@ -871,6 +863,7 @@
                 $('#wholesale_price2_sale_'+id).val('');
                 title = $('#title_'+id).val();
                 code =  title.substring(title.lastIndexOf(':') + 1, title.lastIndexOf(')'));
+                console.log(code);
                 var  dataName={'category':category,'code':code,'title':title};
 
                 $.get("<?php echo url .'/'.$this->folder ?>/processing_show_items/",{ jsonData: JSON.stringify(dataName)}, function(data) {
@@ -879,13 +872,11 @@
                         var value = JSON.parse(data);
                         $('#code_'+id).val(value[0].code);
                         $('#img_'+id).attr('src','<?php echo $this->save_file?>'+value[0].img);
-                        $('#image_'+id).val(value[0].img);
                         $('#size_'+id).html( "الحجم : "+ value[0].size);
-                        $('#size_val_'+id).val(value[0].size);
+                        $('#latiniin_'+id).html(value[0].latiniin);
+                        $('#catg_'+id).html(value[0].catg);
                         $('#type_'+id).html("التصنيف : "+ value[0].type);
-                        $('#type_val_'+id).val(value[0].type);
                         $('#rate_'+id).html( "نسبة : "+ value[0].rate);
-                        $('#rate_val_'+id).val(value[0].rate);
                         $('#quantity_'+id).val(value[0].quantity);
                         $('#sale_price_'+id).val(value[0].price_dollars);
                         $('#wholesale_price_sale_'+id).val(value[0].wholesale_price);
@@ -896,12 +887,9 @@
                             alert(' الباركود غير موجود اضف بطاقة مادة اولا');
                             $('#code_'+id).val('');
                             $('#title_'+id).val('');
-                            $('#image_'+id).val('');
                             $('#img_'+id).attr('src','');
                             $('#type_'+id).html('');
                             $('#rate_'+id).html('');
-                            $('#rate_val_'+id).val('');
-                            $('#type_val_'+id).val('');
                         }
                 });
 
@@ -1003,6 +991,7 @@
            var totalpricedollars = parseFloat(totalprice / price_exchange).toFixed(2);
         //    $('#total_price_dollars').val(totalpricedollars);
         //    $('#totalpricedollars').text(totalpricedollars);
+        $('#price_purchase').text(totalpricedollars);
 
         });
 
@@ -1016,15 +1005,17 @@
             var totalInCurrency = 0;
             $('#totalpricedollars').text(0);
             $('#total_price_dollars').val(0);
+            console.log("subtotal" + subtotal);
             for(var i=1; i<= countClass;i++){
                var subtotal = $('.subtotal_'+i).val();
-             
+
                if(subtotal == undefined){
                 subtotal = 0;
                }
                totalInCurrency += parseFloat(subtotal);
-             
+
                var  price_exchange = $('#price_exchange_'+i).val();
+               console.log("subtotal" + price_exchange);
                // السعر حسب عملة الشراء
                var price_total = $('#total-price').val();
                if(subtotal != ' '){
@@ -1045,17 +1036,18 @@
 
                 }
             }
-        
-        
-        
-        
-          // التكلفة + المجموع الكلي
-         
+
+
+
+
+           // التكلفة + المجموع الكلي
+
            var cost = 0;
            var priceAndCost = 0;
         	var subtotal = <?php echo $allPayment ?>;
             $('#priceandcost').text(0);
             $('#total_price_cost').val(0);
+
         	if($('#total-price').val() != 0){
             	var totalPrice =  $('#total-price').val() / $('#price_exchange_order').val();
             	for(var i=1; i<= countCost;i++){
@@ -1069,7 +1061,7 @@
             	$('#total_price_cost').val(priceAndCost);
          		$('#price_purchase').text(priceAndCost);
             	$('.price_sub').text(priceAndCost - subtotal);
-            	
+
             }
         }, 1000);
 
@@ -1236,7 +1228,7 @@
     }
 
 
-    
+
 
 </script>
 

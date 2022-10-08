@@ -33,6 +33,22 @@ class purchase extends Controller {
         ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
         /*
+        * Create Table supplier
+        * Created 2022/10/06
+        * حسابات المورد
+        */
+        $this->db->query("CREATE TABLE IF NOT EXISTS `supplier_accounts` (
+            `id` int(4) Unsigned  NOT NULL AUTO_INCREMENT ,
+            `id_supplier` int(4) Unsigned  NOT NULL,
+            `id_currency` TINYINT(1) Unsigned  NOT NULL,
+            `balance`  float NOT NULL,
+            `iduser` int(4) NOT NULL,
+            `date` bigint(20) NOT NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`iduser`) REFERENCES user(id)
+        ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+
+        /*
         * Create Table source request
         */
         $this->db->query("CREATE TABLE IF NOT EXISTS `{$this->source_request}` (
@@ -181,7 +197,7 @@ class purchase extends Controller {
             `wholesale_price2_sale`  FLOAT NOT NULL,
             `type` varchar(255),
             `rate` FLOAT NOT NULL DEFAULT '0',
-            `size` varchar(255),
+            `size` smallint(2)	Unsigned NOT NULL,
             `note` varchar(255),
             `id_user` int(4) NOT NULL,
             `add_to_excel` TINYINT(1) Unsigned  NULL DEFAULT '0',
@@ -540,6 +556,7 @@ class purchase extends Controller {
         $this->adminHeaderController($this->langControl('purchase'));
         $data = array();
         $nameSupplier=array();
+        $allPayment = 0;
         $stmt_supplier =$this->db->prepare("SELECT  * FROM `$this->supplier` WHERE `type`= ?");
         $stmt_supplier->execute(array('supplier'));
 
@@ -638,37 +655,19 @@ class purchase extends Controller {
                 $form->post('note_order')
                     ->val('strip_tags');
 
-                $form->post('title')
-                    ->val('is_array')
-                    ->val('strip_tags');
+
 
                 $form->post('category')
                     ->val('is_array')
                     ->val('strip_tags');
 
-                $form->post('code')
-                    ->val('is_array')
-                    ->val('strip_tags');
+
 
                 $form->post('quantity')
                     ->val('is_array')
                     ->val('strip_tags');
 
-                $form->post('image')
-                    ->val('is_array')
-                    ->val('strip_tags');
 
-                $form->post('size_val')
-                    ->val('is_array')
-                    ->val('strip_tags');
-
-                $form->post('type_val')
-                    ->val('is_array')
-                    ->val('strip_tags');
-
-                $form->post('rate_val')
-                    ->val('is_array')
-                    ->val('strip_tags');
 
                 $form->post('price_purchase')
                     ->val('is_array')
@@ -744,10 +743,8 @@ class purchase extends Controller {
                     $category = json_decode($data['category'], true);
                     $codes = json_decode($data['code'], true);
                     $quantity = json_decode($data['quantity'], true);
-                    $img = json_decode($data['image'], true);
-                    $size = json_decode($data['size_val'], true);
-                    $type = json_decode($data['type_val'], true);
-                    $rate = json_decode($data['rate_val'], true);
+
+
                     $price_purchase = json_decode($data['price_purchase'], true);
                     $sale_price = json_decode($data['sale_price'], true);
                     $wholesale_price_sale = json_decode($data['wholesale_price_sale'], true);
@@ -911,8 +908,8 @@ class purchase extends Controller {
                             }
 
 
-                            $stmt_cd = $this->db->prepare("INSERT INTO `purchase_item` (`idpurchase`,`title`,`code`,`quantity`,`price_purchase`,`price_dollars`,`price_sale`,`wholesale_price_sale`,`wholesale_price2_sale`,`note`,`id_user`,`model`,`image`,`size`,`rate`,`type`,`date`) VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                            $stmt_cd->execute(array($lastId, $title[$key],$code,$quantity[$key],$price_purchase[$key],$price_dollars,$sale_price[$key],$wholesale_price_sale[$key],$wholesale_price2_sale[$key],$note[$key],$this->userid,$category[$key],$img[$key],$size[$key],$rate[$key],$type[$key],time()));
+                            $stmt_cd = $this->db->prepare("INSERT INTO `purchase_item` (`idpurchase`,`code`,`quantity`,`price_purchase`,`price_dollars`,`price_sale`,`wholesale_price_sale`,`wholesale_price2_sale`,`id_user`,`model`,`note`,`date`) VALUE (?,?,?,?,?,?,?,?,?,?,?,?)");
+                            $stmt_cd->execute(array($lastId,$code,$quantity[$key],$price_purchase[$key],$price_dollars,$sale_price[$key],$wholesale_price_sale[$key],$wholesale_price2_sale[$key],$this->userid,$category[$key],$note[$key],time()));
                         }
                     }
 
@@ -929,7 +926,21 @@ class purchase extends Controller {
                         if($subtotal !=''){
                             $stmt_payment = $this->db->prepare("INSERT INTO `payment_purchase` (`idpurchase`,`iduser`,`payment`,`id_name_pay`,`price_exchange`,`note`,`date`) VALUE (?,?,?,?,?,?,?)");
                             $stmt_payment->execute(array($lastId, $this->userid,$subtotal,$namePay[$key],$priceExchange[$key],$notePayment[$key],time()));
+                            $allPayment += $subtotal;
                         }
+                    }
+                    $balance = $data['total-price'] -  $allPayment ;
+                    $checkSupplier = $this->db->prepare("SELECT `id` FROM `supplier_accounts` WHERE `id_supplier`=? AND `id_currency` = ?");
+                    $checkSupplier->execute(array($data['name_supplier'],$data['currency']));
+                    if($checkSupplier->rowCount() > 0){
+                        $idRow = $checkSupplier->fetch(PDO::FETCH_ASSOC);
+
+                        $updateBalance = $this->db->prepare("UPDATE `supplier_accounts` SET `balance` =  `balance` + ?  WHERE `id` = ?");
+                        $updateBalance->execute(array($balance,$idRow['id']));
+                    }else{
+
+                        $stmt_balance = $this->db->prepare("INSERT INTO `supplier_accounts` (`id_supplier`,`id_currency`,`balance`,`iduser`,`date`) VALUE (?,?,?,?,?)");
+                        $stmt_balance->execute(array($data['name_supplier'],$data['currency'],$balance,$this->userid,time()));
                     }
 
                     // $data_order = array();
@@ -1324,10 +1335,46 @@ class purchase extends Controller {
 
         $stmt_item = $this->db->prepare("SELECT * FROM `{$this->purchase_item}` WHERE `idpurchase` = ?");
         $stmt_item->execute(array($id));
-
-
         while($row_item = $stmt_item->fetch(PDO::FETCH_ASSOC)){
+
             $row_item['id'] =  $this->get_id_by_model($row_item['model'],$row_item['code']);
+            if($row_item['model'] == 'mobile' || $row_item['model'] == 'computer' || $row_item['model'] == 'games'){
+                $item = array();
+                $item = $this->selectItem($row_item['model'],$row_item['code']);
+                // print_r($item);
+                $row_item['title'] = $item[0]['title'];
+                $row_item['image'] = $item[0]['img'];
+                $row_item['type'] = '';
+                $row_item['rate'] = 0;
+                $row_item['size'] = $item[0]['size'];
+                $row_item['latiniin'] = '';
+                $row_item['catg'] = $this->selectNameCat($row_item['model'],$item[0]['id_cat']);
+
+            }
+            if($row_item['model'] ==  'accessories'){
+                $item = array();
+                $item = $this->selectAcc($row_item['code']);
+                $row_item['title'] = $item[0]['title'];
+                $row_item['image'] = $item[0]['img'];
+                $row_item['type'] = '';
+                $row_item['rate'] = 0;
+                $row_item['size'] = 0;
+                $row_item['latiniin'] = '';
+                $row_item['catg'] = $this->selectNameCat($row_item['model'],$item[0]['id_cat']);
+
+            }
+            if($row_item['model'] == 'savers'){
+                $item = array();
+                $item = $this->selectSavers($row_item['code']);
+                $row_item['title'] = $item[0]['title'];
+                $row_item['image'] = $item[0]['img'];
+                $row_item['type'] = $item[0]['type'];
+                $row_item['rate'] = $item[0]['rate'];
+                $row_item['size'] = 0;
+                $row_item['latiniin'] =$item[0]['latiniin'];
+                $row_item['catg'] = $this->selectNameCat($row_item['model'],$item[0]['id_cat']);
+
+            }
             $item_order[] = $row_item;
         }
 
@@ -1429,9 +1476,6 @@ class purchase extends Controller {
                 $form->post('note_order')
                     ->val('strip_tags');
 
-                $form->post('title')
-                    ->val('is_array')
-                    ->val('strip_tags');
 
                 $form->post('category')
                     ->val('is_array')
@@ -1442,22 +1486,6 @@ class purchase extends Controller {
                     ->val('strip_tags');
 
                 $form->post('quantity')
-                    ->val('is_array')
-                    ->val('strip_tags');
-
-                $form->post('image')
-                    ->val('is_array')
-                    ->val('strip_tags');
-
-                $form->post('size_val')
-                    ->val('is_array')
-                    ->val('strip_tags');
-
-                $form->post('type_val')
-                    ->val('is_array')
-                    ->val('strip_tags');
-
-                $form->post('rate_val')
                     ->val('is_array')
                     ->val('strip_tags');
 
@@ -1537,15 +1565,10 @@ class purchase extends Controller {
                 $data = $form->fetch();
 
                 if (empty($this->error_form)) {
-
-                    $title = json_decode($data['title'], true);
                     $category = json_decode($data['category'], true);
                     $codes = json_decode($data['code'], true);
                     $quantity = json_decode($data['quantity'], true);
-                    $img = json_decode($data['image'], true);
-                    $size = json_decode($data['size_val'], true);
-                    $type = json_decode($data['type_val'], true);
-                    $rate = json_decode($data['rate_val'], true);
+
                     $price_purchase = json_decode($data['price_purchase'], true);
                     $sale_price = json_decode($data['sale_price'], true);
                     $wholesale_price_sale = json_decode($data['wholesale_price_sale'], true);
@@ -1702,12 +1725,12 @@ class purchase extends Controller {
                                 $stmt_select->execute(array($id, $code));
                                 $row = $stmt_select->fetch();
                                 if($stmt_select->rowCount() > 0){
-                                    $stmt_item = $this->db->prepare("UPDATE `{$this->purchase_item}` set  `title` = ?,`code` = ?,`quantity` = ?,`price_purchase` = ?,`price_dollars`=?,`price_sale` = ?,`wholesale_price_sale` = ?,`wholesale_price2_sale` = ?,`note` = ?, `id_user` = ?, `model` = ? ,`image` = ?,`size` = ?,`rate` = ?,`type` =?,`date` = ?  where `idpurchase` = ? AND `code` = ?");
-                                    $stmt_item->execute(array($title[$key],$code,$quantity[$key],$price_purchase[$key],$price_dollars,$sale_price[$key],$wholesale_price_sale[$key],$wholesale_price2_sale[$key],$note[$key],$this->userid,$category[$key],$img[$key],$size[$key],$rate[$key],$type[$key],time() , $id , $code));
+                                    $stmt_item = $this->db->prepare("UPDATE `{$this->purchase_item}` set  `code` = ?,`quantity` = ?,`price_purchase` = ?,`price_dollars`=?,`price_sale` = ?,`wholesale_price_sale` = ?,`wholesale_price2_sale` = ?, `id_user` = ?, `model` = ? ,`note` = ?,`date` = ?  where `idpurchase` = ? AND `code` = ?");
+                                    $stmt_item->execute(array($code,$quantity[$key],$price_purchase[$key],$price_dollars,$sale_price[$key],$wholesale_price_sale[$key],$wholesale_price2_sale[$key],$this->userid,$category[$key],$note[$key],time(),$id,$code));
                                 }
                                 else{
-                                    $stmt_item = $this->db->prepare("INSERT INTO `{$this->purchase_item}` (`idpurchase`,`title`,`code`,`quantity`,`price_purchase`,`price_dollars`,`price_sale`,`wholesale_price_sale`,`wholesale_price2_sale`,`note`, `id_user`, `model`,`image`,`size`,`rate`,`type`,`date`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                                    $stmt_item->execute(array($id ,$title[$key],$code,$quantity[$key],$price_purchase[$key],$price_dollars,$sale_price[$key],$wholesale_price_sale[$key],$wholesale_price2_sale[$key],$note[$key],$this->userid,$category[$key],$img[$key],$size[$key],$rate[$key],$type[$key],time()));
+                                    $stmt_item = $this->db->prepare("INSERT INTO `{$this->purchase_item}` (`idpurchase`,`code`,`quantity`,`price_purchase`,`price_dollars`,`price_sale`,`wholesale_price_sale`,`wholesale_price2_sale`, `id_user`, `model`,`note`,`date`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+                                    $stmt_item->execute(array($id,$code,$quantity[$key],$price_purchase[$key],$price_dollars,$sale_price[$key],$wholesale_price_sale[$key],$wholesale_price2_sale[$key],$this->userid,$category[$key],$note[$key],time()));
                                 }
                             }
                         }
@@ -2021,12 +2044,13 @@ class purchase extends Controller {
                     $row['img'] = $row_color['img'];
                     $id_item = $row_color['id_item'];
                 }
-                $stmt_item = $this->db->prepare("SELECT `id`,`title` FROM `$model` WHERE `is_delete` = 0 AND `id`=?   limit 1");
+                $stmt_item = $this->db->prepare("SELECT `id`,`title`,`id_cat` FROM `$model` WHERE `is_delete` = 0 AND `id`=?   limit 1");
                 $stmt_item->execute(array($id_item));
                 while ($row_item = $stmt_item->fetch(PDO::FETCH_ASSOC))
                 {
                     $row['id'] = $row_item['id'];
                     $row['title'] = $row_item['title'];
+                    $row['catg'] = $this->selectNameCat($model, $row_item['id_cat']);
                 }
                 // $row['e'] = $excel;
                 $stmt_excel = $this->db->prepare("SELECT `quantity` ,`wholesale_price`, `wholesale_price2`, `price_dollars` FROM `$excel` WHERE  `code`=? ");
@@ -2043,6 +2067,7 @@ class purchase extends Controller {
                 }
                 $row['rate'] = '';
                 $row['type'] = '';
+                $row['latiniin'] = '';
                 $item[]=$row;
             }
         }
@@ -2053,7 +2078,7 @@ class purchase extends Controller {
     public function selectSaversByCode($barcode){
         $item = array();
         $model = 'product_savers';
-        $stmt_items = $this->db->prepare("SELECT  `id`, `code`,`title` , `img`,`cover_material` ,`type_cover`, `feature_cover`,`note` FROM `$model` WHERE `is_delete` = 0 AND `code`=? ");
+        $stmt_items = $this->db->prepare("SELECT  `id`, `code`,`title` , `img`,`cover_material` ,`type_cover`, `feature_cover`,`note`,`id_device` FROM `$model` WHERE `is_delete` = 0 AND `code`=? ");
         $stmt_items->execute(array($barcode));
         if($stmt_items->rowCount() > 0){
             while ($row = $stmt_items->fetch(PDO::FETCH_ASSOC))
@@ -2091,7 +2116,7 @@ class purchase extends Controller {
                 $row['rate'] = $row['note'];
 
                 $row['type'] = $cover_material .' - '. $type_cover .' - '.$feature_cover;
-
+                $row['catg']= $this->selectNameCat('savers', $row['id_device']);
 
                 $stmt_excel = $this->db->prepare("SELECT  `quantity` ,`wholesale_price`, `wholesale_price2`,`price_dollars` FROM `excel_savers` WHERE  `code`=? ");
                 $stmt_excel->execute(array($barcode));
@@ -2104,7 +2129,9 @@ class purchase extends Controller {
                         $row['price_dollars'] = $row_excel['price_dollars'];
                     }
                 }
-                $row['size'] = '';
+
+
+
                 $item[]=$row;
             }
         }
@@ -2117,20 +2144,20 @@ class purchase extends Controller {
         $model = 'accessories';
         $color = 'color_accessories';
 
-        $stmt_color = $this->db->prepare("SELECT `img` ,`id_item` , `code` FROM `$color` WHERE `is_delete` = 0 AND `code`=? ");
+        $stmt_color = $this->db->prepare("SELECT `img`,`id_item`,`code` FROM `$color` WHERE `is_delete` = 0 AND `code`=? ");
         $stmt_color->execute(array($barcode));
         if($stmt_color->rowCount() > 0){
             while ($row = $stmt_color->fetch(PDO::FETCH_ASSOC))
             {
                 $id_item = $row['id_item'];
-                // $row['code'] = $barcode;
-                // $row['img'] = $row['img'];
-                $stmt_item = $this->db->prepare("SELECT  `id`, `title`  FROM `$model` WHERE  `is_delete` = 0 AND  `id`=?  limit 1");
+
+                $stmt_item = $this->db->prepare("SELECT  `id`, `title`,`id_cat`  FROM `$model` WHERE  `is_delete` = 0 AND  `id`=?  limit 1");
                 $stmt_item->execute(array($id_item));
                 while ($row_item = $stmt_item->fetch(PDO::FETCH_ASSOC))
                 {
                     $row['title'] = $row_item['title'];
                     $row['id'] = $row_item['id'];
+                    $row['catg'] = $this->selectNameCat($model, $row_item['id_cat']);
                 }
 
                 $stmt_excel = $this->db->prepare("SELECT `quantity` ,`wholesale_price` , `wholesale_price2`,`price_dollars` FROM `excel_accessories` WHERE  `code`=? ");
@@ -2146,7 +2173,9 @@ class purchase extends Controller {
                         $row['type'] = '';
                     }
                 }
+
                 $row['size'] = '';
+                $row['latiniin'] = '';
                 $item[]=$row;
             }
         }
@@ -2274,9 +2303,6 @@ class purchase extends Controller {
         }
     }
 
-
-
-
     function selectById($id,$model,$column = 'name')
     {
 
@@ -2290,6 +2316,140 @@ class purchase extends Controller {
         }
     }
 
+    // get data by code from tables(mobile,computer,games) use in edit purchase
+    public function selectItem($model,$barcode)
+    {
+        if($model=='mobile'){
+            $color = 'color';
+            $code  = 'code';
+            $excel = 'excel';
+        } else{
+            $color = 'color_'. $model;
+            $code = 'code_'. $model;
+            $excel = 'excel_'. $model;
+        }
+        $item = array();
+        $stmt_code = $this->db->prepare("SELECT `id`,`code`,`id_color`,`size` FROM `$code` WHERE `is_delete` = 0 AND `code`=? ");
+        $stmt_code->execute(array($barcode));
+        if($stmt_code->rowCount() > 0){
+            while ($row = $stmt_code->fetch(PDO::FETCH_ASSOC))
+            {
+                $id_color = $row['id_color'];
+                $stmt_color = $this->db->prepare("SELECT `img` , `id_item` FROM `$color` WHERE `is_delete` = 0 AND  `id`=?  limit 1");
+                $stmt_color->execute(array($id_color));
+                while ($row_color = $stmt_color->fetch(PDO::FETCH_ASSOC))
+                {
+                    $row['img'] = $row_color['img'];
+                    $id_item = $row_color['id_item'];
+                }
+                $stmt_item = $this->db->prepare("SELECT `id`,`title`,`id_cat` FROM `$model` WHERE `is_delete` = 0 AND `id`=?   limit 1");
+                $stmt_item->execute(array($id_item));
+                while ($row_item = $stmt_item->fetch(PDO::FETCH_ASSOC))
+                {
+                    $row['id'] = $row_item['id'];
+                    $row['title'] = $row_item['title'];
+                    $row['id_cat'] = $row_item['id_cat'];
+                }
+                $row['rate'] = '';
+                $row['type'] = '';
+                $row['latiniin'] = '';
+                $item[]=$row;
+            }
+        }
+        return $item;
+    }
+
+    // get data by code from tables(product_savers) use in edit purchase
+    public function selectSavers($barcode){
+        $item = array();
+        $model = 'product_savers';
+        $stmt_items = $this->db->prepare("SELECT  `id`, `code`,`title` , `img`,`cover_material` ,`type_cover`, `feature_cover`,`note`,`latiniin`,`id_device` FROM `$model` WHERE `is_delete` = 0 AND `code`=? ");
+        $stmt_items->execute(array($barcode));
+        if($stmt_items->rowCount() > 0){
+            while ($row = $stmt_items->fetch(PDO::FETCH_ASSOC))
+            {
+                // echo $row['code'];
+                $row['id'] = $row['id'];
+                $stmt_cover_material =$this->db->prepare("SELECT `cover_material` FROM `cover_material` WHERE  `number`=? limit 1");
+                $stmt_cover_material->execute(array($row['cover_material']));
+                if($stmt_cover_material->rowCount() > 0){
+                    $row_cover_material = $stmt_cover_material->fetch(PDO::FETCH_ASSOC);
+                    $cover_material = $row_cover_material['cover_material'];
+                }else{
+                    $cover_material = '';
+                }
+
+                $stmt_type_cover =$this->db->prepare("SELECT `type_cover` FROM `type_cover` WHERE  `number`=?  limit 1");
+                $stmt_type_cover->execute(array($row['type_cover']));
+                if($stmt_type_cover->rowCount() > 0){
+                    $row_type_cover = $stmt_type_cover->fetch(PDO::FETCH_ASSOC);
+                    $type_cover = $row_type_cover['type_cover'];
+                }else{
+                    $type_cover = '';
+                }
+
+
+                $stmt_feature_cover =$this->db->prepare("SELECT `feature_cover` FROM `feature_cover` WHERE  `number`=? limit 1");
+                $stmt_feature_cover->execute(array($row['feature_cover']));
+                if($stmt_feature_cover->rowCount() > 0){
+                    $row_feature_cover = $stmt_feature_cover->fetch(PDO::FETCH_ASSOC);
+                    $feature_cover = $row_feature_cover['feature_cover'];
+                }else{
+                    $feature_cover = '';
+                }
+
+                $row['rate'] = $row['note'];
+                $row['id_cat'] = $row['id_device'];
+
+                $row['type'] = $cover_material .' - '. $type_cover .' - '.$feature_cover;
+                $row['size'] = '';
+                $item[]=$row;
+            }
+        }
+        return $item;
+    }
+
+    // get data by code from tables(accessories)
+    public function selectAcc($barcode){
+        $item = array();
+        $model = 'accessories';
+        $color = 'color_accessories';
+
+        $stmt_color = $this->db->prepare("SELECT `img` ,`id_item` , `code` FROM `$color` WHERE `is_delete` = 0 AND `code`=? ");
+        $stmt_color->execute(array($barcode));
+        if($stmt_color->rowCount() > 0){
+            while ($row = $stmt_color->fetch(PDO::FETCH_ASSOC))
+            {
+                $id_item = $row['id_item'];
+
+                $stmt_item = $this->db->prepare("SELECT  `id`, `title`,`id_cat`  FROM `$model` WHERE  `is_delete` = 0 AND  `id`=?  limit 1");
+                $stmt_item->execute(array($id_item));
+                while ($row_item = $stmt_item->fetch(PDO::FETCH_ASSOC))
+                {
+                    $row['title'] = $row_item['title'];
+                    $row['id'] = $row_item['id'];
+                    $row['title'] = $row_item['title'];
+                    $row['id_cat'] = $row_item['id_cat'];
+                }
+                $row['size'] = '';
+                $item[]=$row;
+            }
+        }
+        return $item;
+    }
+
+    public function selectNameCat($model,$idCatg)
+    {
+        if($model == 'savers'){
+            $model = 'type_device';
+        }else{
+            $model = 'category_'.$model;
+        }
+        $stmt = $this->db->prepare("SELECT `title` FROM `$model` WHERE id = ?");
+        $stmt->execute(array($idCatg));
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        return  $data['title'];
+    }
 
     // تكرار فاتورة شراء
     function copy_row($id)

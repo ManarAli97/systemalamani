@@ -166,6 +166,8 @@
                     <th>سعر الشراء</th>
                     <th> الكلفة الاجمالية</th>
                     <th>صورة المادة</th>
+                    <th>الاسم اللاتيني </th>
+                    <th> الفئة</th>
                     <th> سعر البيع $</th>
                     <th> سعر البيع جملة $</th>
                     <th> سعر البيع جملة الجملة $</th>
@@ -177,9 +179,9 @@
                 <tr id='1'>
                     <td> <button type="button" class="btn add_new_sub_row">  <i class="fa fa-plus"></i> </button></td>
                     <td><input  type="text" name="title[1]" class="form-control-lg"  id="title_1" list='list1_1' autocomplete="off" style="width:330px;height:40px; font-size:14px"><datalist id="list1_1"> </datalist>
-                        <p  name="size[1]" id="size_1" style="margin-top:10px;"></p> <input   name="size_val[1]" type="hidden"  class=""    id= 'size_val_1'/>
-                        <p  name="type[1]" id="type_1" style="margin-top:10px;"></p> <input   name="type_val[1]" type="hidden"  class=""    id= 'type_val_1' />
-                        <p  name="rate[1]"  id="rate_1" style="margin-top:10px;"></p> <input   name="rate_val[1]" type="hidden"  class=""    id= 'rate_val_1' />
+                        <p  name="size[1]" id="size_1" style="margin-top:10px;"></p><!-- <input   name="size_val[1]" type="hidden"  class=""    id= 'size_val_1'/> -->
+                        <p  name="type[1]" id="type_1" style="margin-top:10px;"></p><!-- <input   name="type_val[1]" type="hidden"  class=""    id= 'type_val_1' /> -->
+                        <p  name="rate[1]"  id="rate_1" style="margin-top:10px;"></p><!--<input   name="rate_val[1]" type="hidden"  class=""    id= 'rate_val_1' />-->
                     </td>
                     <td>
                         <p id = 'category_val_1'>موبايل</p> <input type='hidden' name="category[1]" id="category_1" value="mobile" />
@@ -188,7 +190,9 @@
                     <td> <input type="text" name="quantity[1]" class="form-control" id="quantity_1" autocomplete="off" style="width:120px"></td>
                     <td> <input type="text" name="price_purchase[1]"  class="form-control" id="price_purchase_1" autocomplete="off" style="width:170px"></td>
                     <td name="price_total[1]" id="price_total_1" ></td>
-                    <td><img src="" name="img[1]"  alt="لا توجد صورة" srcset="" id='img_1' width='150px' height='150px' ><input   name="image[1]" type="hidden"  id='image_1'/></td>
+                    <td><img src="" name="img[1]"  alt="لا توجد صورة" srcset="" id='img_1' width='150px' height='150px' >   <!--<input   name="image[1]" type="hidden"  id='image_1'/> --> </td>
+                    <td ><p  name="latiniin[1]"  id="latiniin_1"> </p></td>
+                    <td > <p  name="catg[1]"  id="catg_1"></p></td>
                     <td> <input type="text" name="sale_price[1]" class="form-control" id="sale_price_1" autocomplete="off" style="width:170px"></td>
                     <td> <input type="text" name="wholesale_price_sale[1]" class="form-control" id="wholesale_price_sale_1"  autocomplete="off" style="width:170px"></td>
                     <td> <input type="text" name="wholesale_price2_sale[1]" class="form-control" id="wholesale_price2_sale_1" autocomplete="off" style="width:170px"></td>
@@ -220,9 +224,9 @@
                     <p  class='text_total'>  المجموع الكلي + التكلفة الاضافية : <span class ='price' id ='priceandcost' name='priceandcost' >0</span></p>
                     <input type="hidden"  name="total_price_cost"  value="0" id="total_price_cost" >
                 </div>
-            
+
                 <div class="col-lg-3 col-md-2" style ="margin-top:35px">
-                    <p  class='text_total'>    المجموع الكلي المدفوع : <span class ='price' id ='totalpricedollars' name='totalpricedollars' >0</span></p>
+                    <p  class='text_total'>   المجموع الكلي  : <span class ='price' id ='totalpricedollars' name='totalpricedollars' >0</span></p>
                     <input type="hidden"  name="total_price_dollars"  value="0" id="total_price_dollars" >
                 </div>
 
@@ -336,7 +340,7 @@
         });
 
         $('#example').DataTable( {
-            //scrollY: "300px",
+            // scrollY: "310px",
             // scrollX: true,
             // scrollCollapse: true,
             // scrollX: true,
@@ -355,7 +359,7 @@
                 "orderable": false
             }],
             "order": [[ 0, 'desc'] ],
-            // aLengthMenu: [ 50,100, 200, 300,-1],
+            aLengthMenu: [ 50,100, 200, 300,-1],
             oLanguage: {
                 sLoadingRecords: "تحميل ...",
                 sProcessing: " معالجة ...",
@@ -413,17 +417,19 @@
             // var nameGategory = $("#category_"+countLine).val();
             countLine++;
             newRow = `<tr id='${countLine}' class="remove_sub_row_${countLine}"><td>  <button type="button" class="btn remove_sub_row" onclick="remove_sub_row(${countLine})"> <i class="fa  fa-minus"></i> </button></td>
-            <td><input type="text" name="title[${countLine}]" class="form-control"   id="title_${countLine}" list='list1_${countLine}' autocomplete="off"><datalist id="list1_${countLine}"></datalist>
-                <p  name ="size[${countLine}]" id="size_${countLine}" style="margin-top:10px;"></p><input   name="size_val[${countLine}]" type="hidden"   id="size_val_${countLine}">
-                <p name ="type[${countLine}]" id="type_${countLine}" style="margin-top:10px;"></p> <input   name="type_val[${countLine}]" type="hidden"    id="type_val_${countLine}">
-                <p  name ="rate[${countLine}]" id="rate_${countLine}" style="margin-top:10px;"></p><input   name="rate_val[${countLine}]" type="hidden"   id="rate_val_${countLine}">
-            </td>
+                <td><input type="text" name="title[${countLine}]" class="form-control"   id="title_${countLine}" list='list1_${countLine}' autocomplete="off"><datalist id="list1_${countLine}"></datalist>
+                    <p  name ="size[${countLine}]" id="size_${countLine}" style="margin-top:10px;"></p>
+                    <p name ="type[${countLine}]" id="type_${countLine}" style="margin-top:10px;"></p>
+                    <p  name ="rate[${countLine}]" id="rate_${countLine}" style="margin-top:10px;"></p>
+                </td>
                 <td><p id = 'category_val_${countLine}'>${nameGatAribic}</p> <input type='hidden' name="category[${countLine}]" id="category_${countLine}" value="${nameGategory}"/></td>
                 <td> <input type="text" name ="code[${countLine}]"  class="form-control" id="code_${countLine}" autocomplete="off" style="font-size:14px"></td>
                 <td> <input type="text" name ="quantity[${countLine}]"  class="form-control" id="quantity_${countLine}" autocomplete="off"></td>
                 <td> <input type="text" name="price_purchase[${countLine}]"  class="form-control" id="price_purchase_${countLine}" autocomplete="off"></td>>
                 <td name="price_total[${countLine}]" id="price_total_${countLine}" ></td>
-                <td><img src=""  name ="img[${countLine}]" alt="لاتوجد صورة" srcset="" id='img_${countLine}' width='150px' height='150px' ><input   name="image[${countLine}]" type="hidden"   id="image_${countLine}" /></td>
+                <td><img src=""  name ="img[${countLine}]" alt="لاتوجد صورة" srcset="" id='img_${countLine}' width='150px' height='150px' ></td>
+                <td ><p  name="latiniin[${countLine}]"  id="latiniin_${countLine}"></p></td>
+                <td > <p  name="catg[${countLine}]"  id="catg_${countLine}"> </p></td>
                 <td> <input type="text" name ="sale_price[${countLine}]"  class="form-control" id="sale_price_${countLine}"autocomplete="off" ></td>
                 <td> <input type="text" name ="wholesale_price_sale[${countLine}]" class="form-control" id="wholesale_price_sale_${countLine}" autocomplete="off"></td>
                 <td> <input type="text" name ="wholesale_price2_sale[${countLine}]" class="form-control" id="wholesale_price2_sale_${countLine}" autocomplete="off"></td>
@@ -559,19 +565,17 @@
                         $('#code_'+id).val('');
                         $('#title_'+id).val('');
                         $('#img_'+id).attr('src','');
-                        $('#image_'+id).val('');
                         $('#size_'+id).html('');
-                        $('#size_val_'+id).val('');
                         $('#type_'+id).html('');
-                        $('#type_val_'+id).val('');
                         $('#rate_'+id).html('');
-                        $('#rate_val_'+id).val('');
+                        $('#latiniin_'+id).html('');
+                        $('#catg_'+id).html('');
                         $('#sale_price_'+id).val('');
                         $('#wholesale_price_sale_'+id).val('');
                         $('#wholesale_price2_sale_'+id).val('');
                         title = '';
                         code = '';
-                     	break;
+                        break;
                     }
                 }
             }
@@ -584,13 +588,11 @@
                         var value = JSON.parse(data);
                         $('#title_'+id).val(value[0].title);
                         $('#img_'+id).attr('src','<?php echo $this->save_file?>'+value[0].img);
-                        $('#image_'+id).val(value[0].img);
                         $('#size_'+id).html( "الحجم : "+ value[0].size);
-                        $('#size_val_'+id).val(value[0].size);
                         $('#type_'+id).html("التصنيف : "+ value[0].type);
-                        $('#type_val_'+id).val(value[0].type);
+                        $('#latiniin_'+id).html(value[0].latiniin);
+                        $('#catg_'+id).html(value[0].catg);
                         $('#rate_'+id).html( "نسبة : "+ value[0].rate);
-                        $('#rate_val_'+id).val(value[0].rate);
                         $('#sale_price_'+id).val(value[0].price_dollars);
                         $('#wholesale_price_sale_'+id).val(value[0].wholesale_price);
                         $('#wholesale_price2_sale_'+id).val(value[0].wholesale_price2);
@@ -602,13 +604,13 @@
                         $('#code_'+id).val('');
                         $('#title_'+id).val('');
                         $('#img_'+id).attr('src','');
-                        $('#image_'+id).val('');
+                        // $('#image_'+id).val('');
                         $('#size_'+id).html('');
-                        $('#size_val_'+id).val('');
+                        // $('#size_val_'+id).val('');
                         $('#type_'+id).html('');
-                        $('#type_val_'+id).val('');
+                        // $('#type_val_'+id).val('');
                         $('#rate_'+id).html('');
-                        $('#rate_val_'+id).val('');
+                        // $('#rate_val_'+id).val('');
                         $('#sale_price_'+id).val('');
                         $('#wholesale_price_sale_'+id).val('');
                         $('#wholesale_price2_sale_'+id).val('');
@@ -623,12 +625,9 @@
                 code = $('#code_'+id).val();
                 var dataTitle={'category':category,'title':title};
                 $.get( "<?php echo url .'/'.$this->folder ?>/selectName/",{ jsonData: JSON.stringify(dataTitle)}, function(titleItem) {
-                    // console.log(titleItem);
                     var dat = JSON.parse(titleItem);
-
                     allTitle = '';
                     for(var i=1;i<dat.length;i++){
-                        // console.log(dat[i].code);
                         allTitle += '<option value="'+dat[i].title+'" id="'+dat[i].code+'" />';
                     }
                     $('#list1_'+id).html(allTitle);
@@ -649,13 +648,11 @@
                         var value = JSON.parse(data);
                         $('#code_'+id).val(value[0].code);
                         $('#img_'+id).attr('src','<?php echo $this->save_file?>'+value[0].img);
-                        $('#image_'+id).val(value[0].img);
                         $('#size_'+id).html( "الحجم : "+ value[0].size);
-                        $('#size_val_'+id).val(value[0].size);
                         $('#type_'+id).html("التصنيف :" + value[0].type);
-                        $('#type_val_'+id).val(value[0].type);
+                        $('#latiniin_'+id).html(value[0].latiniin);
+                        $('#catg_'+id).html(value[0].catg);
                         $('#rate_'+id).html("نسبة :"+ value[0].rate);
-                        $('#rate_val_'+id).val(value[0].rate);
                         $('#sale_price_'+id).val(value[0].price_dollars);
                         $('#wholesale_price_sale_'+id).val(value[0].wholesale_price);
                         $('#wholesale_price2_sale_'+id).val(value[0].wholesale_price2);
@@ -680,8 +677,6 @@
                    $('#price_exchange_order').focus();
                     $('#price_purchase_'+id).val('');
                 }
-
-
                 for(var i=1; i<= len_table;i++){
                     $('#price_total_'+i).text($('#price_purchase_'+i).val() * $('#quantity_'+i).val() + ' ' + currency);
                     $('#price_total_'+i).val($('#price_purchase_'+i).val() * $('#quantity_'+i).val());
@@ -828,7 +823,7 @@
         	var priceAndCost = 0;
             $('#priceandcost').text(0);
             $('#total_price_cost').val(0);
-         
+
         	if($('#total-price').val() != 0){
             var totalPrice =  $('#total-price').val() / $('#price_exchange_order').val();
             for(var i=1; i<= countCost;i++){
@@ -838,7 +833,7 @@
             }
             priceAndCost = totalPrice + cost;
             priceAndCost = parseFloat(priceAndCost * $('#price_exchange_order').val()).toFixed(2);
-        
+
             $('#priceandcost').text(priceAndCost);   //total_price_cost
             $('#total_price_cost').val(priceAndCost);
             }
