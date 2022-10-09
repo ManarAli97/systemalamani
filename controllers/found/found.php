@@ -48,15 +48,15 @@ class found extends Controller
 
 
     }
-    
-    
-    
+
+
+
     public function view($id = 0)
     {
         if($id==0) unset( $_SESSION['modelSelcted']);
         $this->checkPermit('list_founded','found');
         $this->adminHeaderController($this->langControl('found'));
-        if (!is_numeric($id)) 
+        if (!is_numeric($id))
         {
             $error = new Errors();
             $error->index();
@@ -79,8 +79,8 @@ class found extends Controller
                 $stmt->execute(array($data['model'], $data['id_cat'],$id));
                 $this->addFoundTracking($id,"model",$this->getCatgryName($data['id_cat'],$data['model']) );
                 $this->lightRedirect(url.'/'.$this->folder.'/view');
-              
-               
+
+
             } catch (Exception $e) {
                 $data = $form->fetch();
                 $data['date'] = strtotime($data['date']);
@@ -95,28 +95,28 @@ class found extends Controller
      */
     public function checkOption($admin,$supplier,$callCenter,$all)
     {
-        
+
         $_SESSION['filterOption']= array();
-        if($admin==1) 
-            $_SESSION['filterOption'][0]= $admin; 
-        else if(isset ($_SESSION['filterOption'][0])) 
+        if($admin==1)
+            $_SESSION['filterOption'][0]= $admin;
+        else if(isset ($_SESSION['filterOption'][0]))
             unset($_SESSION['filterOption'][0]);
 
-        if($supplier==1) 
-            $_SESSION['filterOption'][1]= $supplier; 
-        else if(isset ($_SESSION['filterOption'][1])) 
+        if($supplier==1)
+            $_SESSION['filterOption'][1]= $supplier;
+        else if(isset ($_SESSION['filterOption'][1]))
             unset($_SESSION['filterOption'][1]);
 
-        if($callCenter==1) 
-            $_SESSION['filterOption'][2]= $callCenter; 
-        else if(isset ($_SESSION['filterOption'][2])) 
+        if($callCenter==1)
+            $_SESSION['filterOption'][2]= $callCenter;
+        else if(isset ($_SESSION['filterOption'][2]))
             unset($_SESSION['filterOption'][2]);
-        
-        if($all==1) 
-            $_SESSION['filterOption'][3]= $all; 
-        else if(isset ($_SESSION['filterOption'][3])) 
+
+        if($all==1)
+            $_SESSION['filterOption'][3]= $all;
+        else if(isset ($_SESSION['filterOption'][3]))
             unset($_SESSION['filterOption'][3]);
-        
+
 
 
     }
@@ -143,7 +143,7 @@ class found extends Controller
                 }
 
             ),
-                // المفروض سابقا كان هذا  اسم الماده ولكن للضروره صار رقم هاتف 
+                // المفروض سابقا كان هذا  اسم الماده ولكن للضروره صار رقم هاتف
             array( 'db' => 'title', 'dt' =>2 ),
             array( 'db' => 'content', 'dt' => 3 ),
 
@@ -169,10 +169,10 @@ class found extends Controller
             array(
                 'db'        => 'model',
                 'dt'        => 6,
-                'formatter' => function($id, $row ) {  
+                'formatter' => function($id, $row ) {
                     if(isset( $_SESSION['filterOption'][0]) && $_SESSION['filterOption'][0]==1 || isset( $_SESSION['filterOption'][3]) && $_SESSION['filterOption'][3]==1)
                     {
-                        
+
                         return "
                         <div id='model_$row[5]' style='text-align: center;font-size: 17px; '>
                         <a  href=".url.'/'.$this->folder."/view/$row[5]> <span>{$this->langControl($id)}</span> </a><p style='font-size:10px;' >{$this->getUser($row[5],'model')}</P>
@@ -192,14 +192,14 @@ class found extends Controller
                 return   $this->noteInput($row[5],$d);
             }
         ),
-        array( 
+        array(
             'db' => 'id_item',
             'dt' =>9,
             'formatter' => function($id, $row ) {
                 return $this->textinput($row[5],$id);
             }
         ),
-        
+
         array(  'db' => 'id', 'dt'=>10,
         'formatter' => function($id, $row ) {
             return "
@@ -208,9 +208,9 @@ class found extends Controller
             </div>
             ";
         }
-        
+
     ),
-    array( 
+    array(
         'db' => 'note_called',
         'dt' =>11,
         'formatter' => function($id, $row ) {
@@ -220,7 +220,7 @@ class found extends Controller
         array(
             'db'        => 'id',
             'dt'        =>12,
-            'formatter' => function($id, $row ) { 
+            'formatter' => function($id, $row ) {
                 if($this->permit("delete",$this->folder))
                 {
                     return "
@@ -246,7 +246,7 @@ class found extends Controller
         );
         $select= ' id like "%%" ';
 
-       
+
             if(isset($_SESSION['filterOption'][0])) $select .= ' and model ="بلا" ';
             if(isset($_SESSION['filterOption'][1]))
             {
@@ -259,8 +259,8 @@ class found extends Controller
                         $select .= ' and id_cat = '.$_SESSION['id_catSelcted'].' ';
                     }
                 }
-            } 
-            if(isset($_SESSION['filterOption'][2])) 
+            }
+            if(isset($_SESSION['filterOption'][2]))
             {
                 $select .= ' and called ="0" and id_item !="" and model !="بلا"  ';
                 if(isset($_SESSION['modelSelcted']))
@@ -272,9 +272,9 @@ class found extends Controller
                     }
                 }
             }
-            if(isset($_SESSION['filterOption'][3])) 
+            if(isset($_SESSION['filterOption'][3]))
             {
-              
+
                 if(isset($_SESSION['modelSelcted']))
                 {
                     $select .= ' and model like "%'.$_SESSION['modelSelcted'].'%" ';
@@ -285,7 +285,7 @@ class found extends Controller
                 }
             }
 
-        
+
         echo json_encode(
         // SSP::simple( $_GET, $sql_details, $table, $primaryKey, $columns );
             SSP::complex( $_GET, $sql_details, $table, $primaryKey, $columns,$select)
@@ -314,9 +314,9 @@ class found extends Controller
                 return $d ;
             }
         ),
-       
-       
-   
+
+
+
         );
         // SQL server connection information
         $sql_details = array(
@@ -334,10 +334,10 @@ class found extends Controller
         );
 
     }
-    
+
     /**
-     * هاي الدالة تضيف اي حركة صارت على جدول اطلب مالم تجده 
-     *  */ 
+     * هاي الدالة تضيف اي حركة صارت على جدول اطلب مالم تجده
+     *  */
     public function addFoundTracking($IdFound,$actionType,$theValue)
     {
         $stmt = $this->db->prepare("INSERT INTO `found_tracking`( `id_found`, `action_type`, `user_id`,the_value) VALUES (?,?,?,?)");
@@ -358,19 +358,19 @@ class found extends Controller
         }
     }
     /**
-     * 😁هاي الدالة مخموطه من علي مع بعض التعديلات 
-     * المهم وضيفتها تحدث على الجدول وتخلي حقل الاتصال صح 
+     * 😁هاي الدالة مخموطه من علي مع بعض التعديلات
+     * المهم وضيفتها تحدث على الجدول وتخلي حقل الاتصال صح
      * يتم استدعأها عن طريق اجاكس للعلم
      */
     public function updateCalled($v_, $id_)
     {
         if ($this->handleLogin()) {
-            if (is_numeric($v_) && is_numeric($id_)) 
+            if (is_numeric($v_) && is_numeric($id_))
             {
                 $v = $v_;
                 $id = $id_;
             }
-             else 
+             else
             {
                 $v = 0;
                 $id = 0;
@@ -385,7 +385,7 @@ class found extends Controller
             {
                 $this->addFoundTracking($id,"called","تم الغاء الاتصال");
             }
-            
+
 		}
     }
     /**
@@ -400,13 +400,13 @@ class found extends Controller
             return  "
             <div style='text-align: center;font-size: 18px;'>
              <a href=".url.'/'.$this->folder."/showTraking/$idFound/$actionType> <span>{$this->UserInfo( $found_data['user_id'])}</span> </a>
-             </div> " 
+             </div> "
             ;
-        else 
+        else
             return "";
     }
     /**
-     * نضيف سشن المودل حتى يسوي فلتره 
+     * نضيف سشن المودل حتى يسوي فلتره
      * اجاكس
      */
     public function setModelSession($model){
@@ -416,12 +416,12 @@ class found extends Controller
 
 
     /**
-     * نضيف سشن الفئة حتى يسوي فلتره 
+     * نضيف سشن الفئة حتى يسوي فلتره
      * اجاكس
      */
     public function setId_catSession($id_cat){
         $_SESSION['id_catSelcted']=$id_cat;
-    
+
     }
     /**
      * هاي الدالة تخلي حقل المادة عباره عن مربع نص من يكون المستخدم هو مجهز
@@ -447,7 +447,7 @@ class found extends Controller
         {
         return "
                     <div class='col-xs-2'>
-                        
+
                         <textarea  onfocusout='addNote(this.value,$row)' class='form-control '  type='text' rows='3' >$id</textarea><p style='font-size:10px;' >{$this->getUser($row,'note')}</P>
                     </div>
                 ";
@@ -463,7 +463,7 @@ class found extends Controller
         {
         return "
                     <div class='col-xs-2'>
-                        
+
                         <textarea  onfocusout='addNoteCalled(this.value,$row)' class='form-control '  type='text' rows='3' >$id</textarea><p style='font-size:10px;' >{$this->getUser($row,'note_called')}</P>
                     </div>
                 ";
@@ -492,7 +492,7 @@ class found extends Controller
     }
     /**
      * هاي الدالة انطيها المعرف والمودل وهي تنطيني اسم الفئة 😁
-      */ 
+      */
     function getCatgryName($id,$model){
         $sqlQ = $this->db->prepare("SELECT title FROM category_$model  WHERE `id`=?");
         $sqlQ->execute(array($id));
@@ -506,7 +506,7 @@ class found extends Controller
     {
         $item = $_POST['value1'];
         $id = $_POST['value2'];
-        
+
         $sqlQ = $this->db->prepare("SELECT * FROM found  WHERE `id`=?");
         $sqlQ->execute(array($id));
         $result = $sqlQ->fetch(PDO::FETCH_ASSOC);
@@ -527,15 +527,15 @@ class found extends Controller
     {
         $note = $_POST['value1'];
         $id = $_POST['value2'];
-        
+
         $sqlQ = $this->db->prepare("SELECT * FROM found  WHERE `id`=?");
         $sqlQ->execute(array($id));
-       
-       
+
+
             $stmt = $this->db->prepare("update  found set note_item=? where id=?");
             $stmt->execute(array($note,$id));
             $this->addFoundTracking($id,"note",$note);
-        
+
     }
      /**
      * هاي الدالة تضيف ملاحظة الكول سنتر ويتم استدعاؤها عن طريق اجاكس
@@ -544,26 +544,26 @@ class found extends Controller
     {
         $note = $_POST['value1'];
         $id = $_POST['value2'];
-        
+
         $sqlQ = $this->db->prepare("SELECT * FROM found  WHERE `id`=?");
         $sqlQ->execute(array($id));
-      
-       
+
+
             $stmt = $this->db->prepare("update  found set note_called=? where id=?");
             $stmt->execute(array($note,$id));
             $this->addFoundTracking($id,"note_called",$note);
-        
+
     }
 
     /**
-     * هاي الدالة من خلالها نعرض الحركات الي صارت بواسطة رقم الحقل ونوع الاكشن 
-     * 
+     * هاي الدالة من خلالها نعرض الحركات الي صارت بواسطة رقم الحقل ونوع الاكشن
+     *
      */
     function showTraking($id=null,$actionType=null)
     {
         $this->checkPermit('details','found');
         $this->adminHeaderController($this->langControl('الحركة'));
-       
+
         require ($this->render($this->folder,'html','show_tracking','php'));
         $this->adminFooterController();
     }
@@ -610,7 +610,7 @@ class found extends Controller
         require ($this->render($this->folder,'html','details','php'));
         $this->adminFooterController();
     }
-    
+
     function add()
     {
         $sendProd=false;
@@ -738,6 +738,53 @@ class found extends Controller
                 return $error['document'] = "مطلوب ";
             }
         }
+    }
+
+
+
+
+    public function custemer_contact_them()
+    {
+        $this->checkPermit('custemer_contact_them','found');
+        $this->adminHeaderController($this->langControl('found'));
+
+        require ($this->render($this->folder,'html','custemer_contact_them','php'));
+        $this->adminFooterController();
+    }
+
+
+    //
+    public function processing_custemer_contact($phone)
+    {
+        $table = "found";
+        $primaryKey = 'found.id';
+
+        $columns = array(
+            array( 'db' => 'found.title', 'dt' => 0 ),
+            array( 'db' => 'found.content', 'dt' => 1),
+            array( 'db' => 'found.date', 'dt' => 2 ,
+                'formatter' => function( $date, $row ) {
+                    return date( 'Y-m-d h:i A', $date);
+                }
+            ),
+            array('db' => 'found.note_called', 'dt' =>3)
+        );
+        // SQL server connection information
+        $sql_details = array(
+            'user' => DB_USER,
+            'pass' => DB_PASS,
+            'db'   => DB_NAME,
+            'host' => DB_HOST,
+            'charset' => 'utf8'
+        );
+
+        $join = " ";
+        $where = " found.title like '%{$phone}%' AND  found.called = 1";
+
+        // print_r($whereAll);
+        echo json_encode(
+            SSP::complex_join( $_GET, $sql_details, $table, $primaryKey, $columns,$join,null,$where,null)
+        );
     }
 
 }

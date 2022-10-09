@@ -1,4 +1,3 @@
-
 <script>
     var table;
     $(document).ready(function() {
@@ -181,16 +180,16 @@
         <table  id="example" class="table table-striped display d-table"  >
             <thead>
             <tr>
-
-                <th>    السلسه  </th>
                 <th>   نوع الجهاز  </th>
                 <th> اسم الحافظة </th>
+                <th> اسم المجموعة</th>
                 <th> الباركود </th>
                 <th> التاريخ </th>
                 <th> الكمية </th>
                 <th> السعر </th>
                 <th> الموقع </th>
                 <th> الصورة </th>
+                <th> اسم المستخدم </th>
                 <th> تاريخ  </th>
                 <th>  المواقع  </th>
 

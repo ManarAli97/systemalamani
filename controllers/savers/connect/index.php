@@ -79,6 +79,7 @@
                     <th><?php  echo $this->langControl('date') ?></th>
 
                     <th>حذف</th>
+                    <th> تعديل</th>
                     <th>المستخدم</th>
 
                 </tr>

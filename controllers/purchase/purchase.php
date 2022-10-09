@@ -661,13 +661,13 @@ class purchase extends Controller {
                     ->val('is_array')
                     ->val('strip_tags');
 
-
+                $form->post('code')
+                    ->val('is_array')
+                    ->val('strip_tags');
 
                 $form->post('quantity')
                     ->val('is_array')
                     ->val('strip_tags');
-
-
 
                 $form->post('price_purchase')
                     ->val('is_array')
@@ -1198,7 +1198,7 @@ class purchase extends Controller {
         $item_order = array();
         $payment_order = array();
         $cost_order = array();
-        $allPayment = 0.0;
+        $allPayment = 0;
         $nameCurrency = '';
         // عرض اسماء الموردين
         $nameSupplier=array();
@@ -1400,11 +1400,11 @@ class purchase extends Controller {
 
             // add order to table trace
             $allData = array();
-            // $allData = array_merge($bill_purchase, $item_order);
+
             $allData = $bill_purchase;
             $allData['item_purchase'] = $item_order;
             $allData['payment_purchase'] =  $payment_order;
-
+            $payment = 0;
             // تكلفة شراء اضافية
             $allData['cost_purchase'] =  $cost_order;
 
@@ -1421,6 +1421,10 @@ class purchase extends Controller {
             // print_r($o);
             // echo '</pre>';
             // echo $o['item_purchase'][0]['title'];
+
+            $balance_before = $bill_purchase[0]['total-price'] - $allPayment ;
+            $updateBalance = $this->db->prepare("UPDATE `supplier_accounts` SET `balance` =  `balance` - ?  WHERE `id_supplier`=? AND `id_currency` = ?");
+            $updateBalance->execute(array($balance_before,$bill_purchase[0]['idsupplier'],$bill_purchase[0]['idcurrency']));
 
 
             try {
@@ -1753,11 +1757,28 @@ class purchase extends Controller {
                         if($subtotal !='' && $idPayment[$key] == '0'){
                             $stmt_payment = $this->db->prepare("INSERT INTO `payment_purchase` (`idpurchase`,`iduser`,`payment`,`id_name_pay`,`price_exchange`,`note`,`date`) VALUES (?,?,?,?,?,?,?)");
                             $stmt_payment->execute(array($id,$this->userid,$subtotal,$namePay[$key],$priceExchange[$key],$notePayment[$key],time()));
+                            $payment += $subtotal;
                         }else{
 
                             $update_payment = $this->db->prepare("UPDATE `payment_purchase` SET `payment`=? ,`id_name_pay`=? ,`price_exchange`=? ,`note`=?   WHERE `idpurchase` =? AND `id` = ?");
                             $update_payment->execute(array($subtotal,$namePay[$key],$priceExchange[$key],$notePayment[$key],$id,$idPayment[$key]));
+                            $payment += $subtotal;
                         }
+                    }
+
+
+                    $balance = $data['total-price'] -  $payment ;
+                    $checkSupplier = $this->db->prepare("SELECT `id` FROM `supplier_accounts` WHERE `id_supplier`=? AND `id_currency` = ?");
+                    $checkSupplier->execute(array($data['name_supplier'],$data['currency']));
+                    if($checkSupplier->rowCount() > 0){
+                        $idRow = $checkSupplier->fetch(PDO::FETCH_ASSOC);
+
+                        $updateBalance = $this->db->prepare("UPDATE `supplier_accounts` SET `balance` =  `balance` + ?  WHERE `id` = ?");
+                        $updateBalance->execute(array($balance,$idRow['id']));
+                    }else{
+
+                        $stmt_balance = $this->db->prepare("INSERT INTO `supplier_accounts` (`id_supplier`,`id_currency`,`balance`,`iduser`,`date`) VALUE (?,?,?,?,?)");
+                        $stmt_balance->execute(array($data['name_supplier'],$data['currency'],$balance,$this->userid,time()));
                     }
 
                 }

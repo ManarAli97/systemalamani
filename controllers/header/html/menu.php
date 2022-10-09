@@ -684,7 +684,7 @@
                         <a class="reports" href="<?php echo url?>/report/report_point_sales"> <?php  echo $this->langControl('report_point_sales') ?> </a>
                     </li>
                 <?php  }  ?>
-                   
+
             </ul>
         </li>
     <?php  }  ?>
@@ -1794,6 +1794,9 @@
 
     <?php  if ($this->permit('found','found')) {  ?>
         <li class="found">  <a href="<?php echo url?>/found/view" class="found"> <?php  echo $this->langControl('found') ?> </a> </li>
+    <?php  } ?>
+    <?php  if ($this->permit('custemer_contact_them','found')) {  ?>
+        <li class="found">  <a href="<?php echo url?>/found/custemer_contact_them" class="found"> <?php  echo $this->langControl('custemer_contact_them') ?> </a> </li>
     <?php  } ?>
 
     <?php  if ($this->permit('print_devices','print_devices')) {  ?>

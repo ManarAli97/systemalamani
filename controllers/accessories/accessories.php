@@ -670,7 +670,7 @@ class Accessories extends Controller
         $data['bast_it']='';
         $data['serial_flag']='';
         $data['price_dollars']='';
-      
+
 		$data['enter_serial'] = '';
         $data['cuts']='';
         $data['price_cuts']='';
@@ -713,10 +713,10 @@ class Accessories extends Controller
                     ->val('strip_tags');
                 $form  ->post('price_dollars')
                     ->val('strip_tags');
-               
+
             	$form->post('is_service')
                     ->val('strip_tags');
-            
+
 				$form->post('enter_serial')
 					->val('strip_tags');
                 $form  ->post('name_color')
@@ -1002,13 +1002,13 @@ class Accessories extends Controller
                     ->val('strip_tags');
                 $form  ->post('price_dollars')
                     ->val('strip_tags');
-               
+
             	 $form->post('is_service')
                     ->val('strip_tags');
 
 				$form->post('enter_serial')
 					->val('strip_tags');
-            
+
                 $form  ->post('cuts')
                     ->val('strip_tags');
 
@@ -1093,7 +1093,7 @@ class Accessories extends Controller
                 {
                     $specifications='';
                 }
-                ;	
+                ;
 
 
                 $image_new=array();
@@ -2140,10 +2140,10 @@ class Accessories extends Controller
                     $stmt_order = $this->db->prepare("SELECT   SUM(`number`)as num ,`dollar_exchange` FROM `cart_shop_active` WHERE `code` =?  AND  `buy` = 0 AND `status` = 0    AND `table`=?  AND  `id_member_r` = ?");
                     $stmt_order->execute(array($result['code'],$this->table,$data['id_member_r']));
                     $only_order=$stmt_order->fetch(PDO::FETCH_ASSOC);
-                
+
                     $q= $result['quantity']  - $only_order['num'];
 					// $data['cost_price'] = $price_2D['cost_price'];
-                
+
                     if ($q >= $data['number']) {
 
                         $data['code'] = $result_color['code'];
@@ -2155,7 +2155,7 @@ class Accessories extends Controller
                         $stmt_item = $this->db->prepare("SELECT * from `{$this->table}` WHERE  `id`=?  ");
                         $stmt_item->execute(array($id));
                         $result_item = $stmt_item->fetch(PDO::FETCH_ASSOC);
-	
+
                         if ($result_item['cuts']== 1)
                         {
                             $data['price'] = $result_item['price_cuts'];
@@ -2337,7 +2337,7 @@ class Accessories extends Controller
                             if ($result_item['price_dollars'] == 1 )
                             {
                                 $data['price'] = $this->price_dollars($price_2D['price_dollars']);
-                            
+
                             }else
                             {
                                 $data['price'] = $price_2D['wholesale_price'];
@@ -2382,14 +2382,14 @@ class Accessories extends Controller
                         } else {
                             $data['price_dollars'] = $price_2D['price_dollars'];
                         }
-                    	
+
                     }else
                     {
                         $data['price_dollars'] = $price_2D['price_dollars'];
-                    	
-                    	
+
+
                     }
-	
+
 					$stmt_chx = $this->db->prepare("SELECT   * FROM `cart_shop_active` WHERE `id_item` =?  AND `code` =?  AND  `buy` = 0 AND `status` = 0    AND `table`=?  AND  `id_member_r` = ? AND `name_color`=?  AND  price_type=? ");
 					$stmt_chx->execute(array($data['id_item'],$data['code'], $this->table, $data['id_member_r'], $data['name_color'], $data['price_type']));
 					if ($stmt_chx->rowCount() > 0)
@@ -3298,7 +3298,7 @@ class Accessories extends Controller
 
 									$update = $this->db->prepare("UPDATE `{$this->table}`  SET  `is_delete`=0   WHERE id = ?  ");
                                     $update->execute(array($result['id']));
-                                
+
                                     $trace=new trace_site();
                                     $newData=$trace->neaw($result['id'],$this->folder);
                                     $trace->add($result['id'],$this->folder,'رفع سريع','',$rowData[0][0],'',$newData);
@@ -3542,6 +3542,24 @@ class Accessories extends Controller
                 'db' => 'id',
                 'dt' => 3,
                 'formatter' => function ($id, $row) {
+                    if ($this->permit('edit_accessories_connect_connect',$this->folder)) {
+                        return "
+                        <div style='text-align: center'>
+                            <a href=".url."/accessories/edit_accessories_connect/$id>
+                                <i class='fa fa-edit' aria-hidden='true'></i>
+                            </a>
+                        </div> ";
+                    } else {
+                        return "لا تمتلك صلاحية";
+                    }
+                }
+            ),
+
+
+            array(
+                'db' => 'id',
+                'dt' => 4,
+                'formatter' => function ($id, $row) {
                     if ($this->permit('delete_accessories_connect_connect',$this->folder)) {
                         return "
                    <div style='text-align: center'>
@@ -3555,7 +3573,7 @@ class Accessories extends Controller
                     }
                 }
             ),
-            array('db' => 'id', 'dt' => 4)
+            array('db' => 'id', 'dt' => 5)
 
 
         );
@@ -3574,6 +3592,78 @@ class Accessories extends Controller
         );
 
     }
+
+    function edit_accessories_connect($id=null)
+    {
+        $this->checkPermit('list_accessories_connect', $this->folder);
+        $this->adminHeaderController($this->langControl('list_saver_connect'));
+
+        $stmt = $this->db->prepare("SELECT `title`,ids FROM `category_accessories_connect` WHERE id = ?  ");
+        $stmt->execute(array($id));
+        if ($stmt->rowCount() > 0) {
+            $dev = $stmt->fetch(PDO::FETCH_ASSOC);
+            $title = explode(' // ',$dev['title']);
+            $ids = explode(',',$dev['ids']);
+        }
+
+
+        if (isset($_POST['submit']))
+        {
+            try
+            {
+                $form =new  Form();
+
+
+
+                $form  ->post('ids')
+                    ->val('is_array')
+                    ->val('strip_tags');
+
+
+                $form ->submit();
+                $data =$form -> fetch();
+                $data['date']=time();
+
+                $data['userid']=$this->userid;
+
+
+                $ids= json_decode($data['ids'], true);
+
+                if (!empty($ids)) {
+
+                    $title = array();
+                    foreach ($ids as $d) {
+
+                        $stmt = $this->db->prepare("SELECT `title` FROM `category_accessories` WHERE  `id`=? ");
+                        $stmt->execute(array($d));
+                        $dev = $stmt->fetch(PDO::FETCH_ASSOC);
+                        $title[] = $dev['title'];
+
+                    }
+
+
+                    $data['title'] = implode(' // ', $title);
+                    $data['ids'] = implode(',', $ids);
+
+                    $where = "id = ".$id ;
+                    $id_add=$this->db->update($this->category_accessories_connect,$data,$where);
+
+                }
+                $this->lightRedirect(url.'/'.$this->folder."/list_accessories_connect",0);
+
+
+            }
+            catch (Exception $e)
+            {
+                $data =$form -> fetch();
+
+                $this->error_form= $e -> getMessage();
+            }
+        }
+        require($this->render($this->folder, 'connect', 'edit', 'php'));
+        $this->adminFooterController();
+    }
+
 
     public function ch_connect($id)
     {
@@ -3873,7 +3963,7 @@ class Accessories extends Controller
                 $row_cont['color'] = $details['color'];
                 $row_cont['nameImage'] = $details['img'];
                 $row_cont['like'] = $this->ckeckLick($row_cont['id']);
-            
+
             	 // اذا كانت الفئة الرئيسية هي اللواصق يعرض اسم الفئة والا يعرض اسم اللاصق
                 $result_check = $this->check_id_catge($id);
                 if($result_check == 1){
@@ -3889,8 +3979,8 @@ class Accessories extends Controller
                     }
                 }else{
                     $row_cont['title'] = $row_cont['title'];
-                } 
-            
+                }
+
                 $table[] = $row_cont;
 
             }
@@ -3898,7 +3988,7 @@ class Accessories extends Controller
 
 
 
-       
+
     	$date = time();
         $stmtOffers=$this->db->prepare("SELECT offers.id, offers_item.code  FROM `offers` INNER JOIN `offers_item` ON offers.id = offers_item.id_offer  WHERE offers_item.model = ? AND offers.active=1 AND {$date} BETWEEN `fromdate` AND `todate`AND offers.delete =0");
         $stmtOffers->execute(array('accessories'));
@@ -4578,8 +4668,8 @@ class Accessories extends Controller
 
 
     function fixed_location() {
-		
-    
+
+
     	$this->AddToTraceByFunction($this->userid,'accessories','fixed_location');
         $stmt=$this->db->prepare("SELECT  code  FROM  location WHERE model='accessories' AND fixed_location=0 ");
         $stmt->execute();
@@ -4596,7 +4686,7 @@ class Accessories extends Controller
 
  function zero_location ($s=null)
     {
- 
+
  	$this->AddToTraceByFunction($this->userid,'accessories','zero_location/'.$s);
         if ($s) {
 

@@ -81,7 +81,7 @@
                     <th>تفعيل</th>
 
                     <th><?php  echo $this->langControl('date') ?></th>
-
+                    <th> تعديل</th>
                     <th>حذف</th>
 
                 </tr>

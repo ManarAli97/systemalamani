@@ -624,7 +624,7 @@ use type_cover,feature_cover;
 			{
 				$idProd['image'] = $this->save_file . $idProd['img'];
 				$idProd['id_device'] = $idProd['id_type_device'];
-            	
+
             	 $stmt_cat = $this->db->prepare("SELECT `title` FROM `type_device` WHERE id=?  AND  active=1 LIMIT 1");
                 $stmt_cat->execute(array($id));
                 if($stmt_cat->rowCount()>0)
@@ -632,7 +632,7 @@ use type_cover,feature_cover;
                     $row_cat = $stmt_cat->fetch(PDO::FETCH_ASSOC);
                     $idProd['title_device'] = $row_cat['title'];
                 }
-            
+
                 $idProd['id_device_coustomer'] = $id;
 
                 if ($this->loginUser()) {
@@ -3606,7 +3606,7 @@ use type_cover,feature_cover;
 		$this->adminFooterController();
 	}
 
-
+//  manar
 	public function processing_quantity()
 	{
 		$this->checkPermit('view_quantity', $this->folder);
@@ -3616,10 +3616,9 @@ use type_cover,feature_cover;
 
 		$columns = array(
 
-
-			array('db' => 'name_device.title', 'dt' => 0),
-			array('db' => 'type_device.title', 'dt' => 1),
-			array('db' => 'product_savers.title', 'dt' =>2),
+			array('db' => 'type_device.title', 'dt' =>0),
+			array('db' => 'product_savers.title', 'dt' =>1),
+            array('db' => 'product_savers.group_name', 'dt' => 2),
 			array('db' => $tableJoin . 'code', 'dt' => 3),
             array('db' => 'product_savers.date', 'dt' => 4,
             'formatter' => function ($d, $row) {
@@ -3632,15 +3631,15 @@ use type_cover,feature_cover;
             array('db' =>'product_savers.locationTag', 'dt' => 7,
                 'formatter' => function( $d, $row ) {
                     if ($d == 1) {
-                        $span = "<span class='location_active_{$row[11]}' style='color: green;font-weight: bold;display: block'>ON</span>";
+                        $span = "<span class='location_active_{$row[12]}' style='color: green;font-weight: bold;display: block'>ON</span>";
                     } else {
-                        $span = "<span class='location_active_{$row[11]}' style='color: red;font-weight: bold;display: block'>OFF</span>";
+                        $span = "<span class='location_active_{$row[12]}' style='color: red;font-weight: bold;display: block'>OFF</span>";
 
                     }
                     if ($this->permit('visible_location', $this->folder)) {
                         $span .= "
                             <div style='text-align: center'>
-                              <input {$this->ch_location($row[11])} class='toggle-demo' onchange='visible_savers_location(this,$row[11])' type='checkbox' data-on='On' data-off='Off' id='toggle-event'    data-toggle='toggle' data-style='ios' data-onstyle='success' data-size='small'>
+                              <input {$this->ch_location($row[12])} class='toggle-demo' onchange='visible_savers_location(this,$row[12])' type='checkbox' data-on='On' data-off='Off' id='toggle-event'    data-toggle='toggle' data-style='ios' data-onstyle='success' data-size='small'>
                              </div>
                          ";
                     }
@@ -3655,14 +3654,21 @@ use type_cover,feature_cover;
 					return "<img  src='".$this->save_file.$d."' style='width: 50px;border: 1px solid gainsboro;'>";
 				}
 			),
-            array('db' => 'product_savers.date', 'dt' => 9,
+
+            array('db' => 'excel_savers.userid', 'dt' => 9,
+                'formatter' => function ($user, $row) {
+                    return $this->UserInfo($user);
+                }
+            ),
+            array('db' => 'product_savers.date', 'dt' => 10,
                 'formatter' => function( $d, $row ) {
                                      return  date('Y-m-d h:i:s A',$d) ;
                 }),
-            array('db' => 'product_savers.code', 'dt' => 10,
+
+            array('db' => 'product_savers.code', 'dt' => 11,
                 'formatter' => function( $d, $row ) {
                     $m="'{$this->folder}'";;
-                    
+
                     return '
                    <button class="btn btn-primary btn_location" onclick="list_location('.$d.','.$m.')"  type="button" data-toggle="collapse" data-target="#get_location-'.$d.'" aria-expanded="false" aria-controls="get_location'.$d.'">المواقع</button>
                    <div class="collapse multi-collapse" id="get_location-'.$d.'">
@@ -3671,7 +3677,7 @@ use type_cover,feature_cover;
                 </div>
                 ';
                 }),
-            array('db' => 'product_savers.id', 'dt' => 11),
+            array('db' => 'product_savers.id', 'dt' => 12),
 
 		);
 
@@ -3739,6 +3745,7 @@ use type_cover,feature_cover;
 			SSP::complex_join($_GET, $sql_details, $table, $primaryKey, $columns, $join, null, $whereAll,null,null));
 
 	}
+
 
 
 
@@ -4117,10 +4124,26 @@ use type_cover,feature_cover;
                 }
 
             ),
-
             array(
                 'db' => 'product_savers_connect.id',
                 'dt' => 3,
+                'formatter' => function ($id, $row) {
+                    if ($this->permit('edit_product_savers_connect',$this->folder)) {
+                        return "
+                        <div style='text-align: center'>
+                            <a href=".url."/savers/edit_savers_connect/$id>
+                                <i class='fa fa-edit' aria-hidden='true'></i>
+                            </a>
+                        </div> ";
+                    } else {
+                        return "لا تمتلك صلاحية";
+                    }
+                }
+            ),
+
+            array(
+                'db' => 'product_savers_connect.id',
+                'dt' => 4,
                 'formatter' => function ($id, $row) {
                     if ($this->permit('delete_product_savers_connect',$this->folder)) {
                         return "
@@ -4135,8 +4158,8 @@ use type_cover,feature_cover;
                     }
                 }
             ),
-            array('db' => 'user.username', 'dt' => 4),
-            array('db' => 'product_savers_connect.id', 'dt' => 5)
+            array('db' => 'user.username', 'dt' => 5),
+            array('db' => 'product_savers_connect.id', 'dt' => 6)
 
 
         );
@@ -4161,6 +4184,78 @@ use type_cover,feature_cover;
 
 
 
+    }
+
+    function edit_savers_connect($id=null)
+    {
+        $this->checkPermit('edit_savers_connect', $this->folder);
+        $this->adminHeaderController($this->langControl('list_saver_connect'));
+
+        $stmt = $this->db->prepare("SELECT `title`,ids FROM `product_savers_connect` WHERE id = ?  ");
+        $stmt->execute(array($id));
+        if ($stmt->rowCount() > 0) {
+            $dev = $stmt->fetch(PDO::FETCH_ASSOC);
+            $title = explode(' // ',$dev['title']);
+            $ids = explode(',',$dev['ids']);
+        }
+
+
+        if (isset($_POST['submit']))
+        {
+            try
+            {
+                $form =new  Form();
+
+
+
+                $form  ->post('ids')
+                    ->val('is_array')
+                    ->val('strip_tags');
+
+
+                $form ->submit();
+                $data =$form -> fetch();
+                $data['date']=time();
+
+                $data['userid']=$this->userid;
+
+
+                $ids= json_decode($data['ids'], true);
+
+                if (!empty($ids)) {
+
+                    $title = array();
+                    foreach ($ids as $d) {
+
+                        $stmt = $this->db->prepare("SELECT `title` FROM `type_device` WHERE  `id`=? AND {$this->is_delete} ");
+                        $stmt->execute(array($d));
+                        $dev = $stmt->fetch(PDO::FETCH_ASSOC);
+                        $title[] = $dev['title'];
+
+                    }
+
+
+                    $data['id_cat'] =  $id;
+                    $data['title'] = implode(' // ', $title);
+                    $data['ids'] = implode(',', $ids);
+
+                    $where = "id = ".$id ;
+                    $id_add=$this->db->update($this->product_savers_connect,$data,$where);
+
+                    }
+               $this->lightRedirect(url.'/'.$this->folder."/list_saver_connect/{$id}",0);
+
+
+            }
+            catch (Exception $e)
+            {
+                $data =$form -> fetch();
+
+                $this->error_form= $e -> getMessage();
+            }
+        }
+        require($this->render($this->folder, 'connect', 'edit', 'php'));
+        $this->adminFooterController();
     }
 
     public function ch_connect($id)
@@ -5910,7 +6005,7 @@ function x()
 		{
 			$category[]=$row;
 		}
-    
+
     	 $stmtcover_material = $this->db->prepare("SELECT * from `cover_material`   ");
         $stmtcover_material->execute(array());
         $cover_material=array();
@@ -5935,7 +6030,7 @@ function x()
         {
             $feature_cover[]=$row;
         }
-    
+
         require($this->render($this->folder, 'html', 'full_report', 'php'));
         $this->adminFooterController();
 
@@ -6006,7 +6101,7 @@ function x()
                     return $this->currentQuantity($code);
                 }
             ),
-         
+
             array('db' => 'product_savers.id', 'dt' =>8,
                 'formatter' => function ($id, $row) {
                 return $this->typeSavers($row[9],$row[10],$row[11]);
@@ -6238,7 +6333,7 @@ function x()
 
 
 
-	
+
     // عرض مجموع الحافظات الرجالية او النسائية
     function numberCover($model,$type){
         $quantity = 0;
@@ -6432,7 +6527,7 @@ function x()
     }
 
 
-   // تعديل النسبة 	
+   // تعديل النسبة
 	function updateRate($idSavers,$rate){
         $update =$this->db->prepare("UPDATE `product_savers` SET `note` = ? WHERE `id` = ?");
         $update->execute(array($rate,$idSavers));
@@ -6648,7 +6743,7 @@ function x()
                 $quantity[$key]= $row_quantity['num'];
             }
         }
-       
+
         return $quantity;
     }
 

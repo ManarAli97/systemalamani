@@ -848,7 +848,7 @@ class User extends Controller
                 'db'        => 'id',
                 'dt'        => 11,
                 'formatter' => function($id, $row ) {
-                    return " 
+                    return "
                    <div style='text-align: center;font-size: 23px;'>
                     <a href=".url."/user/edit/$id> <i class='fa fa-pencil-square-o' aria-hidden='true'></i> </a>
                     </div> ";
@@ -870,7 +870,7 @@ class User extends Controller
                 'db'        => 'id',
                 'dt'        => 13,
                 'formatter' => function($id, $row ) {
-                    return " 
+                    return "
                    <div style='text-align: center;font-size: 23px;'>
                     <a href=".url."/permit/admin_permit_user/$id> <i class='fa fa-list-alt' aria-hidden='true'></i> </a>
                     </div> ";
@@ -1222,7 +1222,7 @@ class User extends Controller
                 'db'        => 'id',
                 'dt'        => 10,
                 'formatter' => function($id, $row ) {
-                    return " 
+                    return "
                    <div style='text-align: center;font-size: 23px;'>
                     <a href=".url."/user/edit/$id> <i class='fa fa-pencil-square-o' aria-hidden='true'></i> </a>
                     </div> ";
@@ -1244,7 +1244,7 @@ class User extends Controller
                 'db'        => 'id',
                 'dt'        => 12,
                 'formatter' => function($id, $row ) {
-                    return " 
+                    return "
                    <div style='text-align: center;font-size: 23px;'>
                     <a href=".url."/permit/admin_permit_user/$id> <i class='fa fa-list-alt' aria-hidden='true'></i> </a>
                     </div> ";
