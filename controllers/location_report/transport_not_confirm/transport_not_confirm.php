@@ -166,7 +166,7 @@ trait transport_not_confirm
 //        }
 
 
-        $stmtdata = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 1 AND `transport`=? /*GROUP BY code,model,transport*/");
+        $stmtdata = $this->db->prepare("SELECT *, SUM(`quantity`) as `quantity`, GROUP_CONCAT(`location`) as location FROM location_transport WHERE  `active` = 1 AND `transport`=? GROUP BY code");
         $stmtdata->execute(array($transport));
         $data = array();
         while ($row = $stmtdata->fetch(PDO::FETCH_ASSOC)) {
@@ -275,10 +275,7 @@ trait transport_not_confirm
     {
 
         if ($this->handleLogin()) {
-
-
             if (isset($_POST['submit'])) {
-
                 $model = trim($_POST['model']);
                 $location = trim($_POST['location']);
                 $code = trim($_POST['code']);
@@ -288,16 +285,15 @@ trait transport_not_confirm
                     $quantity = 0;
                 }
                 $color = 'بلا';
-
-                
                 $stmtxm = $this->db->prepare("SELECT `sequence` FROM `location_model`  WHERE `location`=?  AND `model` =?  ");
                 $stmtxm->execute(array($location, $model));
                 if ($stmtxm->rowCount() > 0) {
-                    //  اذا كان الموقع مضاف 
+                    //  اذا كان الموقع مضاف
                     $location_model=$stmtxm->fetch(PDO::FETCH_ASSOC);
 
                     // ناخذ من المناقلة
-                    $stmt_check_q = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 1 AND code=?  AND model=? AND transport=?  LIMIT 1");
+
+                    $stmt_check_q = $this->db->prepare("SELECT *,  SUM(quantity) as quantity FROM location_transport WHERE  `active` = 1 AND code=?  AND model=? AND transport=?  ");
                     $stmt_check_q->execute(array($code, $model, $transport ));
                     $result_location= $stmt_check_q->fetch(PDO::FETCH_ASSOC);
 
@@ -308,7 +304,7 @@ trait transport_not_confirm
                         // اذا ما كان مضاف نضيفه
                         $stmtins = $this->db->prepare("INSERT INTO location (`model` , location  , `code` ,quantity,userid ,date,`new_location`,`sequence`) values (?,?,?,?,?,?,?,?)");
                         $stmtins->execute(array($model, $location, $code, 0, $this->userid, time(), 1,$location_model['sequence']));
-                        // get last id 
+                        // get last id
                         // $last_id = $this->db->lastInsertId();
                     }
 
@@ -320,7 +316,7 @@ trait transport_not_confirm
                     // $stmtchq->execute(array($model, $location, $code));
 
                     if ($stmtins->rowCount() > 0) {
-                        // اذا كان مضاف  
+                        // اذا كان مضاف
 
                         // نشوف اذا كان كمية المادة اكبر من الكمية الموجودة في المناقلة
                         $stmtlocation = $this->db->prepare("SELECT * FROM location WHERE `model`=? AND location  = ?   AND `code` =? AND quantity >= ? ");
@@ -328,9 +324,9 @@ trait transport_not_confirm
                         if ($stmtlocation ->rowCount() ) {
                             // اذا كانت كمية المادة اكبر من الكمية الموجودة في المناقلة
                             $q = true;
-                            // مره لخ يرجع يسوي ركوست على هاي 
-                            // هذا راح الغي لان ماله داعي 
-                            // 
+                            // مره لخ يرجع يسوي ركوست على هاي
+                            // هذا راح الغي لان ماله داعي
+                            //
                             // $stmtx1 = $this->db->prepare("SELECT * FROM location_transport WHERE  `active` = 1 AND code=?  AND model=? AND transport=?");
                             // $stmtx1->execute(array($code, $model, $transport));
                             // if ($stmtx1->rowCount() > 0) {
@@ -347,7 +343,7 @@ trait transport_not_confirm
 
                                         if ($result_location['quantity'] >= $quantity) {
 
-                                            $stmtch = $this->db->prepare("SELECT *FROM   WHERE  `active` = 1 AND location = ? AND code=? AND model=? AND transport=? AND from_location=?");
+                                            $stmtch = $this->db->prepare("SELECT *FROM `location_transport_convert`  WHERE  `active` = 1 AND location = ? AND code=? AND model=? AND transport=? AND from_location=?");
                                             $stmtch->execute(array($location, $code, $model, $transport, $result_location['location']));
                                             if ($stmtch->rowCount() > 0) {
 //
@@ -367,7 +363,7 @@ trait transport_not_confirm
                                                 $stmt = $this->db->prepare("INSERT INTO location_transport_convert ( model, location, code, quantity, transport, active, date, userid,from_location,quantity_trans,user_pull,serial)values (?,?,?,?,?,?,?,?,?,?,?,?)");
                                                 $stmt->execute(array($model, $location, $code, $quantity, $transport, 1, time(), $this->userid, $result_location['location'], $quantity, $result_location['userid'], $result_location['serial']));
                                                 if ($stmt->rowCount() > 0) {
-                                                    $stmtup_trans = $this->db->prepare("UPDATE    location_transport SET  quantity=quantity - ? WHERE  `active` = 1 AND code=?  AND model=? AND transport = ? AND `location` =?  ");
+                                                    $stmtup_trans = $this->db->prepare("UPDATE    location_transport SET  quantity = quantity - ? WHERE  `active` = 1 AND code=?  AND model=? AND transport = ? AND `location` =?  ");
                                                     $stmtup_trans->execute(array($quantity, $code, $model, $transport, $result_location['location']));
 
                                                     $this->date_transport_not_confirm($transport,$result_location['id']);

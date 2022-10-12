@@ -549,10 +549,10 @@
                         var last = respon.slice(respon.indexOf("<"),respon.length);
                         console.log(last);
                         console.log(id);
-                         
-                        $('#row_db_'+id).empty();   
+
+                        $('#row_db_'+id).empty();
                         $('#row_db_'+id).html(last);
-                        
+
                         $('#alert_over_q').empty();
                     }
                   }
@@ -584,8 +584,8 @@
                         var last = respon.slice(respon.indexOf("<"),respon.length);
                         console.log(last);
                         console.log(id);
-                         
-                        $('#row_db_'+id).empty();   
+
+                        $('#row_db_'+id).empty();
                         $('#row_db_'+id).html(last);
 
             }
@@ -609,8 +609,8 @@
                         // var last = respon.slice(respon.indexOf("<"),respon.length);
                         // console.log(last);
                         // console.log(id);
-                         
-                        $('#row_db_'+respon).empty();   
+
+                        $('#row_db_'+respon).empty();
                         // $('#row_db_'+id).html(last);
 			}
         });

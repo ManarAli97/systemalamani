@@ -3655,7 +3655,7 @@ use type_cover,feature_cover;
 				}
 			),
 
-            array('db' => 'excel_savers.userid', 'dt' => 9,
+            array('db' => 'product_savers.userId', 'dt' => 9,
                 'formatter' => function ($user, $row) {
                     return $this->UserInfo($user);
                 }
@@ -6733,7 +6733,7 @@ function x()
     function quantNextByAllType($model){
         $quantity = array();
 
-        $stmt_quantity= $this->db->prepare("SELECT  SUM(`purchase_item`.`quantity`) as num,`product_savers`.`cover_material`,`product_savers`.`type_cover`, `product_savers`.`feature_cover` FROM `purchase_item` INNER JOIN `product_savers` ON `purchase_item`.`code` = `product_savers`.`code` WHERE   `product_savers`.`id_device` = ? AND `product_savers`.`is_delete` = 0   GROUP by `product_savers`.`cover_material` ,`product_savers`.`type_cover`, `product_savers`.`feature_cover` ");
+        $stmt_quantity= $this->db->prepare("SELECT  SUM(`purchase_item`.`quantity`) as num,`product_savers`.`cover_material`,`product_savers`.`type_cover`, `product_savers`.`feature_cover` FROM `purchase_item` INNER JOIN `product_savers` ON `purchase_item`.`code` = `product_savers`.`code` WHERE   `product_savers`.`id_device` = ? AND `product_savers`.`is_delete` = 0    GROUP by `product_savers`.`cover_material` ,`product_savers`.`type_cover`, `product_savers`.`feature_cover` ");
         $stmt_quantity->execute(array($model));
 
         if ($stmt_quantity->rowCount() > 0)

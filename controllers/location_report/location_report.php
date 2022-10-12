@@ -84,7 +84,7 @@ class location_report extends Controller
            `checked` int(20) NOT NULL DEFAULT 0,
            `user_checked` int(20) NOT NULL,
            `date` bigint(20) NOT NULL,
-           
+
            PRIMARY KEY (`id`)
      ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
@@ -548,7 +548,7 @@ class location_report extends Controller
 
 	public function processing_report_savers($from,$to,$model=null,$id=null,$fromDate=0,$toDate=0)
 	{
- 
+
 		$this->checkPermit('location_report', $this->folder);
 		$this->from=$from;
 		$this->to=$to;
@@ -680,7 +680,7 @@ class location_report extends Controller
 		 <tr>
         <td style='padding: 0;    vertical-align: unset;background: #add'> م  </td>
         <td style='padding: 0;    vertical-align: unset;background: #fea'>  ك </td>
-      
+
            </tr>
 			";
 
@@ -689,7 +689,7 @@ class location_report extends Controller
 		 <tr>
         <td style='padding: 0;    vertical-align: unset;background: #ad7'>   {$this->tamayaz_locations($row['location'])}   </td>
         <td style='padding: 0;    vertical-align: unset;background: #ffffff'> {$row['quantity']} </td>
-      
+
            </tr>
 			";
 
@@ -942,12 +942,14 @@ class location_report extends Controller
 	}
 
 
+
+	//  manar
 	function insert_location()
 	{
 
 		if ($this->handleLogin())
 		{
-            
+
 
 			if (isset($_POST['submit']))
 			{
@@ -988,22 +990,22 @@ class location_report extends Controller
                         } else {
 
 
-						$same_location=true;
-                        $stmtchSameLocation = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 0  AND code=?  AND model=? AND userid=?");
-                        $stmtchSameLocation->execute(array( $code, $model, $this->userid));
-                        if ($stmtchSameLocation->rowCount() > 0) {
+						// $same_location=true;
+                        // $stmtchSameLocation = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 0  AND code=?  AND model=? AND userid=?");
+                        // $stmtchSameLocation->execute(array( $code, $model, $this->userid));
+                        // if ($stmtchSameLocation->rowCount() > 0) {
 
-                            $resultSameLocation=$stmtchSameLocation->fetch(PDO::FETCH_ASSOC);
+                        //     $resultSameLocation=$stmtchSameLocation->fetch(PDO::FETCH_ASSOC);
 
-                            if ($location != $resultSameLocation['location'])
-							{
-								$same_location=false;
-							}
+                        //     if ($location != $resultSameLocation['location'])
+						// 	{
+						// 		$same_location=false;
+						// 	}
 
-                        }
+                        // }
 
 
-                        if ($same_location) {
+                        // if ($same_location) {
 
 
 							$stmtch = $this->db->prepare("SELECT *FROM location_transport WHERE  `active` = 0 AND location = ? AND code=?  AND model=? AND userid=?");
@@ -1052,10 +1054,10 @@ class location_report extends Controller
 								echo '-q';
 							}
 
-						}else
-						{
-							echo 'notSameLocation';
-						}
+						// }else
+						// {
+						// 	echo 'notSameLocation';
+						// }
 
 
 
@@ -1296,7 +1298,7 @@ function enter_note()
 
 					return "
              	 <div class='row justify-content-center align-items-center'>
-				  <div class='col-auto' style='padding-left: 2px'>		
+				  <div class='col-auto' style='padding-left: 2px'>
 				  	       <input id='numberBill_{$d}'  type='text' class='form-control withBill' name='crystal_bill' autocomplete='off' required>
                    </div>
 				  <div class='col-auto' style='padding-right: 2px'>
@@ -1559,7 +1561,7 @@ function enter_note()
 					if ($this->permit('edit_crystal_bill_group',$this->folder)) {
 						return "
              	 <div class='row justify-content-center align-items-center'>
-				  <div class='col-auto' style='padding-left: 2px'>		
+				  <div class='col-auto' style='padding-left: 2px'>
 				  	       <input id='numberBill_{$d}' value='{$row[5]}'  type='text' class='form-control withBill' name='crystal_bill' required>
                    </div>
 				  <div class='col-auto' style='padding-right: 2px'>
