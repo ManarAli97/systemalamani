@@ -312,8 +312,8 @@
         </li>
     <?php  }  ?>
 
+   <?php  if ($this->permit('savers','savers')) {  ?>
 
-    <?php  if ($this->permit('savers','savers')) {  ?>
         <li class="savers">  <a href="#">  <?php  echo $this->langControl('savers') ?> </a>
             <a href="<?php echo  url ?>/savers/all_cover" style="color: #4CAF50" data-toggle="tooltip" data-placement="top" title="كل الحافظات"><i class="fa fa-list" aria-hidden="true"></i></a>
             <a href="<?php echo  url ?>/savers/quantity" style="color: #ff0000" data-toggle="tooltip" data-placement="top" title="export excel"><i class="fa fa-file-excel-o" aria-hidden="true"></i></a>
@@ -453,7 +453,11 @@
         </li>
 
     <?php  }  ?>
-
+    <?php  if ($this->permit('account','account')) {  ?>
+          <li class="account">
+          <a href="#"> دليل الحسابات  </a>
+        </li>
+    <?php  }  ?>
 
     <?php  if ($this->permit('location_model','location_model')) {  ?>
         <li class="location_model">  <a href="#">  <?php  echo $this->langControl('location_model') ?> </a>
