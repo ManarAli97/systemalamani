@@ -36,6 +36,7 @@ class Header extends Controller
     public function menu($id=null)
     {
         $gallery = new Gallery();
+
         if ($this->permit('gallery', 'gallery')) {
             $galleryCategory = $gallery->select_category_gallery(0);
             $category_gallery = array();
@@ -185,6 +186,12 @@ class Header extends Controller
             }
         }
 
+
+        $accountCatg = '';
+        if ($this->permit('account', 'account')) {
+            $account = new Account();
+            $accountCatg .=  $account->account_catg();
+        }
 
        require( $this->render($this->folder,'html','menu','php'));
 
@@ -904,7 +911,7 @@ class Header extends Controller
 
                             }else
                             {
-                          
+
                                $row['price'] = $this->price_dollars($result_price['price_dollars']) . ' د.ع ';
 
                             }

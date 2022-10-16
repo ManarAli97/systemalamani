@@ -1,7 +1,7 @@
 <?php
 
 // 192.168.9.82 localhost
- define('url', 'http://localhost/systemalamani');
+ define('url', 'http://127.0.0.1/systemalamani');
 //  define('url', 'http://192.168.31.92/localalamni');
 
 
