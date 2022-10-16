@@ -26,14 +26,14 @@
 
                 <div class="col-lg-2 col-md-2 mr-4">
                     <label class="mr-sm-2" for="type_account_1">نوع الحساب </label>
-                    <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="type_account" id="type_account_1" required>
+                    <select class="form-control dropdown_filter selectpicker gg" data-live-search="true" name="type_account" id="type_account_1" required>
                         <option value = '0'> نوع الحساب </option>
                         <?php foreach ($nameCategory as $key => $name) {   ?>
                                 <option  value="<?php  echo $name['id']?>"><?php  echo $name['title']?></option>
                             <?php  } ?>
                     </select>
 
-                    <p id="f"></p>
+
                 </div>
             </div>
         </div>
@@ -59,8 +59,8 @@
 
 
 <script>
-    $('#type_account_1').on('change',function() {
-        var idGategory = $("#type_account_1").val();
+    $('.gg').on('change',function() {
+        var idGategory = $(".gg").val();
         if(idGategory != '0'){
             console.log(idGategory);
             var data={'id':idGategory};
