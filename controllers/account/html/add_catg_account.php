@@ -11,87 +11,188 @@
         <hr>
     </div>
 </div>
-
-
-<div class="content">
-    <form  action="<?php echo url.'/'.$this->folder ?>/add_catg_account" method="post" enctype="multipart/form-data">
-
-        <div class='part_1'>
-            <div class="form-row row mb-4 add">
-
-                <div class="col-lg-3 col-md-2 mr-4">
-                    <label class="mr-sm-2" for="name_categ">   الاسم </label>
-                    <input type="text" name="name_categ"  class="form-control" id="name_categ">
-                </div>
-
-                <div class="col-lg-2 col-md-2 mr-4">
-                    <label class="mr-sm-2" for="type_account_1">نوع الحساب </label>
-                    <select class="form-control dropdown_filter selectpicker gg" data-live-search="true" name="type_account" id="type_account_1" required>
-                        <option value = '0'> نوع الحساب </option>
+<div class="row">
+    <div class="col">
+        <form  action="<?php echo url.'/'.$this->folder ?>/add_catg_account" method="post" enctype="multipart/form-data">
+            <div class="container-fluid" id="expand_menu">
+                <div class="row selec_catg">
+                    <div class="col-lg-3 col-md-3">
+                        <label class="mr-sm-2" for="name_categ">   الاسم </label>
+                        <input type="text" name="name_categ"  class="form-control" id="name_categ">
+                    </div>
+                    <select name="main_catg"  id="her_add_menu" class="custom-select  col-md-2 list_menu_categ" onchange="mainCatg(this)"  >
+                        <option value="0" selected> نوع الحساب</option>
                         <?php foreach ($nameCategory as $key => $name) {   ?>
-                                <option  value="<?php  echo $name['id']?>"><?php  echo $name['title']?></option>
-                            <?php  } ?>
-                    </select>
-
-
-                </div>
-            </div>
-        </div>
-
-        <!-- <div class='part_2'>
-            <div class="form-row row mb-4">
-                <div class="col-lg-3 col-md-2 mr-4">
-                    <label class="mr-sm-2" for="select_name_supplier">نوع الحساب </label>
-                    <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="name_supplier" id="select_name_supplier" required>
-                        <option value = '0'> نوع الحساب </option>
-                        <?php foreach ($nameCategory as $key => $name) {   ?>
-                                <option  value="<?php  echo $name['id']?>"><?php  echo $name['title']?></option>
-                            <?php  } ?>
+                            <option  value="<?php  echo $name['id']?>"><?php  echo $name['title']?></option>
+                        <?php  } ?>
                     </select>
                 </div>
             </div>
-        </div> -->
-        <div class="row justify-content-md-center  mb-4" >
-            <input class="btn btn-primary" id="save" value="<?php  echo $this->langControl('save') ?>"  type="submit" name="submit">
-        </div>
-    </form>
+
+            <div class="container-fluid " id="expand_menu">
+                <div class="row selec_branch">
+                    <select name="main_branch"  id="sub_branch_p" class="custom-select  col-md-2 list_menu_categ" onchange="mainBranch(this)"  >
+                        <option value="0" selected> الفرع </option>
+                        <?php foreach ($nameBranch as $key => $name) {   ?>
+                            <option  value="<?php  echo $name['id']?>"><?php  echo $name['title']?></option>
+                        <?php  } ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row justify-content-md-center  mb-4" style="clear: both;">
+                <input class="btn btn-primary" id="save" value="<?php  echo $this->langControl('save') ?>"  type="submit" name="submit">
+            </div>
+        </form>
+    </div>
 </div>
 
 
 <script>
-    $('.gg').on('change',function() {
-        var idGategory = $(".gg").val();
-        if(idGategory != '0'){
-            console.log(idGategory);
-            var data={'id':idGategory};
-            $.get( "<?php echo url .'/'.$this->folder ?>/get_sub_catg/",{ jsonData: JSON.stringify(data)}, function(namecatg) {
+    function mainCatg(selectObject) {
+        var idGategory = selectObject.value;
 
-                console.log(namecatg);
-                var namecatg = JSON.parse(namecatg);
-                var  addSelect = `<div class="col-lg-2 col-md-2  mb-4 mr-2">
-                    <label class="mr-sm-2" for="type_account4">نوع الحساب </label>
-                    <select class=" form-control" >
-                    <option value = "0"> نوع الحساب </option>`;
-                    for(var i=0;i<namecatg.length;i++){
-                        addSelect += `<option value="${namecatg[i].id}"> ${namecatg[i].title} </option>`;
+        var data={'id':idGategory};
+        var id_html = selectObject.id;
 
-                    }
-                    addSelect += `</select></div>`;
-                $('.add').append(addSelect);
-
+        if (idGategory != '0') {
+            $("select[name='sub_categ']").remove();
+            $.get("<?php echo url . '/' . $this->folder ?>/get_sub_catg/",{ jsonData: JSON.stringify(data)}, function (data) {
+                if (data) {
+                    $('#' + id_html).nextAll('select').remove();
+                    $('#' + id_html + ':last').after(data);
+                }
             });
+        }else{
+            $("select[name='sub_categ']").remove();
         }
+    }
+
+    function sub_catgs(selectObject)
+    {
+        var idGategory = selectObject.value;
+
+        var data={'id':idGategory};
+        var id_html = selectObject.id;
+        if (idGategory != '0') {
+            $.get("<?php echo url . '/' . $this->folder ?>/get_sub_catgs/",{ jsonData: JSON.stringify(data)}, function (data) {
+                if (data)
+                {
+                    $('#'+id_html).nextAll('select').remove();
+                    $('#'+id_html+':last').after(data);
+                }
+                else
+                {
+                    $('#'+id_html).nextAll('select').remove();
+                }
+            });
+        }else{
+            $('#'+id_html).nextAll('select').remove();
+
+        }
+    }
+
+
+    function mainBranch(selectObject) {
+        var idBranch = selectObject.value;
+        var data={'id':idBranch};
+        var id_html = selectObject.id;
+        if (idBranch != '0') {
+            // $("select[name='sub_branch']").remove();
+            $.get("<?php echo url . '/' . $this->folder ?>/get_sub_branch/",{ jsonData: JSON.stringify(data)}, function (data) {
+                if (data) {
+                    $('#' + id_html).nextAll('select').remove();
+                    $('#' + id_html + ':last').after(data);
+                }
+            });
+        }else{
+            $('#' + id_html).nextAll('select').remove();
+        }
+    }
+
+    function sub_branches(selectObject)
+    {
+        var idBranch = selectObject.value;
+        var data={'id':idBranch};
+        var id_html = selectObject.id;
+        if (idBranch != '0') {
+            $.get("<?php echo url . '/' . $this->folder ?>/get_sub_branches/",{ jsonData: JSON.stringify(data)}, function (data) {
+                if (data)
+                {
+                    console.log(id_html);
+                    $('#'+id_html).nextAll('select').remove();
+                    $('#'+id_html+':last').after(data);
+                }
+                else
+                {
+                    $('#'+id_html).nextAll('select').remove();
+                }
+            });
+        }else{
+            $('#'+id_html).nextAll('select').remove();
+
+        }
+    }
+
+    setInterval(function() {
+        // var o = $('.selec_catg select:last').val();
+        // console.log(o);
+
+        var name = $('#name_categ').val();
+        var relid = $('.selec_catg select:last').val();
+        // var idbranch = $('.selec_branch select:last').val();
+        var relidl = $('.selec_catg :nth-last-child(-1)').val();
+        console.log(relidl);
+        // console.log(relid);
+        // console.log(idbranch);
+    }, 1000);
+
+    $('#save').on('click',function () {
+        var name = $('#name_categ').val();
+        var relid = $('.selec_catg select:last').val();
+        var relidl = $('.selec_catg select:last[-1]').val();
+        var idbranch = $('.selec_branch select:last').val();
+        console.log(name);
+        console.log(relid);
+        console.log(relidl);
+        console.log(idbranch);
+        var data={'name':name,'relid':relid,'idbranch':idbranch};
+        // if(name != ''){
+        //     $.get( "<?php echo url ?>/create_account_catg", { jsonData: JSON.stringify(data)},function( data ) {
+        //         if(data == 1){
+        //             alert(' تمت الاضافة');
+        //         }else{
+        //             alert('لم تتم الاضافة');
+        //         }
+        //     });
+        // }
     });
-
-
 
 </script>
 
 
 <style>
-
-select option {
-  background: #fff;
-  color: #000;
+.breadcrumb{
+    border-radius: 0 !important;
+    margin-bottom: 0 !important;
+    background-color: rgba(121,169,197,.92) !important;
+    -webkit-box-shadow: 0px -4px 3px #ccc;
+    -moz-box-shadow: 0px -4px 3px #ccc;
+    box-shadow: 0px -4px 10px #ccc;
 }
+.breadcrumb li {
+    color: #fff !important;
+}
+.list_menu_categ
+{
+    outline: none;
+    box-shadow: unset;
+    margin-top: 30px;
+}
+.list_menu_categ:focus
+{
+    outline: none;
+    box-shadow: unset;
+}
+
 </style>

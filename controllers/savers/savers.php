@@ -3406,7 +3406,6 @@ use type_cover,feature_cover;
                 }
             ),
 
-
             array(
 				'db' => 'product_savers.id',
 				'dt' => 11,
@@ -3499,29 +3498,34 @@ use type_cover,feature_cover;
 	{
 		if ($this->handleLogin() ) {
 
-
-
 			$stmt=$this->db->prepare("SELECT  *FROM `product_savers` WHERE `id`  = ?   " );
 			$stmt->execute(array($id));
 			$result=$stmt->fetch(PDO::FETCH_ASSOC);
 
-        	$code = strval($result['code']);
-        	$this->Add_to_sync_schedule($id,'product_savers','delete_savers', $code);
 
-			$trace=new trace_site();
-			$oldData=$trace->old($id,$this->folder);
+			$stmt_qua=$this->db->prepare("SELECT `quantity`  FROM `{$this->excel}` WHERE `code`  = ?" );
+			$stmt_qua->execute(array($result['code']));
+			$result_qua=$stmt_qua->fetch(PDO::FETCH_ASSOC);
 
-			$trace->add($id,$this->folder,'delete',$result['title'],$result['title'],$oldData,'');
+            if($result_qua['quantity']> 0){
+                echo 0;
+            }else{
+                $code = strval($result['code']);
+                $this->Add_to_sync_schedule($id,'product_savers','delete_savers', $code);
 
-			$this->update_is_delete('product_savers', 'id = '.$id.'');
+                $trace=new trace_site();
+                $oldData=$trace->old($id,$this->folder);
 
-			$this->update_code('product_savers', $code,$id);
-			// $cd = $this->db->prepare("DELETE FROM `$this->product_savers`  WHERE  `id`=?");
-			// $cd->execute(array($id));
-
+                $trace->add($id,$this->folder,'delete',$result['title'],$result['title'],$oldData,'');
 
 
+                $this->update_is_delete('product_savers', 'id = '.$id.'');
 
+                $this->update_code('product_savers', $code,$id);
+                // $cd = $this->db->prepare("DELETE FROM `$this->product_savers`  WHERE  `id`=?");
+                // $cd->execute(array($id));
+                echo 1;
+            }
 		}
 	}
 

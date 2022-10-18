@@ -312,7 +312,6 @@
     }
 
 
-
     $('#exampleModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);
         var recipient = button.data('id') ;
@@ -326,8 +325,13 @@
     $('#save').on('click',function () {
         var  id= $('#save').val();
         $.get( "<?php echo url ?>/savers/delete_savers_product_savers/"+id, function( data ) {
-            $('#row_'+id).remove();
-            $('#exampleModal').modal('hide')
+            console.log(data);
+            if(data == 1){
+                $('#row_'+id).remove();
+                $('#exampleModal').modal('hide');
+            }else{
+                alert('لا يمكن حذف الباركود لانه يحتوي على كمية');
+            }
         });
     });
  </script>
