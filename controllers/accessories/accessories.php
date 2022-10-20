@@ -1370,18 +1370,17 @@ class Accessories extends Controller
             $stmt_codes_sync->execute(array($id));
             while($row_codes = $stmt_codes_sync->fetch(PDO::FETCH_ASSOC))
             {
-                $stmt_qua=$this->db->prepare("SELECT `quantity`  FROM `excel_accessories` WHERE `code`=?" );
+
+                $stmt_qua=$this->db->prepare("SELECT sum(`quantity`) as num FROM `excel_accessories` WHERE `code`=?" );
                 $stmt_qua->execute(array($row_codes['code']));
                 $result_qua=$stmt_qua->fetch(PDO::FETCH_ASSOC);
-                if($result_qua['quantity'] > 0){
+                if($result_qua['num'] > 0){
                     $check_qua[] = 0;
-                }else{
-                    $check_qua[] = 1;
                 }
             }
 
 
-            if(!empty(array_search(0,$check_qua,true))){
+            if(count($check_qua) > 0){
                 echo 0;
             }else{
 
