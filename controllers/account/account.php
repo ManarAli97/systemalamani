@@ -62,7 +62,7 @@ class Account extends Controller {
     function account_catg($relid = 0)
     {
         $account = '';
-        $stmt = $this->db->prepare("SELECT `title`,`id` FROM `{$this->account_catg}` WHERE active = 0 AND relid = ?");
+        $stmt = $this->db->prepare("SELECT `title`,`id` FROM `{$this->account_catg}` WHERE active = 1 AND relid = ?");
         $stmt->execute(array($relid));
         if($stmt->rowCount() > 0){
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
@@ -71,11 +71,14 @@ class Account extends Controller {
                     if($this->check_child_account($row['id'])){
                         $account .= "<li class='account'> <a href='#'>";
                     }else{
-                        $account .= "<li class='account'> <a href='".url."/account/view_user_account/".$row['id']."'>";
+                        $account .= "<li class='account'> <a href='".url."/account/view_user_account/".$row['id']."'> ";
+
                     }
-                    // $account .= "/account/view_user_account/".strval($row['title'])."/".$row['id']."'>";
-                    $account .= $row['title'] . $this->account_catg($row['id']);
-                    $account .= " </a></li>";
+
+                    $account .= $row['title'] .'</a>';
+                    $account .= "  <a href='".url."/account/add_catg_account/".$row['id']."' class='account' data-toggle='tooltip' data-placement='top' title='اضافة فئة'><i class='fa  fa-folder' aria-hidden='true'></i></a>
+                    <a href='".url."/account/add_account/".$row['id']."' class='account' data-toggle='tooltip' data-placement='top' title='اضافة حساب'><i class='fa fa-plus' aria-hidden='true'></a></i>";
+                    $account .= $this->account_catg($row['id']);
                 }
                 $account .= " </ul>";
             }
@@ -86,7 +89,7 @@ class Account extends Controller {
 
     public function check_child_account($id){
         $check = false;
-        $stmt = $this->db->prepare("SELECT `id` FROM `{$this->account_catg}` WHERE active = 0 AND relid = ? LIMIT 1 ");
+        $stmt = $this->db->prepare("SELECT `id` FROM `{$this->account_catg}` WHERE active = 1 AND relid = ? LIMIT 1 ");
         $stmt->execute(array($id));
         if($stmt->rowCount() > 0){
             $check = true;
@@ -94,12 +97,12 @@ class Account extends Controller {
         return $check;
     }
 
-    public function add_catg_account(){
+    public function add_catg_account($id = 0){
         $this->checkPermit('add_catg_account','account');
         $this->adminHeaderController($this->langControl('account'));
 
         $nameCategory = array();
-        $name_catg =$this->db->prepare("SELECT `title`,`id` FROM `{$this->account_catg}` WHERE active = 0 AND relid = 0");
+        $name_catg =$this->db->prepare("SELECT `title`,`id` FROM `{$this->account_catg}` WHERE active = 1");
         $name_catg->execute();
 
         while ($row = $name_catg->fetch(PDO::FETCH_ASSOC))
@@ -108,7 +111,7 @@ class Account extends Controller {
         }
 
         $nameBranch = array();
-        $name_branch =$this->db->prepare("SELECT `title`,`id` FROM `branch` WHERE active = 0 AND relid = 0");
+        $name_branch =$this->db->prepare("SELECT `title`,`id` FROM `branch` WHERE active = 1");
         $name_branch->execute();
 
         while ($row = $name_branch->fetch(PDO::FETCH_ASSOC))
@@ -171,8 +174,8 @@ class Account extends Controller {
     public function create_account_catg(){
         $data = json_decode($_GET['jsonData'], true);
 
-        $stmt = $this->db->prepare("INSERT INTO `{$this->account_catg}` (`title`,`active`,`relid`,`idbranch`,`iduser`,`date`) VALUE (?,?,?,?,?,?)");
-        $stmt->execute(array($data['name'],0,$data['relid'],$data['idbranch'],$this->userid,time()));
+        $stmt = $this->db->prepare("INSERT INTO `{$this->account_catg}`(`title`,`active`,`relid`,`idbranch`,`iduser`,`date`) VALUE (?,?,?,?,?,?)");
+        $stmt->execute(array($data['name'],1,$data['relid'],$data['idbranch'],$this->userid,time()));
         if($stmt->rowCount() > 0){
             echo 1;
         }else{
@@ -180,100 +183,100 @@ class Account extends Controller {
         }
     }
 
-    // الفئات التابعه للفئة الاصلية
-    public function get_sub_catg()
-    {
-        $data = json_decode($_GET['jsonData'], true);
-        $id = $data['id'];
-        $item = array();
-        $select = '';
-        $stmt = $this->db->prepare("SELECT `id`,`title` FROM `{$this->account_catg}` WHERE active = 0 AND relid = ?");
-        $stmt->execute(array($id));
-        if($stmt->rowCount() > 0){
-            $select .= "<select  name='sub_categ'  id='sub_cags_p'  class='custom-select col-md-2  mb-4 ml-2 list_menu_categ' onchange='sub_catgs(this)' >";
-            $select .="<option value='0'  selected >  نوع الحساب   </option>"  ;
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                $select .="<option value='{$row['id']}'>{$row['title']}</option>"  ;
+    // // الفئات التابعه للفئة الاصلية
+    // public function get_sub_catg()
+    // {
+    //     $data = json_decode($_GET['jsonData'], true);
+    //     $id = $data['id'];
+    //     $item = array();
+    //     $select = '';
+    //     $stmt = $this->db->prepare("SELECT `id`,`title` FROM `{$this->account_catg}` WHERE active = 0 AND relid = ?");
+    //     $stmt->execute(array($id));
+    //     if($stmt->rowCount() > 0){
+    //         $select .= "<select  name='sub_categ'  id='sub_cags_p'  class='custom-select col-md-2  mb-4 ml-2 list_menu_categ' onchange='sub_catgs(this)' >";
+    //         $select .="<option value='0'  selected >  نوع الحساب   </option>"  ;
+    //         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+    //             $select .="<option value='{$row['id']}'>{$row['title']}</option>"  ;
 
-            }
-            $select .='</select>';
-        }
-        echo $select;
-
-
-    }
-
-    // كل الفئات التابعات للفئة لثانويه
-    public function get_sub_catgs()
-    {
-        $data = json_decode($_GET['jsonData'], true);
-        $id = $data['id'];
-        $item = array();
-        $select = '';
-        $stmt = $this->db->prepare("SELECT `id`,`title` FROM `{$this->account_catg}` WHERE active = 0 AND relid = ?");
-        $stmt->execute(array($id));
-        if($stmt->rowCount() > 0){
-            $select .= "<select  name='sub_categ'  id='sub_cags_$id'  class='custom-select col-md-2  mb-4 ml-2 list_menu_categ' onchange='sub_catgs(this)'>";
-            $select .="<option value='0'  selected >  نوع الحساب   </option>"  ;
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                $select .="<option value='{$row['id']}'>{$row['title']}</option>"  ;
-
-            }
-            $select .='</select>';
-        }
-        echo $select;
+    //         }
+    //         $select .='</select>';
+    //     }
+    //     echo $select;
 
 
-    }
+    // }
+
+    // // كل الفئات التابعات للفئة لثانويه
+    // public function get_sub_catgs()
+    // {
+    //     $data = json_decode($_GET['jsonData'], true);
+    //     $id = $data['id'];
+    //     $item = array();
+    //     $select = '';
+    //     $stmt = $this->db->prepare("SELECT `id`,`title` FROM `{$this->account_catg}` WHERE active = 0 AND relid = ?");
+    //     $stmt->execute(array($id));
+    //     if($stmt->rowCount() > 0){
+    //         $select .= "<select  name='sub_categ'  id='sub_cags_$id'  class='custom-select col-md-2  mb-4 ml-2 list_menu_categ' onchange='sub_catgs(this)'>";
+    //         $select .="<option value='0'  selected >  نوع الحساب   </option>"  ;
+    //         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+    //             $select .="<option value='{$row['id']}'>{$row['title']}</option>"  ;
+
+    //         }
+    //         $select .='</select>';
+    //     }
+    //     echo $select;
 
 
-    public function get_sub_branch()
-    {
-        $data = json_decode($_GET['jsonData'], true);
-        $id = $data['id'];
-        $item = array();
-        $select = '';
-        $stmt = $this->db->prepare("SELECT `id`,`title` FROM `branch` WHERE active = 0 AND relid = ?");
-        $stmt->execute(array($id));
-        if($stmt->rowCount() > 0){
-            $select .= "<select  name='main_branch'  id='sub_branch'  class='custom-select col-md-2  mb-4 ml-2 list_menu_categ' onchange='sub_branches(this)' >";
-            $select .="<option value='0'  selected >  نوع الحساب   </option>"  ;
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                $select .="<option value='{$row['id']}'   >{$row['title']}</option>"  ;
-
-            }
-            $select .='</select>';
-        }
-        echo $select;
+    // }
 
 
-    }
+    // public function get_sub_branch()
+    // {
+    //     $data = json_decode($_GET['jsonData'], true);
+    //     $id = $data['id'];
+    //     $item = array();
+    //     $select = '';
+    //     $stmt = $this->db->prepare("SELECT `id`,`title` FROM `branch` WHERE active = 0 AND relid = ?");
+    //     $stmt->execute(array($id));
+    //     if($stmt->rowCount() > 0){
+    //         $select .= "<select  name='main_branch'  id='sub_branch'  class='custom-select col-md-2  mb-4 ml-2 list_menu_categ' onchange='sub_branches(this)' >";
+    //         $select .="<option value='0'  selected >  نوع الحساب   </option>"  ;
+    //         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+    //             $select .="<option value='{$row['id']}'   >{$row['title']}</option>"  ;
 
-    // كل الفئات التابعات للفئة لثانويه
-    public function get_sub_branches()
-    {
-        $data = json_decode($_GET['jsonData'], true);
-        $id = $data['id'];
-        $item = array();
-        $select = '';
-        $stmt = $this->db->prepare("SELECT `id`,`title` FROM `branch` WHERE active = 0 AND relid = ?");
-        $stmt->execute(array($id));
-        if($stmt->rowCount() > 0){
-            $select .= "<select  name='main_branch'  id='sub_branches_$id'  class='custom-select col-md-2  mb-4 ml-2 list_menu_categ' onchange='sub_branches(this)'>";
-            $select .="<option value='0'  selected >  نوع الحساب   </option>"  ;
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                $select .="<option value='{$row['id']}'>{$row['title']}</option>"  ;
-
-            }
-            $select .='</select>';
-        }
-        echo $select;
+    //         }
+    //         $select .='</select>';
+    //     }
+    //     echo $select;
 
 
-    }
+    // }
+
+    // // كل الفئات التابعات للفئة لثانويه
+    // public function get_sub_branches()
+    // {
+    //     $data = json_decode($_GET['jsonData'], true);
+    //     $id = $data['id'];
+    //     $item = array();
+    //     $select = '';
+    //     $stmt = $this->db->prepare("SELECT `id`,`title` FROM `branch` WHERE active = 0 AND relid = ?");
+    //     $stmt->execute(array($id));
+    //     if($stmt->rowCount() > 0){
+    //         $select .= "<select  name='main_branch'  id='sub_branches_$id'  class='custom-select col-md-2  mb-4 ml-2 list_menu_categ' onchange='sub_branches(this)'>";
+    //         $select .="<option value='0'  selected >  نوع الحساب   </option>"  ;
+    //         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+    //             $select .="<option value='{$row['id']}'>{$row['title']}</option>"  ;
+
+    //         }
+    //         $select .='</select>';
+    //     }
+    //     echo $select;
 
 
-    public function add_account(){
+    // }
+
+
+    public function add_account($id=0){
         $this->checkPermit('add_account','account');
         $this->adminHeaderController($this->langControl('account'));
 

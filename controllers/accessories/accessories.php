@@ -1360,7 +1360,7 @@ class Accessories extends Controller
     function delete_accessories($id)
     {
         if ($this->handleLogin()) {
-
+            $check_qua = array();
 
 			$stmt=$this->db->prepare("SELECT  *FROM `{$this->table}` WHERE `id`  = ? AND {$this->is_delete}  " );
 			$stmt->execute(array($id));
@@ -1368,37 +1368,55 @@ class Accessories extends Controller
 
         	$stmt_codes_sync=$this->db->prepare("SELECT id , code FROM `color_accessories` where id_item =?");
             $stmt_codes_sync->execute(array($id));
-
-            $check_codes="( ";
             while($row_codes = $stmt_codes_sync->fetch(PDO::FETCH_ASSOC))
             {
-                $check_codes.='"'.$row_codes['code'].'",';
-            	$this->update_code('color_accessories',$row_codes['code'],$row_codes['id']);
+                $stmt_qua=$this->db->prepare("SELECT `quantity`  FROM `excel_accessories` WHERE `code`=?" );
+                $stmt_qua->execute(array($row_codes['code']));
+                $result_qua=$stmt_qua->fetch(PDO::FETCH_ASSOC);
+                if($result_qua['quantity'] > 0){
+                    $check_qua[] = 0;
+                }else{
+                    $check_qua[] = 1;
+                }
             }
 
-        	 $check_codes=substr($check_codes,0,-1).')';
-        	 $this->Add_to_sync_schedule($id,'accessories','delete_item_accessories', $check_codes);
+
+            if(!empty(array_search(0,$check_qua,true))){
+                echo 0;
+            }else{
+
+                $check_codes="( ";
+                while($row_codes = $stmt_codes_sync->fetch(PDO::FETCH_ASSOC))
+                {
+                    $check_codes.='"'.$row_codes['code'].'",';
+                    $this->update_code('color_accessories',$row_codes['code'],$row_codes['id']);
+                }
+
+                $check_codes=substr($check_codes,0,-1).')';
+                $this->Add_to_sync_schedule($id,'accessories','delete_item_accessories', $check_codes);
 
 
-			$trace=new trace_site();
-			$oldData=$trace->old($id,$this->folder);
-			$trace->add($id,$this->folder,'delete',$result['title'],$result['title'],$oldData,'');
+                $trace=new trace_site();
+                $oldData=$trace->old($id,$this->folder);
+                $trace->add($id,$this->folder,'delete',$result['title'],$result['title'],$oldData,'');
 
 
-			// $response = $this->db->delete($this->table, "`id`={$id}");
-        	$this->update_is_delete($this->table, 'id = '.$id.'');
+                // $response = $this->db->delete($this->table, "`id`={$id}");
+                $this->update_is_delete($this->table, 'id = '.$id.'');
 
-            $c_id = $this->db->prepare("SELECT `id` FROM `$this->color`  WHERE  `id_item`=? limit 1");
-            $c_id->execute(array($id));
-            $c_id_c = $c_id->fetch(PDO::FETCH_ASSOC)['id'];
+                $c_id = $this->db->prepare("SELECT `id` FROM `$this->color`  WHERE  `id_item`=? limit 1");
+                $c_id->execute(array($id));
+                $c_id_c = $c_id->fetch(PDO::FETCH_ASSOC)['id'];
 
-            // $c = $this->db->prepare("DELETE FROM `$this->color`  WHERE  `id_item`=?");
-            // $c->execute(array($id));
+                // $c = $this->db->prepare("DELETE FROM `$this->color`  WHERE  `id_item`=?");
+                // $c->execute(array($id));
 
-        	$this->update_is_delete($this->color, 'id_item = '.$id.'');
+                $this->update_is_delete($this->color, 'id_item = '.$id.'');
 
-            // $cd = $this->db->prepare("DELETE FROM `$this->code`  WHERE  `id_color`=?");
-            // $cd->execute(array($c_id_c));
+                // $cd = $this->db->prepare("DELETE FROM `$this->code`  WHERE  `id_color`=?");
+                // $cd->execute(array($c_id_c));
+                echo 1;
+            }
         }
 
     }
@@ -2033,8 +2051,22 @@ class Accessories extends Controller
     {
         if ($this->handleLogin() ) {
 
-            $this->update_is_delete($this->color, 'id = '.$id.'');
+            $stmt = $this->db->prepare("SELECT `code`  FROM `color_accessories` WHERE   `id`= ? ");
+            $stmt->execute(array($id));
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            $stmt_qua = $this->db->prepare("SELECT `quantity`  FROM `excel_accessories` WHERE   `code`= ? ");
+            $stmt_qua->execute(array($result['code']));
+            $result_qua = $stmt_qua->fetch(PDO::FETCH_ASSOC);
+
+            if($result_qua['quantity'] > 0){
+                echo 0;
+            }else{
+                $this->update_is_delete($this->color, 'id = '.$id.'');
+                $this->update_code('color_accessories',$result['code'],$id);
+                $this->Add_to_sync_schedule($id,'color_accessories','delete_code', $result['code']);
+                echo 1;
+            }
             // $c= $this->db->prepare("DELETE FROM `$this->color`  WHERE  `id`=?");
             // $c->execute(array($id));
 

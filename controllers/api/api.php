@@ -17,10 +17,10 @@ class api extends Controller
 
               // $stmtInst=$this->db->prepare("INSERT INTO xxx (code) values  (?) ");
               // $stmtInst->execute(array(1));
-            // $this->synchronization();
+            $this->synchronization_item();
       	// $this->add_cart_shop_all();
        // $this->testConnection();
-       echo  ROOT_FILES_h27;
+    //    echo  ROOT_FILES_h27;
 
 
       }
@@ -40,19 +40,19 @@ class api extends Controller
                 {
                     $not_exist .= $row['img'].',';
                 }
-    
+
             }
             $not_exist=substr($not_exist,0,-1);
             echo $not_exist;
 
       }
 // 		function add_direct()
-//         { 
+//         {
 //         	$stmt=$this->db->prepare("SELECT id FROM `computer` ");
 //             $stmt->execute();
 //             // $result= $stmt->fetchAll(PDO::FETCH_ASSOC);
 //         	//print_r($result);
-        
+
 //             if ($stmt-> rowCount() > 0 )
 //             {
 //                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -152,8 +152,8 @@ class api extends Controller
                 break;
             case 'add_games':
                 echo json_encode($this->add_games_send($id,$id_rec));
-                break; 
-        
+                break;
+
         	case 'delete_category':
                  echo json_encode($this->delete_cate_send($id,$id_rec,$table_name));
                  break;
@@ -165,7 +165,7 @@ class api extends Controller
           	// break;
          // case 'delete_code':
               //  echo json_encode($this->delete_code_send($id,$id_rec,$table_name,$code));
-              // break; 
+              // break;
         	case 'delete_item_accessories':
                 echo json_encode($this->delete_item_accessories_send($id,$id_rec,$table_name,$code));
                	break;
@@ -182,8 +182,8 @@ class api extends Controller
 			case 'delete_category_savers':
 				echo json_encode($this->delete_category_savers_send($id,$id_rec,$table_name));
 				break;
-                    
-            
+
+
         }
     }
 

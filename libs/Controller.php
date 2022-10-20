@@ -74,7 +74,7 @@ class Controller
             $this->controlUser($this->userid);
             $this->autoLogOut();
             $this->activeUser($this->userid);
-        
+
         }
 
         $this->langControl = $this->langControlDefault();
@@ -153,7 +153,7 @@ class Controller
 
                     echo '
                    <div  style="    text-align: center; background: #ffc107;padding: 15px;font-size: 22px;font-weight: bold;" role="alert">
-                  <span> الحساب غير فعال </span> <a href="'.url .'/login/user" class="alert-link"> رجوع </a>   
+                  <span> الحساب غير فعال </span> <a href="'.url .'/login/user" class="alert-link"> رجوع </a>
                 </div>
                 ';
                     die();
@@ -243,11 +243,11 @@ class Controller
     // H27 تم التعديل على هذه الدالة بتاريخ 10-9-2022
     public function permit($aclname = NULL, $aclgroup = NULL)
     {
-       
+
         if ($aclname == NULL) {
             return TRUE;
         }
-        // اذا كان غير مضاف 
+        // اذا كان غير مضاف
         $stmt = $this->db->prepare("SELECT * from `permitgroup` WHERE `aclname`='{$aclname}' AND `aclgroup`='$aclgroup' ");
         $stmt->execute();
         if($stmtPermit = $stmt->fetch(PDO::FETCH_ASSOC))
@@ -257,12 +257,12 @@ class Controller
         else{
             // return 'else';
             $data = array('aclname' => $aclname, 'aclgroup' => $aclgroup);
-    
+
             $stmt = $this->db->insert("permitgroup", $data);
             $idParmit = $this->db->lastInsertId();
 
         }
-    
+
         if (in_array($this->userid, $this->idAdmin)) {
             return true;
         }
@@ -1478,7 +1478,7 @@ class Controller
     }
 
 
-    // $check اذا كان صغر  فراح يشتغل عادي 
+    // $check اذا كان صغر  فراح يشتغل عادي
     //  واذا واحد ف مراح يجيب مواقع مستودع البلدية
     function get_location($model, $code, $color = null, $check=0)
     {
@@ -2140,7 +2140,7 @@ class Controller
             return false;
         }
     }
- 	
+
 	//  هذا الدالة لمتابعة الكميات عن طريق اسم الدالة
     public function AddToTraceByFunction($idUser,$model,$nameFunction)
     {
@@ -2193,7 +2193,7 @@ class Controller
         $stmt = $this->db->prepare("INSERT INTO `sync_schedule`(`id_rec`, `table_name`, `function` ,`code`) VALUES (?,?,?,?)");
         $stmt->execute(array($id_rec,$table_name,$function,$code));
     	$this->add_to_sync_log($this->db->lastInsertId(),$id_rec,$table_name,$function,'Add_to_sync_schedule commint : -'.$commint);
-    	
+
         // $this->synchronization();
     }
     // 	 بسبب اللود راح نخلي فكشنات ثنين للمزامنة حتى ما يصير تاخير بالمطابقة
@@ -2268,7 +2268,7 @@ class Controller
 //                             break;
 //                         case 'add_games':
 //                             $this->add_games_send($row['id'],$row['id_rec']);
-//                             break;   
+//                             break;
 
 //                     }
 
@@ -2351,7 +2351,7 @@ class Controller
 //                             break;
 //                         case 'add_games':
 //                             $this->add_games_send($row['id'],$row['id_rec']);
-//                             break;   
+//                             break;
 
 //                     }
 
@@ -2364,8 +2364,10 @@ class Controller
 // هاي الدالة تجريبية نستدعيها بشكل فردي
     public function synchronization_item()
     {
+
         if($this->testConnection()==200){
-            $stmt=$this->db->prepare("SELECT   `id`,`id_rec`, `table_name`, `function` FROM `sync_schedule` where  id =57085 ");
+            echo 'gg';
+            $stmt=$this->db->prepare("SELECT   `id`,`id_rec`, `table_name`, `function`,`code` FROM `sync_schedule` where  id =555615 ");
             $stmt->execute();
             if ($stmt-> rowCount() > 0 )
             {
@@ -2377,92 +2379,92 @@ class Controller
                     echo "<br> table_name ".$row['table_name'];
                     echo "<br> function ".$row['function'];
                     switch ($row['function']) {
-                        case 'quantity_adjustment':
+                        // case 'quantity_adjustment':
 
-                            $this->quantity_adjustment_send($row['id'],$row['id_rec'],$row['table_name']);
-                            break;
-                        case 'add_category':
-                            $this->add_category_send($row['id'],$row['id_rec'],$row['table_name']);
-                            break;
-                        case 'add_item':
-                            $this->add_item_send($row['id'],$row['id_rec'],$row['table_name']);
-                            break;
-                        case 'add_category_savers':
-                            $this->add_category_savers_send($row['id'],$row['id_rec']);
-                            break;
-                        case 'add_name_device':
-                            $this->add_name_device_send($row['id'],$row['id_rec']);
-                            break;
-                        case 'add_type_device':
-                            $this->add_type_device_send($row['id'],$row['id_rec']);
-                            break;
-                        case 'add_savers':
-                            $this->add_savers_send($row['id'],$row['id_rec']);
-                            break;
-                        case 'add_accessories':
-                            $this->add_accessories_send($row['id'],$row['id_rec']);
-                            break;
-                        case 'add_mobile':
-                            $this->add_mobile_send($row['id'],$row['id_rec']);
-                            break;
-                        case 'offer_categories':
-                            $this->add_offer_categories_send($row['id'],$row['id_rec'],$row['table_name']);
-                            break;
-                        case 'delete_offer_categories':
-                            $this->delete_offer_categories_send($row['id'],$row['id_rec'],$row['table_name']);
-                            break;
-                        case 'add_offers':
-                            $this->add_offers_send($row['id'],$row['id_rec'],$row['table_name']);
-                            break;
-                    	case 'delete_offers':
-                             $this->delete_offers_send($row['id'],$row['id_rec'],$row['table_name']);
-                             break;
-                        case 'add_offers_item':
-                            $this->add_offers_item_send($row['id'],$row['id_rec'],$row['table_name']);
-                            break;
-                        case 'delete_offers_item':
-                            $this->delete_offers_item_send($row['id'],$row['id_rec'],$row['table_name']);
-                            break;
-                    	case 'add_class_games':
-                            $this->add_class_games_send($row['id'],$row['id_rec']);
-                            break;
-                        case 'add_games':
-                            $this->add_games_send($row['id'],$row['id_rec']);
-                            break;  
-                    
-                    
-                    	case 'delete_category':
-                                $this->delete_cate_send($row['id'],$row['id_rec'],$row['table_name']);
-                                break;
-                    	case 'delete_item':
-                    		    $this->delete_item_send($row['id'],$row['id_rec'],$row['table_name'],$row['code']);
-                    		    break;
-                    		// case 'delete_color_code':
-                    		// $this->delete_color_code_send($row['id'],$row['id_rec'],$row['table_name'],$row['code']);
-                    		// break;
-                    		// case 'delete_code':
-                    		// $this->delete_code_send($row['id'],$row['id_rec'],$row['table_name'],$row['code']);
-                    		// break; 
-                    
-                    		case 'delete_item_accessories':
-                    		      $this->delete_item_accessories_send($row['id'],$row['id_rec'],$row['table_name'],$row['code']);
-                    		      break;
-                    	
-                    		case 'delete_savers':
-                                $this->delete_savers_send($row['id'],$row['id_rec'],$row['table_name'],$row['code']);
-                                break;
+                        //     $this->quantity_adjustment_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //     break;
+                        // case 'add_category':
+                        //     $this->add_category_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //     break;
+                        // case 'add_item':
+                        //     $this->add_item_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //     break;
+                        // case 'add_category_savers':
+                        //     $this->add_category_savers_send($row['id'],$row['id_rec']);
+                        //     break;
+                        // case 'add_name_device':
+                        //     $this->add_name_device_send($row['id'],$row['id_rec']);
+                        //     break;
+                        // case 'add_type_device':
+                        //     $this->add_type_device_send($row['id'],$row['id_rec']);
+                        //     break;
+                        // case 'add_savers':
+                        //     $this->add_savers_send($row['id'],$row['id_rec']);
+                        //     break;
+                        // case 'add_accessories':
+                        //     $this->add_accessories_send($row['id'],$row['id_rec']);
+                        //     break;
+                        // case 'add_mobile':
+                        //     $this->add_mobile_send($row['id'],$row['id_rec']);
+                        //     break;
+                        // case 'offer_categories':
+                        //     $this->add_offer_categories_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //     break;
+                        // case 'delete_offer_categories':
+                        //     $this->delete_offer_categories_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //     break;
+                        // case 'add_offers':
+                        //     $this->add_offers_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //     break;
+                    	// case 'delete_offers':
+                        //      $this->delete_offers_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //      break;
+                        // case 'add_offers_item':
+                        //     $this->add_offers_item_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //     break;
+                        // case 'delete_offers_item':
+                        //     $this->delete_offers_item_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //     break;
+                    	// case 'add_class_games':
+                        //     $this->add_class_games_send($row['id'],$row['id_rec']);
+                        //     break;
+                        // case 'add_games':
+                        //     $this->add_games_send($row['id'],$row['id_rec']);
+                        //     break;
 
-                    		case 'delete_type_device':
-                                $this->delete_type_device_send($row['id'],$row['id_rec'],$row['table_name']);
-                                break;
-                    			
-                           case 'delete_name_device':
-                                $this->delete_name_device_send($row['id'],$row['id_rec'],$row['table_name']);
-                                break;
-                    		 case 'delete_category_savers':
-                                $this->delete_category_savers_send($row['id'],$row['id_rec'],$row['table_name']);
-                                break;
-                    
+
+                    	// case 'delete_category':
+                        //         $this->delete_cate_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //         break;
+                    	// case 'delete_item':
+                    	// 	    $this->delete_item_send($row['id'],$row['id_rec'],$row['table_name'],$row['code']);
+                    	// 	    break;
+                    		case 'delete_color_code':
+                    		$this->delete_color_code_send($row['id'],$row['id_rec'],$row['table_name'],$row['code']);
+                    		break;
+                    		case 'delete_code':
+                    		$this->delete_code_send($row['id'],$row['id_rec'],$row['table_name'],$row['code']);
+                    		break;
+
+                    	// 	case 'delete_item_accessories':
+                    	// 	      $this->delete_item_accessories_send($row['id'],$row['id_rec'],$row['table_name'],$row['code']);
+                    	// 	      break;
+
+                    	// 	case 'delete_savers':
+                        //         $this->delete_savers_send($row['id'],$row['id_rec'],$row['table_name'],$row['code']);
+                        //         break;
+
+                    	// 	case 'delete_type_device':
+                        //         $this->delete_type_device_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //         break;
+
+                        //    case 'delete_name_device':
+                        //         $this->delete_name_device_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //         break;
+                    	// 	 case 'delete_category_savers':
+                        //         $this->delete_category_savers_send($row['id'],$row['id_rec'],$row['table_name']);
+                        //         break;
+
 
 
                     }
@@ -2505,7 +2507,7 @@ class Controller
         // Optional Authentication:
         curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($curl, CURLOPT_USERPWD, "username:password");
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array("key:jehf75652"));
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array("key:jehf7565256"));
 
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -2519,20 +2521,20 @@ class Controller
     /**
      *
      */
-    function  testConnection($url='https://alamani.iq')
+    function  testConnection($url='https://system.alamani.iq/')
     {
 
 
-        // Use get_headers() function
-        $headers = @get_headers($url);
+        // // Use get_headers() function
+        // $headers = @get_headers($url);
 
-        // Use condition to check the existence of URL
-        if($headers && strpos( $headers[0], '200')) {
+        // // Use condition to check the existence of URL
+        // if($headers && strpos( $headers[0], '200')) {
             $status = 200;
-        }
-        else {
-            $status = 404;
-        }
+        // }
+        // else {
+        //     $status = 404;
+        // }
 
         // Display result
         return $status;
@@ -2596,7 +2598,7 @@ class Controller
         }
         // echo "<br> row : ";
         // print_r($row);
-        $test_add = $this->CallAPI('POST', "https://alamani.iq/api/quantity_adjustment_receive",array(
+        $test_add = $this->CallAPI('POST', "https://system.alamani.iq/api/quantity_adjustment_receive",array(
             'code' => $row['code'],
             'quantity' => $sum_quntity,
             'price_dollars' => $row['price_dollars'],
@@ -2702,7 +2704,7 @@ class Controller
         }
 
     }
-	
+
 	/*
     * NAI
     * Update value  field is_delete
@@ -2710,7 +2712,7 @@ class Controller
     */
   	public function update_is_delete($table,$where_claus)
 	{
-	
+
     	$this->create_is_delete($table);
         $stmt_item=$this->db->prepare("UPDATE {$table} SET `is_delete`=1 WHERE  {$where_claus} ");
         $stmt_item->execute();
@@ -2725,11 +2727,11 @@ class Controller
     */
 	 public function update_code($table,$code,$id)
     {
-       
+
         $code = $code.'_d_'.$id;
-        $stmt_item=$this->db->prepare("UPDATE {$table} SET code =? WHERE  id = ? AND is_delete = 0");
+        $stmt_item=$this->db->prepare("UPDATE {$table} SET code =? WHERE  id = ?");
         $stmt_item->execute(array($code, $id));
-      
+
     }
 
     /**
@@ -2784,7 +2786,7 @@ class Controller
             'method'=>'add_file'
         );
         $this->add_to_sync_log($id,$id_row,'files','add_file','send to server : id : '.$row['id'].' - module : '.$row['module'].' - normal_name : '.$row['normal_name'].' - relid : '.$row['relid'].' - description : '.$row['description'].' - ext : '.$row['ext'].' - file_type : '.$row['file_type'].' - file_size : '.$row['file_size'].' - lang : '.$row['lang'].' - date : '.$row['date'].' - img_name : '.$row['rand_name'].' - method : add_file');
-        $id_sync= $this->CallAPI('POST', "https://alamani.iq/api/api_receive",$array_data);
+        $id_sync= $this->CallAPI('POST', "https://system.alamani.iq/api/api_receive",$array_data);
         $this->add_to_sync_log($id,$id_row,'files','add_file','get from server : id : '.$id_sync);
         $id_sync = intval($id_sync);
         if($id_sync>0)
@@ -2811,7 +2813,7 @@ class Controller
      */
     function add_category_send($id=0,$id_row,$model)
     {
-		
+
         $this->add_to_sync_log($id,$id_row,$model,'add_category','strating');
      	$this->create_is_delete('category_'.$model);
 
@@ -2890,7 +2892,7 @@ class Controller
             $this->add_to_sync_log($id,$id_row,$model,'add_category','send to server : - id '.$row['id'].' - title '.$row['title'].' - img '.$row['img'].' - relid '.$row['relid'].' - active '.$row['active'].' - date '.$row['date'].' - order_cat '.$row['order_cat'].' - code_cat '.$row['code_cat']);
             // print_r($array_data);
             // echo "<br>";
-            $id_sync= $this->CallAPI('POST', "https://alamani.iq/api/api_receive",$array_data);
+            $id_sync= $this->CallAPI('POST', "https://system.alamani.iq/api/api_receive",$array_data);
             // echo $id_sync."<br>";
             $this->add_to_sync_log($id,$id_row,$model,'add_category','receive from server : - id '.$id_sync);
             $id_sync = intval($id_sync);
@@ -2919,11 +2921,11 @@ class Controller
      */
     function add_item_send($id,$id_row,$table_name)
     {
-    
+
     	$this->create_is_delete($table_name);
     	$this->create_is_delete('code_'.$table_name);
     	$this->create_is_delete('color_'.$table_name);
-    
+
         $this->add_to_sync_log($id,$id_row,$table_name,'add_item','start');
         $check_FK =array("check_id_cat"=>false);
         $stmt_item=$this->db->prepare("SELECT  `id`, `title`, `content`, `id_cat`, `id_main_cat`, `img`, `view`, `active`, `main_cat`, `date`, `bast_it`, `tags`, `specifications`, `cuts`, `price_cuts`, `description`, `serial_flag`, `price_dollars`, `location`, `enter_serial`, `change_price`,`is_delete`  FROM {$table_name} WHERE `id`=?  ");
@@ -2988,7 +2990,7 @@ class Controller
             $this->add_to_sync_log($id,$id_row,$table_name,'add_item','send to server : - id '.$row_item['id'].' - title '.$row_item['title']. ' - id_cat '.$id_cat.' - id_main_cat '.$row_item['id_main_cat'].' - active '.$row_item['active'].' - main_cat '.$row_item['main_cat'].' - date '.$row_item['date'].' - bast_it '.$row_item['bast_it'].' - tags '.$row_item['tags'].' - specifications '.$row_item['specifications'].' - cuts '.$row_item['cuts'].' - price_cuts '.$row_item['price_cuts'].' - description '.$row_item['description'].' - serial_flag '.$row_item['serial_flag'].' - price_dollars '.$row_item['price_dollars'].' - location '.$row_item['location'].' - enter_serial '.$row_item['enter_serial'].' - change_price '.$row_item['change_price']. ' - table_name '.$table_name.' - check_codes '.$check_codes);
             // echo "<br> array_data";
             // print_r($array_data);
-            $id_item = $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+            $id_item = $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
             $this->add_to_sync_log($id,$id_row,$table_name,'add_item','receive from server : - id_item '.$id_item);
             // echo "<br> id_item ".$id_item;
             // اذا كانت النتيجة 0 فهذا يعني ان الاضافة لم تتم ف ننهي عمل الدالة الى هنا
@@ -3046,7 +3048,7 @@ class Controller
                 $this->add_to_sync_log($id,$id_row,$table_name,'add_color_item','send to server : - id '.$row_color['color'].' - color '.$row_color['color'].' - code_color '.$row_color['code_color'].' - id_item '.$id_item.'  - date '.$row_color['date'].' - code '.$row_color['code'].' - model '.$table_name);
                 // echo "<br> array data color item";
                 // print_r($array_data);
-                $id_color= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+                $id_color= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
                 $this->add_to_sync_log($id,$id_row,$table_name,'add_color_item','receive from server : - id_color '.$id_color);
                 // echo $id_color;
                 // بعد اضافة الالوان
@@ -3080,7 +3082,7 @@ class Controller
                     $this->add_to_sync_log($id,$id_row,$table_name,'add_code_item','send to server : - id '.$row_code['id'].' - code '.$row_code['code'].' - size '.$row_code['size'].' - id_color '.$id_color.'  - date '.$row_code['date'].' - serial '.$row_code['serial'].' - location '.$row_code['location'].' - model '.$table_name);
                     // echo "code";
                     // print_r($array_data);
-                    $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+                    $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
                     $this->add_to_sync_log($id,$id_row,$table_name,'add_code_item','receive from server : - id_code '.$id_code);
                     // echo '<br>'.$id_code.'<br>';
                     $id_code = intval($id_code);
@@ -3133,7 +3135,7 @@ class Controller
 
         );
         $this->add_to_sync_log($id,$id_row,'category_savers','add_category_savers','send to server : - id '.$row_item['id'].' - title '.$row_item['title'].' - relid '.$row_item['relid'].' - active '.$row_item['active'].' - order_cat '.$row_item['order_cat'].' - date '.$row_item['date']);
-        $id_sync = $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+        $id_sync = $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
         $this->add_to_sync_log($id,$id_row,'category_savers','add_category_savers','receive from server : - id_sync '.$id_sync);
         // اذا تمت العملية بنجاح ف سوف تعيد عدد اكبر من 0
         $id_sync = intval($id_sync);
@@ -3196,7 +3198,7 @@ class Controller
 
             );
             $this->add_to_sync_log($id,$id_row,'name_device','add_name_device','send to server : - id '.$row_item['id'].' - title '.$row_item['title'].' - id_cat '.$row_item['id_cat'].' - active '.$row_item['active'].' - date '.$row_item['date']);
-            $id_sync=intval($this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data));
+            $id_sync=intval($this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data));
             $this->add_to_sync_log($id,$id_row,'name_device','add_name_device','receive from server : - id_sync '.$id_sync);
             // اذا تمت الاضافة بصورة صحيحة فنحدث حقل المزامنة
             //  واذا ليست صحية ف لا
@@ -3269,7 +3271,7 @@ class Controller
                 'method' => 'add_type_device',
             );
             $this->add_to_sync_log($id,$id_row,'type_device','add_type_device','send to server : - id '.$row_item['id'].' - title '.$row_item['title'].' - id_device '.$row_item['id_device'].' - active '.$row_item['active'].' - date '.$row_item['date']);
-            $id_sync=intval($this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data));
+            $id_sync=intval($this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data));
             $this->add_to_sync_log($id,$id_row,'type_device','add_type_device','receive from server : - id_sync '.$id_sync);
             if($id_sync>0)
             {
@@ -3384,8 +3386,8 @@ class Controller
             );
             $this->add_to_sync_log($id,$id_row,'savers','add_savers','send to server : - id : '.$row_item['id']. ' - color : '.$row_item['color'].' - code_color : '.$row_item['code_color'].'  - id_product : '.$row_item['id_product'].' - date : '.$row_item['date'].' - code : '.$row_item['code'].' - title : '.$row_item['title'].'  - latiniin : '.$row_item['latiniin'].' - symbol : '.$row_item['symbol'].' - bast_it : '.$row_item['bast_it'].' - active : '.$row_item['active'].' - cuts : '.$row_item['cuts'].' - price_cuts : '.$row_item['price_cuts'].' - id_device : '.$row_item['id_device'].' - serial_flag : '.$row_item['serial_flag'].' - location : '.$row_item['location'].' - enter_serial : '.$row_item['enter_serial'].' - locationTag : '.$row_item['locationTag'].' - serial : '.$row_item['serial'].' - change_price : '.$row_item['change_price']);
             // print_r($array_data);
-            
-            if(intval( $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data))>0)
+
+            if(intval( $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data))>0)
             {
                 $this->add_to_sync_log($id,$id_row,'savers','add_savers',' end');
                 $this->delete_rows('sync_schedule','id',$id);
@@ -3397,7 +3399,7 @@ class Controller
                 $this->update_code_in_sync("error in send to server",$id);
                 return 0;
             }
-            
+
         }
         else
         {
@@ -3479,13 +3481,13 @@ class Controller
             );
             $this->add_to_sync_log($id,$id_row,'accessories','add_accessories',' send to server : - id '.$row_item['id'].' title '.$row_item['title'].' id_cat '.$id_cat.' id_main_cat '.$row_item['id_main_cat'].' active '.$row_item['active'].' main_cat '.$row_item['main_cat'].' date '.$row_item['date'].' bast_it '.$row_item['bast_it'].' tags '.$row_item['tags'].' specifications '.$row_item['specifications'].' cuts '.$row_item['cuts'].' price_cuts '.$row_item['price_cuts'].' description '.$row_item['description'].' serial_flag '.$row_item['serial_flag'].' price_dollars '.$row_item['price_dollars'].' location '.$row_item['location'].' enter_serial '.$row_item['enter_serial'].' change_price '.$row_item['change_price'].' check_codes '.$check_codes);
             // print_r($array_data);
-            $id_item = $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+            $id_item = $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
             $this->add_to_sync_log($id,$id_row,'accessories','add_accessories','response from server : - id '.$id_item);
             $id_item = intval($id_item);
             // echo "<br> id_item ".$id_item.'<br>';
             if($id_item>0)
             {
-                $this->add_to_sync_log($id,$id_row,'accessories','add_accessories',' start send colors'); 
+                $this->add_to_sync_log($id,$id_row,'accessories','add_accessories',' start send colors');
                 // echo $id_item;
                 //  بعد اضافة المادة
                 // نضيف الالوان الخاصة بالمادة
@@ -3527,7 +3529,7 @@ class Controller
                     );
                     $this->add_to_sync_log($id,$id_row,'accessories','add_color_accessories',' send to server : - id '.$row_color['id'].' - code '.$row_color['code'].' - color '.$row_color['color'].' - code_color '.$row_color['code_color'].' - id_item '.$id_item.' - date '.$row_color['date'].' - old_table '.$row_color['old_table'].' - serial '.$row_color['serial'].' - location '.$row_color['location'].' - minimum '.$row_color['minimum'].' - maximum '.$row_color['maximum']);
                     // print_r( $array_data);
-                    $id_color = $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+                    $id_color = $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
                     $this->add_to_sync_log($id,$id_row,'accessories','add_color_accessories','response from server : - id '.$id_color);
                     // echo "<br> id_color ".$id_color;
                     $id_color = intval($id_color);
@@ -3558,7 +3560,7 @@ class Controller
     	$this->create_is_delete('mobile');
     	$this->create_is_delete('code');
     	$this->create_is_delete('color');
-    
+
         $check_FK =array("check_id_cat"=>false,"check_id_accessories"=>false,"check_id_savers"=>false);
         $stmt_item=$this->db->prepare("SELECT  `id`, `content`, `title`, `id_cat`, `id_main_cat`, `img`,  `active`, `main_cat`, `date`, `bast_it`, `tags`, `specifications`, `cuts`, `price_cuts`, `description`, `name_accessories`, `id_accessories`, `name_savers`, `id_savers`, `serial_flag`, `price_dollars`, `location`, `enter_serial` ,`is_delete` FROM mobile WHERE `id`=?  ");
         $stmt_item->execute(array($id_row));
@@ -3644,7 +3646,7 @@ class Controller
             );
             $this->add_to_sync_log($id,$id_row,'mobile','add_mobile',' send to server : - id : '.$row_item['id'].' - title : '.$row_item['title'].' - id_cat : '.$id_cat.' - id_main_cat : '.$row_item['id_main_cat'].' - active : '.$row_item['active'].' - main_cat : '.$row_item['main_cat'].' - date : '.$row_item['date'].' - bast_it : '.$row_item['bast_it'].' - tags : '.$row_item['tags'].' - specifications : '.$row_item['specifications'].' - cuts : '.$row_item['cuts'].' - price_cuts : '.$row_item['price_cuts'].' - description : '.$row_item['description'].' - name_accessories : '.$row_item['name_accessories'].' - id_accessories : '.$id_accessories.' - name_savers : '.$row_item['name_savers'].' - id_savers : '.$id_savers.' - serial_flag : '.$row_item['serial_flag'].' - price_dollars : '.$row_item['price_dollars'].' - location : '.$row_item['location'].' - enter_serial : '.$row_item['enter_serial'].' - check_codes : '.$check_codes.' - method : add_mobile');
             // print_r($array_data);
-            $id_item = $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+            $id_item = $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
             $this->add_to_sync_log($id,$id_row,'mobile','add_mobile',' return from server : - id_item : '.$id_item);
             // اذا كانت النتيجة 0 فهذا يعني ان الاضافة لم تتم ف ننهي عمل الدالة الى هنا
             // echo "<br>".$id_item."<br>";
@@ -3703,7 +3705,7 @@ class Controller
                 // echo "<br>";
                 // print_r($array_data);
                 // print_r($array_data);
-                $id_color= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+                $id_color= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
                 $this->add_to_sync_log($id,$id_row,'mobile','add_mobile',' return from server : '.$id_color);
                 // echo $id_color;
                 // بعد اضافة الالوان
@@ -3735,7 +3737,7 @@ class Controller
                     );
                     $this->add_to_sync_log($id,$id_row,'mobile','add_mobile',' send to server : - id : '.$row_code['id'].' - code : '.$row_code['code'].' - size : '.$row_code['size'].' - id_color : '.$id_color.' - date : '.$row_code['date'].' - serial : '.$row_code['serial'].' - location : '.$row_code['location'].' - model : mobile - method : add_code_item');
                     // print_r($array_data);
-                    $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+                    $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
                     $this->add_to_sync_log($id,$id_row,'mobile','add_mobile',' return from server : '.$id_code);
                     $id_code = intval($id_code);
                     if($id_code==0)
@@ -3751,7 +3753,7 @@ class Controller
             $this->delete_rows('sync_schedule','id',$id);
             return 1;
         }
-        else 
+        else
         {
             $this->add_to_sync_log($id,$id_row,'mobile','add_mobile',' fild in FK ');
             $this->update_code_in_sync('error in FK',$id);
@@ -3769,12 +3771,12 @@ class Controller
     function add_class_games_send($id=0,$id_row)
     {
         $this->add_to_sync_log($id,$id_row,'class_games','add_class_games_send',' start add class games');
- 		
+
 
         $statm = $this->db->prepare("SELECT `id`, `title`, `active`,  `date` FROM `class_games` WHERE `id`=? ");
         $statm->execute(array($id_row));
         $row = $statm->fetch(PDO::FETCH_ASSOC);
-        
+
         $array_data = array(
             'id'=>$row['id'],
             'title'=>$row['title'],
@@ -3785,7 +3787,7 @@ class Controller
         $this->add_to_sync_log($id,$id_row,'class_games','add_class_games_send',' send to server : - id : '.$row['id'].' - title : '.$row['title'].' - active : '.$row['active'].' - date : '.$row['date'].' - method : add_class_games');
         // print_r($array_data);
         // echo "<br>";
-        $id_sync= $this->CallAPI('POST', "https://alamani.iq/api/api_receive",$array_data);
+        $id_sync= $this->CallAPI('POST', "https://system.alamani.iq/api/api_receive",$array_data);
         $this->add_to_sync_log($id,$id_row,'class_games','add_class_games_send',' return from server : '.$id_sync);
         // echo $id_sync."<br>";
         $id_sync = intval($id_sync);
@@ -3795,14 +3797,14 @@ class Controller
             $this->update_id_sync($id_row,$id_sync,'class_games');
              $this->delete_rows('sync_schedule','id',$id);
         }
-        else 
+        else
         {
             $this->add_to_sync_log($id,$id_row,'class_games','add_class_games_send',' fild in FK ');
             $this->update_code_in_sync('error in add : - id : '.$row['id'].' - title : '.$row['title'].' - active : '.$row['active'].' - date : '.$row['date'],$id);
             return 0;
         }
         return $id_sync;
-        
+
     }
 
     function add_games_send($id,$id_row)
@@ -3848,7 +3850,7 @@ class Controller
             $id_class_games =$this->get_id_sync($array_class_games[$i],'class_games');
 
             // اذا كان صفر ف الفئة لم تتم مزامنتها
-            if(strval($id_class_games) =='0'){   
+            if(strval($id_class_games) =='0'){
                 $id_class_games =intval($this->add_class_games_send(0,$array_class_games[$i]));
                 if($id_class_games>0){
                     $check_FK['check_id_class_games'][$i]=true;
@@ -3859,7 +3861,7 @@ class Controller
             $class_games .= strval(intval($id_class_games)).',';
         }
         $class_games=substr($class_games,0,-1);
-        
+
         $check_all_classes = true;
         for($i = 0; $i < count($check_FK['check_id_class_games']); $i++)
         {
@@ -3909,7 +3911,7 @@ class Controller
             $this->add_to_sync_log($id,$id_row,'games','add_games_send',' send to server : - id '.$row_item['id'].' - title ' .$row_item['title'].' - id_cat '.$row_item['id_cat'].' - id_main_cat '.$row_item['id_main_cat'].' - active '.$row_item['active'].' - main_cat '.$row_item['main_cat'].' - date '.$row_item['date'].' - bast_it '.$row_item['bast_it'].' - tags '.$row_item['tags'].' - class_games '.$row_item['class_games'].' - specifications '.$row_item['specifications'].' - cuts '.$row_item['cuts'].' - price_cuts '.$row_item['price_cuts'].' - description '.$row_item['description'].' - serial_flag '.$row_item['serial_flag'].' - price_dollars '.$row_item['price_dollars'].' - location '.$row_item['location'].' - enter_serial '.$row_item['enter_serial'].' - change_price '.$row_item['change_price']. ' - check_codes '.$check_codes);
             // echo "<br> array_data";
             // print_r($array_data);
-            $id_item = $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+            $id_item = $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
             $this->add_to_sync_log($id,$id_row,'games','add_games_send',' return from server : - id '.$id_item);
             // echo "<br> id_item ".$id_item;
             // اذا كانت النتيجة 0 فهذا يعني ان الاضافة لم تتم ف ننهي عمل الدالة الى هنا
@@ -3968,7 +3970,7 @@ class Controller
                 $this->add_to_sync_log($id,$id_row,'games','add_color_games_send',' send to server : - id '.$row_color['id'].' - color ' .$row_color['color'].' - code_color '.$row_color['code_color'].' - id_item '.$id_item.' - img '.$row_color['img'].' - date '.$row_color['date'].' - code '.$row_color['code']);
                 // echo "<br> array data color item";
                 // print_r($array_data);
-                $id_color= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+                $id_color= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
                 $this->add_to_sync_log($id,$id_row,'games','add_color_games_send',' return from server : - id '.$id_color);
                 // echo $id_color;
                 // بعد اضافة الالوان
@@ -4002,7 +4004,7 @@ class Controller
                     $this->add_to_sync_log($id,$id_row,'games','add_size_games_send',' send to server : - id '.$row_code['id'].' - code '.$row_code['code'].' - size '.$row_code['size'].' - id_color '.$id_color.' - date '.$row_code['date'].' - serial '.$row_code['serial'].' - location '.$row_code['location']);
                     // echo "code";
                     // print_r($array_data);
-                    $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+                    $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
                     $this->add_to_sync_log($id,$id_row,'games','add_size_games_send',' return from server : - id '.$id_code);
                     // echo '<br>'.$id_code.'<br>';
                     $id_code = intval($id_code);
@@ -4051,7 +4053,7 @@ class Controller
             );
             $this->add_to_sync_log($id,$id_row,'offer_categories','add_offer_categories_send',' send to server : - id '.$row['id'].' - title '.$row['title'].' - active '.$row['active'].' - date '.$row['date']);
             // print_r($array_data);
-            $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+            $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
             $this->add_to_sync_log($id,$id_row,'offer_categories','add_offer_categories_send',' return from server : - id '.$id_code);
             $id_code = intval($id_code);
             // echo 'int' . $id_code ."<br>";
@@ -4075,7 +4077,7 @@ class Controller
 	/*
 	*  NAI
      *  مزامنة حذف فئات العروض
-	* 2022/04  create 
+	* 2022/04  create
 	* 2022/05/29 last update
 	*/
     function delete_offer_categories_send($id,$id_row,$table_name){
@@ -4087,8 +4089,8 @@ class Controller
    		if(strval($id_cat)=='0'){
         	$this->add_to_sync_log($id,$id_row,'offer_categories','delete_offer_categories',' الفئة غير متزامنة');
         	$id_cat = intval($this->add_category_send(0,$id_row,$table_name));
-        	
-  			
+
+
         	if($id_cat>0)
             {
                 $is_sync['check_is_sync']=true;
@@ -4108,7 +4110,7 @@ class Controller
         	);
         	  $this->add_to_sync_log($id,$id_row,'offer_categories','delete_offer_categories_send',' send to server : - id '.$id_cat);
         	// print_r($array_data);
-        	$id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+        	$id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
        		// echo  $id_code;
         	 $this->add_to_sync_log($id,$id_row,'offer_categories','delete_offer_categories_send',' return from server : - id '.$id_code);
         	if(strval($id_code)=='0'){
@@ -4170,7 +4172,7 @@ class Controller
                 	$check_FK['check_id_cat'][$i]=true;
                 }
                 $ids_cat[]= $id_cat;
-                  
+
             }
             $array_cat  = $check_FK['check_id_cat'];
             $check_all_id_cat = true;
@@ -4178,8 +4180,8 @@ class Controller
                 $check_all_id_cat = false;
             }
             $id_cat = implode(" ,",$ids_cat);
-        
-        	
+
+
         	//check id offer categories
             $array_offer_categories = explode(",",  $row['id_offer_categories']);
             $ids_offer_cat = array();
@@ -4204,8 +4206,8 @@ class Controller
                $check_all_id_offer_cat = false;
             }
             $id_offer_cat = implode(" ,",$ids_offer_cat);
-        
-     
+
+
             if($check_all_id_cat && $check_all_id_offer_cat)
             {
                 $array_data = array(
@@ -4239,7 +4241,7 @@ class Controller
                     'method' => 'add_offers'
                 );
                 $this->add_to_sync_log($id,$id_row,'offers','add_offers_send',' send to server : - id '.$row['id'].' title '.$row['title'].' content '.$row['content'].' description '.$row['description'].' total_price '.$row['total_price'].' rate '.$row['rate'].' img '.$row['img'].' id_offer_categories '.$row['id_offer_categories'].' ids_cat '.$row['ids_cat'].' model '.$row['model'].' imgid '.$row['imgid'].' range_price '.$row['range_price'].' fromdate_normal '.$row['fromdate_normal'].' fromdate '.$row['fromdate'].' todate_normal '.$row['todate_normal'].' todate '.$row['todate'].' active '.$row['active'].' delete '.$row['delete'].' lang '.$row['lang'].' date '.$row['date'].' note '.$row['note'].' range_price_user '.$row['range_price_user'].' note2 '.$row['note2'].' countdown '.$row['countdown']);
-                $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+                $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
                 $this->add_to_sync_log($id,$id_row,'offers','add_offers_send','return from server : - id '.$id_code);
                 $id_code=intval($id_code);
                 if($id_code>0 ){
@@ -4279,11 +4281,11 @@ class Controller
         	$id_offer = intval($this->add_offers_send(0,$id_row,$table_name));
         	// echo  $id_offer ;
         	if($id_offer >0){
-            	
+
                   $stmt=$this->db->prepare("SELECT `id`  FROM `offers_item` WHERE  `id_offer`=?   ");
         		  $stmt->execute(array($id_row));
                   $row_offers = $stmt->fetch(PDO::FETCH_ASSOC);
-                  
+
             	 $id_offer_item = intval($this->add_offers_item_send(0,$row_offers['id'],'offers_item'));
             	 echo $id_offer_item;
             		if($id_offer_item >0){
@@ -4298,7 +4300,7 @@ class Controller
          }
 
         // echo  $id_offer;
-     
+
     	}else{
     		$stmt=$this->db->prepare("SELECT `active`  FROM `offers` WHERE `id`=?  ");
       		$stmt->execute(array($id_row));
@@ -4310,7 +4312,7 @@ class Controller
         	);
          	$this->add_to_sync_log($id,$id_row,'offers','delete_offers',' send to server : - id '.$id_offer.' active '.$row_offers['active']);
         	// print_r($array_data);
-        	$id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+        	$id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
         	$this->add_to_sync_log($id,$id_row,'offers','delete_offers','return from server : - id '.$id_code);
         	$id_code = intval($id_code);
         	if($id_code>0)
@@ -4322,7 +4324,7 @@ class Controller
             	return 0;
         	}
       		echo $id_code;
-    	}         
+    	}
 
 	}
 
@@ -4414,7 +4416,7 @@ class Controller
                 );
                 $this->add_to_sync_log($id,$id_row,$table_name,'add_offers_item_send',' send to server : - id '.$row['id'].' - model '.$row['model'].' - title '.$row['title'].' - code '.$row['code'].' - id_offer '.$id_offer_cat.' - id_item '.$row['id_item'].' - ids_cat '.$ids_cat.'  - imgid '.$row['imgid'].' - active '.$row['active'].' - lang '.$row['lang'].' - date '.$row['date'].' - color '.$row['color'].' - code_color '.$row['code_color'].' - size '.$row['size'].' - latiniin_or_code '.$row['latiniin_or_code'].' - cover_type_offer '.$row['cover_type_offer']);
 
-                $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+                $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
                 $this->add_to_sync_log($id,$id_row,$table_name,'add_offers_item_send',' response from server : - id '.$id_code);
                 // echo $id_code;
                 $id_code = intval($id_code);
@@ -4434,7 +4436,7 @@ class Controller
 
 
 
-    
+
 	/*
 	*  NAI
 	*   حذف منتجات العرض
@@ -4468,7 +4470,7 @@ class Controller
 			);
         	$this->add_to_sync_log($id,$id_row,'offers_item','delete_offers_item',' send to server : - id '.$id_offer_item);
 			// print_r($array_data);
-			$id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+			$id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
          	$this->add_to_sync_log($id,$id_row,'offers_item','delete_offers_item',' response from server : - id '.$id_code);
 			$id_code = intval($id_code);
 			if($id_code>0)
@@ -4480,7 +4482,7 @@ class Controller
 				return 0;
 			}
 			echo $id_code;
-		}         
+		}
 
   }
 
@@ -4507,12 +4509,12 @@ function delete_item_send($id,$id_row,$table_name,$code){
         );
         // print_r($array_data);
 		$this->add_to_sync_log($id,$id_row,$table_name,'delete_item',' send to server : - code '.$code. 'model'.$table_name);
-        $id_code = $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+        $id_code = $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
 		$this->add_to_sync_log($id,$id_row,$table_name,'delete_item',' response from server : - id '.$id_code);
-		
+
  		// echo  $id_code;
 		if(intval($id_code) != 404){
-			//  is_delete  اذا المادة موجودة يحدث قيمة   	
+			//  is_delete  اذا المادة موجودة يحدث قيمة
         	$id_code = intval($id_code);
           	// echo $id_code;
           	if($id_code>0){
@@ -4529,10 +4531,10 @@ function delete_item_send($id,$id_row,$table_name,$code){
             	$id_item = intval($this->add_mobile_send($id,$id_row));
         	}
         	if($table_name == 'games' || $table_name == 'computer'){
-            	
+
             	$id_item = intval($this->add_item_send($id,$id_row,$table_name));
         	}
-          	
+
           if($id_item>0){
                 $this->add_to_sync_log($id,$id_row,$table_name,'delete_item','  تم اضافة المادة  ');
             	$this->delete_rows('sync_schedule','id',$id);
@@ -4540,18 +4542,18 @@ function delete_item_send($id,$id_row,$table_name,$code){
             $this->add_to_sync_log($id,$id_row,$table_name,'delete_item','error in id'.$id_item);
             return 0;
          }
-        
-        
+
+
         }
-             
+
 }
 
 /*
 * NAI
 * delete color and code from mobile, computer , games
 * 2022/05/30 last update
-* الدالة تشتغل ولكن حاليا منحتاجها لان عند حذف اللون او الكود تعاد اضافة المادة 
-*/ 
+* الدالة تشتغل ولكن حاليا منحتاجها لان عند حذف اللون او الكود تعاد اضافة المادة
+*/
 // function delete_color_code_send($id,$id_row,$table_name,$code){
 //         $array_data = array(
 //             'id' => $id_row,
@@ -4560,7 +4562,7 @@ function delete_item_send($id,$id_row,$table_name,$code){
 //             'method' => 'delete_color_code'
 //         );
 //         // print_r($array_data);
-//         $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+//         $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
 //  		// echo $id_code;
 //         $id_code = intval($id_code);
 //         echo $id_code;
@@ -4575,35 +4577,36 @@ function delete_item_send($id,$id_row,$table_name,$code){
 /*
 * NAI
 * delete code from mobile, computer , games
-* 2022/05/08 create 
+* 2022/05/08 create
 * 2022/05/30 last update
 */
-// function delete_code_send($id,$id_row,$table_name,$code){
-//         $array_data = array(
-//             'id' => $id_row,
-//             'code' => $code,
-//         	'model' => $table_name,
-//             'method' => 'delete_code'
-//         );
-//         // print_r($array_data);
-//         $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
-//  		// echo $id_code;
-//         $id_code = intval($id_code);
-//         // echo $id_code;
-//         if($id_code>0)
-//         {
-//             $this->delete_rows('sync_schedule','id',$id);
-//         }else{
-//             return 0;
-//         }
-//                 // echo $id_code;
-// }
+function delete_code_send($id,$id_row,$table_name,$code){
+
+        $array_data = array(
+            'id' => $id_row,
+            'code' => $code,
+        	'model' => $table_name,
+            'method' => 'delete_code'
+        );
+    // print_r($array_data);
+        $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
+ 		// echo $id_code;
+        $id_code = intval($id_code);
+        // echo $id_code;
+        if($id_code>0)
+        {
+            $this->delete_rows('sync_schedule','id',$id);
+        }else{
+            return 0;
+        }
+                // echo $id_code;
+}
 
 
 /*
 * NAI
 * delete code from mobile, computer , games
-* 2022/05/08 create 
+* 2022/05/08 create
 * 2022/06/02 last update
 */
 function delete_savers_send($id,$id_row,$table_name,$code){
@@ -4611,16 +4614,16 @@ function delete_savers_send($id,$id_row,$table_name,$code){
 			$this->add_to_sync_log($id,$id_row,$table_name,'delete_savers',' start ');
              $array_data = array(
             'code' => $code,
-            'method' => 'delete_savers'   
+            'method' => 'delete_savers'
         );
          // print_r($array_data);
 		$this->add_to_sync_log($id,$id_row,$table_name,'delete_savers',' send to server : - code '.$code);
-        $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+        $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
  		// echo $id_code;
 		$this->add_to_sync_log($id,$id_row,$table_name,'delete_savers',' response from server : - id '.$id_code);
 		$id_code = intval($id_code);
 		if($id_code != 404){
-        
+
         	// echo $id_code;
         	if($id_code>0)
         	{
@@ -4642,8 +4645,8 @@ function delete_savers_send($id,$id_row,$table_name,$code){
            		$this->add_to_sync_log($id,$id_row,$table_name,'delete_savers','error in id'.$id_item);
             return 0;
          }
-        
-        
+
+
         }
 }
 
@@ -4654,7 +4657,7 @@ function delete_savers_send($id,$id_row,$table_name,$code){
 * NAI
 * حذف بطاقة مادة من جدول الاكسسوار
 * 2022/05/31 last update
-*/ 
+*/
 // add_accessories_send($id=0,$id_row)
 function delete_item_accessories_send($id,$id_row,$table_name,$code){
  		$this->create_is_delete($table_name);
@@ -4665,10 +4668,10 @@ function delete_item_accessories_send($id,$id_row,$table_name,$code){
         );
         // print_r($array_data);
 		$this->add_to_sync_log($id,$id_row,$table_name,'delete_item_accessories',' send to server : - code '.$code);
-        $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+        $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
 		$this->add_to_sync_log($id,$id_row,$table_name,'delete_item_accessories',' response from server : - id '.$id_code);
 		if($id_code != 404){
-			//  is_delete  اذا المادة موجودة يحدث قيمة   	
+			//  is_delete  اذا المادة موجودة يحدث قيمة
         	// $id_code = intval($id_code);
           	// echo $id_code;
           	if($id_code>0){
@@ -4689,17 +4692,17 @@ function delete_item_accessories_send($id,$id_row,$table_name,$code){
              	$this->add_to_sync_log($id,$id_row,$table_name,'delete_item_accessories','error in id'.$id_item);
             	return 0;
          	}
-        
-        
+
+
         }
- 	
+
 }
 
 
 /*
 * NAI
 * delete  from category and product from mobile , computer, games , accessories
-* 2022/06/02 create 
+* 2022/06/02 create
 */
 function delete_cate_send($id,$id_row,$table_name){
  	$this->create_is_delete($table_name);
@@ -4709,7 +4712,7 @@ function delete_cate_send($id,$id_row,$table_name){
    if(strval($id_cat)=='0'){
    		   $this->add_to_sync_log($id,$id_row,$table_name,'delete_cate',' الفئة غير متزامنة ');
            $id_cat = intval($this->add_category_send(0,$id_row,$table_name));
-  		
+
             if($id_cat>0)
             {
                 $is_sync['check_is_sync']=true;
@@ -4727,14 +4730,14 @@ function delete_cate_send($id,$id_row,$table_name){
         	'model'=> $table_name,
             'method' => 'delete_category'
     	);
-    	
+
     	// print_r($array_data);
     	$this->add_to_sync_log($id,$id_row,$table_name,'delete_item',' send to server : - id '.$id_cat. 'model'.$table_name);
-        $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+        $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
     	// echo $id_code;
     	$this->add_to_sync_log($id,$id_row,$table_name,'delete_cate',' response from server : - id '.$id_code);
         $id_code = intval($id_code);
-        
+
         if($id_code>0)
         {
         	$this->add_to_sync_log($id,$id_row,$table_name,'delete_cate_send',' end ');
@@ -4743,7 +4746,7 @@ function delete_cate_send($id,$id_row,$table_name){
         	$this->add_to_sync_log($id,$id_row,$table_name,'delete_cate_send','error in id'.$id_code);
             return 0;
         }
-    }        
+    }
 }
 
 //////////
@@ -4752,7 +4755,7 @@ function delete_cate_send($id,$id_row,$table_name){
 /*
 * NAI
 * تحذف اسم الجهاز والحافظات الخاصة بالجهاز
-* 2022/06/03 create 
+* 2022/06/03 create
 */
 function delete_type_device_send($id,$id_row,$table_name){
  	$this->create_is_delete($table_name);
@@ -4764,7 +4767,7 @@ function delete_type_device_send($id,$id_row,$table_name){
     	  // echo $id_sync;
 		  $this->add_to_sync_log($id,$id_row,$table_name,'delete_type_device','  غير متزامنة ');
           $id_sync = intval($this->add_type_device_send(0,$id_row));
-  		
+
             if($id_sync>0)
             {
                 $is_sync['check_is_sync']=true;
@@ -4782,10 +4785,10 @@ function delete_type_device_send($id,$id_row,$table_name){
          	'id' => $id_sync,
             'method' => 'delete_type_device'
     	);
-    	
+
         // print_r($array_data);
     	$this->add_to_sync_log($id,$id_row,$table_name,'delete_type_device',' send to server : - id '.$id_sync);
-        $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+        $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
     	$this->add_to_sync_log($id,$id_row,$table_name,'delete_type_device',' response from server : - id '.$id_code);
         $id_code = intval($id_code);
         // echo $id_code;
@@ -4797,7 +4800,7 @@ function delete_type_device_send($id,$id_row,$table_name){
         	$this->add_to_sync_log($id,$id_row,$table_name,'delete_type_device_send','error in id'.$id_code);
             return 0;
         }
-    }        
+    }
 }
 
 
@@ -4813,7 +4816,7 @@ function delete_type_device_send($id,$id_row,$table_name){
 /*
 * NAI
 * تحذف السلسلة و اسم الجهاز والحافظات الخاصة بالجهاز
-* 2022/06/03 create 
+* 2022/06/03 create
 */
 function delete_name_device_send($id,$id_row,$table_name){
  	$this->create_is_delete($table_name);
@@ -4825,7 +4828,7 @@ function delete_name_device_send($id,$id_row,$table_name){
    if(strval($id_sync)=='0'){
    		  $this->add_to_sync_log($id,$id_row,$table_name,'delete_name_device','  غير متزامنة ');
           $id_sync = intval($this->add_name_device_send(0,$id_row));
-  		
+
             if($id_sync>0)
             {
                 $is_sync['check_is_sync']=true;
@@ -4843,10 +4846,10 @@ function delete_name_device_send($id,$id_row,$table_name){
          	'id' => $id_sync,
             'method' => 'delete_name_device'
     	);
-    	
+
         // print_r($array_data);
     	$this->add_to_sync_log($id,$id_row,$table_name,'delete_name_device',' send to server : - id '.$id_sync);
-        $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+        $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
         $this->add_to_sync_log($id,$id_row,$table_name,'delete_name_device',' response from server : - id '.$id_code);
         $id_code = intval($id_code);
         // echo $id_code;
@@ -4858,14 +4861,14 @@ function delete_name_device_send($id,$id_row,$table_name){
         $this->add_to_sync_log($id,$id_row,$table_name,'delete_name_device_send','error in id'.$id_code);
             return 0;
         }
-    }       
+    }
 }
 
 
 /*
 * NAI
 * تحذف الماركة و  السلسلة و اسم الجهاز والحافظات الخاصة بالجهاز
-* 2022/06/03 create 
+* 2022/06/03 create
 */
 function delete_category_savers_send($id,$id_row,$table_name){
 
@@ -4873,11 +4876,11 @@ function delete_category_savers_send($id,$id_row,$table_name){
 	$this->add_to_sync_log($id,$id_row,$table_name,'delete_category_savers',' send ');
 	$is_sync =array("check_is_sync"=>false);
 	$id_sync = $this->get_id_sync($id_row,'category_savers');
-	
+
    if(strval($id_sync)=='0'){
      	  $this->add_to_sync_log($id,$id_row,$table_name,'delete_category_savers','  غير متزامنة ');
           $id_sync = intval($this->add_category_savers_send(0,$id_row));
-  		
+
             if($id_sync>0)
             {
                 $is_sync['check_is_sync']=true;
@@ -4895,10 +4898,10 @@ function delete_category_savers_send($id,$id_row,$table_name){
          	'id' => $id_sync,
             'method' => 'delete_category_savers'
     	);
-    	
+
         // print_r($array_data);
      	$this->add_to_sync_log($id,$id_row,$table_name,'delete_category_savers',' send to server : - id '.$id_sync);
-        $id_code= $this->CallAPI('POST','https://alamani.iq/api/api_receive', $array_data);
+        $id_code= $this->CallAPI('POST','https://system.alamani.iq/api/api_receive', $array_data);
         // echo $id_code;
     	 $this->add_to_sync_log($id,$id_row,$table_name,'delete_category_savers',' response from server : - id '.$id_code);
         $id_code = intval($id_code);
@@ -4911,10 +4914,10 @@ function delete_category_savers_send($id,$id_row,$table_name){
         $this->add_to_sync_log($id,$id_row,$table_name,'delete_category_savers_send','error in id'.$id_code);
             return 0;
         }
-    }       
-	
+    }
 
-   
+
+
 }
 
     //////////////////
@@ -4977,10 +4980,10 @@ function delete_category_savers_send($id,$id_row,$table_name){
 
 
 
- 
+
 function set_quantity_order($table,$id_item,$code,$number)
 {
-	
+
 
     $locationCol='location';
     $table_item=$table;
@@ -5422,9 +5425,9 @@ function set_quantity_order($table,$id_item,$code,$number)
             }
 
 
-            $stmt = $this->db->prepare("SELECT {$cat}.serial_prepared FROM `{$codeTable}` 
-             INNER JOIN {$color} ON {$color}.id={$codeTable}.id_color  
-             INNER JOIN {$model} ON {$model}.id={$color}.id_item 
+            $stmt = $this->db->prepare("SELECT {$cat}.serial_prepared FROM `{$codeTable}`
+             INNER JOIN {$color} ON {$color}.id={$codeTable}.id_color
+             INNER JOIN {$model} ON {$model}.id={$color}.id_item
              INNER JOIN  {$cat} On {$cat}.id={$model}.id_cat
              WHERE {$codeTable}.code=? AND {$cat}.serial_prepared=1 LIMIT 1");
             $stmt->execute(array($code));
@@ -5486,8 +5489,8 @@ function set_quantity_order($table,$id_item,$code,$number)
 
 
 
-            $stmt = $this->db->prepare("SELECT {$model}.location  FROM `{$codeTable}` 
-             INNER JOIN {$color} ON {$color}.id={$codeTable}.id_color  
+            $stmt = $this->db->prepare("SELECT {$model}.location  FROM `{$codeTable}`
+             INNER JOIN {$color} ON {$color}.id={$codeTable}.id_color
              INNER JOIN {$model} ON {$model}.id={$color}.id_item  WHERE {$model}.location = 1 AND `{$codeTable}`.code=?
              LIMIT 1");
             $stmt->execute(array($code));
@@ -5605,9 +5608,9 @@ function set_quantity_order($table,$id_item,$code,$number)
             }
 
 
-            $stmt = $this->db->prepare("SELECT {$cat}.{$col} FROM `{$codeTable}` 
-             INNER JOIN {$color} ON {$color}.id={$codeTable}.id_color  
-             INNER JOIN {$model} ON {$model}.id={$color}.id_item 
+            $stmt = $this->db->prepare("SELECT {$cat}.{$col} FROM `{$codeTable}`
+             INNER JOIN {$color} ON {$color}.id={$codeTable}.id_color
+             INNER JOIN {$model} ON {$model}.id={$color}.id_item
              INNER JOIN  {$cat} On {$cat}.id={$model}.id_cat
              WHERE {$codeTable}.code=? AND {$cat}.{$col}=1 LIMIT 1");
             $stmt->execute(array($code));
@@ -5717,7 +5720,7 @@ function set_quantity_order($table,$id_item,$code,$number)
         return $serial;
 
     }
-	/**	
+	/**
      * h27
      * check if row is exist in table by where condition
      * @param $table
@@ -5857,11 +5860,11 @@ function set_quantity_order($table,$id_item,$code,$number)
         // update cart_shop_all where id in cart_shop and crystal_bill=''
         $stmt=$this->db->prepare("UPDATE cart_shop_all as t1  INNER JOIN cart_shop_active as t2 on t1.id = t2.id SET t1.id_member_r=t2.id_member_r,t1.id_item=t2.id_item,t1.size=t2.size,t1.price=t2.price,t1.price_dollars=t2.price_dollars, t1.number = t2.number ,t1.buy = t2.buy , t1.date = t2.date , t1.date_req = t2.date_req , t1.status = t2.status , t1.why_rejected = t2.why_rejected , t1.mpx = t2.mpx , t1.user_id = t2.user_id , t1.date_d_r = t2.date_d_r , t1.number_bill = t2.number_bill , t1.name_color = t2.name_color , t1.accountant = t2.accountant , t1.date_accountant = t2.date_accountant , t1.id_accountant_user = t2.id_accountant_user , t1.prepared = t2.prepared , t1.date_prepared = t2.date_prepared , t1.id_prepared = t2.id_prepared , t1.note_prepared = t2.note_prepared , t1.top = t2.top , t1.direct = t2.direct , t1.user_direct = t2.user_direct , t1.done_direct = t2.done_direct , t1.dollar_exchange = t2.dollar_exchange , t1.cancel = t2.cancel , t1.date_cancel = t2.date_cancel , t1.enter_serial = t2.enter_serial , t1.edit_bill = t2.edit_bill , t1.edit_price = t2.edit_price , t1.old_price = t2.old_price , t1.user_edit_price = t2.user_edit_price , t1.note = t2.note , t1.location = t2.location , t1.auto_print = t2.auto_print , t1.crystal_bill = t2.crystal_bill , t1.group_bill = t2.group_bill , t1.offers = t2.offers , t1.id_offer = t2.id_offer , t1.date_offer = t2.date_offer , t1.price_type = t2.price_type , t1.wr_prepared = t2.wr_prepared , t1.byqr = t2.byqr , t1.user_note_prepared = t2.user_note_prepared , t1.note_search_serial = t2.note_search_serial , t1.user_note_search_serial = t2.user_note_search_serial , t1.id_computer_assembly = t2.id_computer_assembly , t1.computer_assembly = t2.computer_assembly , t1.date_computer_assembly = t2.date_computer_assembly where t1.buy!=2 or t1.prepared!=2 or t1.crystal_bill='' ");
         $stmt->execute();
-     
+
      	$stmt=$this->db->prepare("DELETE FROM `cart_shop_all` where id not in (select id from cart_shop_active) and id >360329");
         $stmt->execute();
-     	
-     
+
+
     }
 /**
      * check if the item that ordered in cart_shop_active there are the 0 quantity in excel table

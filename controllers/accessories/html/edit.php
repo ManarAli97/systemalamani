@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col">
         <span></span>
-        <nav aria-label="breadcrumb"> 
+        <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="<?php  echo url.'/'.$this->folder?>/admin_category"><?php  echo $this->langControl('accessories') ?> </a></li>
                 <?php if ($breadcumbs){ foreach ($breadcumbs as $key => $bc) {   ?>
@@ -111,7 +111,7 @@
                     <input type="hidden"  name="change_price"  value="0"    >
                     <input type="checkbox"  id="validationServer0change_price" name="change_price"  value="1" data-toggle="toggle" datax-stylex="iosx" data-size="small"   <?php  if ($data['change_price'] == 1 ) echo 'checked'?>  >
                 </div>
-            </div> 
+            </div>
             <!-- // nur -->
             <br>
             <div class="form-row">
@@ -145,12 +145,12 @@
                     .bootstrap-select:not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn) {
                         width: 392px !important;
                     }
-                
+
                     .bootstrap-select .dropdown-menu {
-                    
+
                         min-width: auto !important;
                     }
-                
+
                 </style>
             </div>
 
@@ -525,7 +525,11 @@
 
     function remove_row_database(id) {
         $.get( "<?php echo url.'/'.$this->folder ?>/remove_row_database/"+id, function( data ) {
-            $('.removeRow_'+id).remove();
+            if(data == 1){
+                $('.removeRow_'+id).remove();
+            }else{
+                alert('لا يمكن حذف الباركود لانه يحتوي على كمية');
+            }
         });
     }
 

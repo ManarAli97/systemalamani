@@ -202,11 +202,17 @@
         modal.find('#save').val(recipient)
     });
 
+
     $('#save').on('click',function () {
         var  id= $('#save').val();
         $.get( "<?php echo url ?>/accessories/delete_accessories/"+id, function( data ) {
-            $('#row_'+id).remove();
-            $('#exampleModal').modal('hide')
+            console.log(data);
+            if(data == 1){
+                $('#row_'+id).remove();
+                $('#exampleModal').modal('hide');
+            }else{
+                    alert('لا يمكن حذف الباركود لانه يحتوي على كمية');
+            }
         });
     });
 
