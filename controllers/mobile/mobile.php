@@ -81,9 +81,9 @@ class mobile extends Controller
           `id_member_r` int(11) NOT NULL,
           `id_item` int(11) NOT NULL,
           `size` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
-          `price` varchar(250) COLLATE utf8_unicode_ci NOT NULL, 
+          `price` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
           `price_dollars`  varchar(250) COLLATE utf8_unicode_ci NOT NULL,
-          `image` varchar(250) COLLATE utf8_unicode_ci NOT NULL,  
+          `image` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
           `color` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
           `code` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
           `table` varchar(250) COLLATE utf8_unicode_ci NOT NULL,
@@ -259,7 +259,7 @@ class mobile extends Controller
                 'dt' => 5,
                 'formatter' => function ($id, $row) {
                     return "
- 
+
                    <div style='text-align: center;font-size: 23px;'>
                     <a href=" . url . "/mobile/edit_mobile/$id> <i class='fa fa-pencil-square-o' aria-hidden='true'></i> </a>
                     </div> ";
@@ -645,7 +645,7 @@ class mobile extends Controller
 
         }
 
-    	
+
     	$date = time();
         $stmtOffers=$this->db->prepare("SELECT offers.id, offers_item.code  FROM `offers` INNER JOIN `offers_item` ON offers.id = offers_item.id_offer  WHERE offers_item.model = ? AND offers.active=1 AND {$date} BETWEEN `fromdate` AND `todate`AND offers.delete =0");
         $stmtOffers->execute(array('mobile'));
@@ -1569,10 +1569,10 @@ class mobile extends Controller
 
                 $form->post('location')
                     ->val('strip_tags');
-				
+
             	 $form->post('is_service')
                     ->val('strip_tags');
-            
+
                 $form->post('enter_serial')
                     ->val('strip_tags');
 
@@ -1911,10 +1911,10 @@ class mobile extends Controller
 
 				$form->post('stop')
 					->val('strip_tags');
-            
+
 				 $form->post('is_service')
                     ->val('strip_tags');
-            
+
                 $form->post('enter_serial')
                     ->val('strip_tags');
 
@@ -2118,7 +2118,7 @@ class mobile extends Controller
                 'dt' => 6,
                 'formatter' => function ($id, $row) {
                     return "
- 
+
                    <div style='text-align: center;font-size: 23px;'>
                     <a href=" . url . "/mobile/edit_mobile/$id> <i class='fa fa-pencil-square-o' aria-hidden='true'></i> </a>
                     </div> ";
@@ -2130,7 +2130,7 @@ class mobile extends Controller
                     if ($this->permit('copy_row', $this->folder)) {
                     return '
                    <button class="btn btn-warning btn-sm " onclick="copy_row('.$id.')"  type="button"  >  <i class="fa fa-clone"></i> <span>تكرار</span>  </button>
-               
+
                 ';
                     } else {
                         return $this->langControl('forbidden');
@@ -2242,57 +2242,75 @@ class mobile extends Controller
     function delete_mobile($id)
     {
         if ($this->handleLogin()) {
-
-        	 $ids_color = array();
+			$check_qua = array();
+        	$ids_color = array();
         	$stmt_codes_sync=$this->db->prepare("SELECT id,code FROM `code` where id_color in (select id from `color` where id_item =? )");
             $stmt_codes_sync->execute(array($id));
-
-            $check_codes="( ";
-            while($row_codes = $stmt_codes_sync->fetch(PDO::FETCH_ASSOC))
+        	$rows = $stmt_codes_sync->fetchAll( PDO::FETCH_BOTH );
+         	foreach ($rows as $row)
             {
-                $check_codes.='"'.$row_codes['code'].'",';
-            	$this->update_code($this->code,$row_codes['code'],$row_codes['id']);
-            }
-			
-        	$check_codes=substr($check_codes,0,-1).')';
-        	 $this->Add_to_sync_schedule($id,'mobile','delete_item', $check_codes); 
-            
 
-			$stmt=$this->db->prepare("SELECT  *FROM `{$this->table}` WHERE `id`  = ?   AND {$this->is_delete} " );
-			$stmt->execute(array($id));
-			$result=$stmt->fetch(PDO::FETCH_ASSOC);
-
-			$trace=new trace_site();
-			$oldData=$trace->old($id,$this->folder);
-
-			$trace->add($id,$this->folder,'delete',$result['title'],$result['title'],$oldData,'');
-
-			$this->update_is_delete('mobile', 'id = '.$id.'');
-			// $response = $this->db->delete($this->table, "`id`={$id}");
-
-            $c_id = $this->db->prepare("SELECT `id` FROM `$this->color`  WHERE  `id_item`=? AND  {$this->is_delete}");
-            $c_id->execute(array($id));
-
-        	while($row_color =$c_id->fetch(PDO::FETCH_ASSOC))
-            {
-                $ids_color[]=$row_color['id'];
+                $stmt_qua=$this->db->prepare("SELECT sum(`quantity`) as num FROM `{$this->excel}` WHERE `code`=?" );
+                $stmt_qua->execute(array($row['code']));
+                $result_qua=$stmt_qua->fetch(PDO::FETCH_ASSOC);
+                if($result_qua['num'] > 0){
+                    $check_qua[] = 0;
+                }
             }
 
-        	$this->update_is_delete('color', 'id_item = '.$id.'');
-            // $c_id_c = $c_id->fetch(PDO::FETCH_ASSOC)['id'];
 
-            // $c = $this->db->prepare("DELETE FROM `$this->color`  WHERE  `id_item`=?");
-            // $c->execute(array($id));
+            if(count($check_qua) > 0){
+                echo 0;
+            }else{
+
+            	$check_codes="( ";
+           	    foreach ($rows as $row)
+            	{
+                	$check_codes.='"'.$row['code'].'",';
+            		$this->update_code($this->code,$row['code'],$row['id']);
+            	}
+
+        		$check_codes=substr($check_codes,0,-1).')';
+        	 	$this->Add_to_sync_schedule($id,'mobile','delete_item', $check_codes);
+
+
+				$stmt=$this->db->prepare("SELECT  *FROM `{$this->table}` WHERE `id`  = ?   AND {$this->is_delete} " );
+				$stmt->execute(array($id));
+				$result=$stmt->fetch(PDO::FETCH_ASSOC);
+
+				$trace=new trace_site();
+				$oldData=$trace->old($id,$this->folder);
+
+				$trace->add($id,$this->folder,'delete',$result['title'],$result['title'],$oldData,'');
+
+				$this->update_is_delete('mobile', 'id = '.$id.'');
+				// $response = $this->db->delete($this->table, "`id`={$id}");
+
+            	$c_id = $this->db->prepare("SELECT `id` FROM `$this->color`  WHERE  `id_item`=? AND  {$this->is_delete}");
+            	$c_id->execute(array($id));
+
+        		while($row_color =$c_id->fetch(PDO::FETCH_ASSOC))
+            	{
+                	$ids_color[]=$row_color['id'];
+            	}
+
+        		$this->update_is_delete('color', 'id_item = '.$id.'');
+            	// $c_id_c = $c_id->fetch(PDO::FETCH_ASSOC)['id'];
+
+            	// $c = $this->db->prepare("DELETE FROM `$this->color`  WHERE  `id_item`=?");
+            	// $c->execute(array($id));
 
 
 
-            for($i = 0; $i < count($ids_color); $i++){
-            	$this->update_is_delete($this->code, 'id_color = '.$ids_color[$i].' AND is_delete = 0');
-                // $cd = $this->db->prepare("DELETE FROM `$this->code`  WHERE  `id_color`=?");
-                // $cd->execute(array($ids_color[$i]));
+            	for($i = 0; $i < count($ids_color); $i++){
+            		$this->update_is_delete($this->code, 'id_color = '.$ids_color[$i].' AND is_delete = 0');
+                	// $cd = $this->db->prepare("DELETE FROM `$this->code`  WHERE  `id_color`=?");
+                	// $cd->execute(array($ids_color[$i]));
+            	}
+			  echo 1;
             }
-			
-       
+
+
 
 		}
     }
@@ -2567,7 +2585,7 @@ class mobile extends Controller
             $this->Add_to_sync_schedule($id, 'mobile', 'delete_category');
 
         }
-    	
+
     }
 
 
@@ -2927,11 +2945,29 @@ class mobile extends Controller
             // $c = $this->db->prepare("DELETE FROM `$this->color`  WHERE  `id`=?");
             // $c->execute(array($id));
 
+
+            $stmt = $this->db->prepare("SELECT `code`  FROM `{$this->code}` WHERE   `id`= ? ");
+            $stmt->execute(array($id));
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $stmt_qua = $this->db->prepare("SELECT `quantity`  FROM `{$this->excel}` WHERE   `code`= ? ");
+            $stmt_qua->execute(array($result['code']));
+            $result_qua = $stmt_qua->fetch(PDO::FETCH_ASSOC);
+
+            if($result_qua['quantity'] > 0){
+                echo 0;
+            }else{
+                $this->update_is_delete($this->code, 'id = '.$id.'');
+                $this->update_code($this->code,$result['code'],$id);
+                $this->Add_to_sync_schedule($id,$this->code,'delete_code', $result['code']);
+                echo 1;
+            }
+
             // $c = $this->db->prepare("DELETE FROM `$this->code`  WHERE  `id_color`=?");
             // $c->execute(array($id));
          	 $this->update_is_delete($this->color, 'id = '.$id.'');
 			 $this->update_is_delete($this->code, 'id_color = '.$id.'');
-        
+
             echo true;
         }
     }
@@ -2943,8 +2979,24 @@ class mobile extends Controller
 
             // $c = $this->db->prepare("DELETE FROM `$this->code`  WHERE  `id`=?");
             // $c->execute(array($id));
-        
-        	  $this->update_is_delete($this->code, 'id = '.$id.'');
+        	$stmt = $this->db->prepare("SELECT `code`  FROM `{$this->code}` WHERE   `id`= ? ");
+            $stmt->execute(array($id));
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $stmt_qua = $this->db->prepare("SELECT `quantity`  FROM `{$this->excel}` WHERE   `code`= ? ");
+            $stmt_qua->execute(array($result['code']));
+            $result_qua = $stmt_qua->fetch(PDO::FETCH_ASSOC);
+
+            if($result_qua['quantity'] > 0){
+                echo 0;
+            }else{
+                $this->update_is_delete($this->code, 'id = '.$id.'');
+                $this->update_code($this->code,$result['code'],$id);
+                $this->Add_to_sync_schedule($id,$this->code,'delete_code', $result['code']);
+                echo 1;
+            }
+
+        	  // $this->update_is_delete($this->code, 'id = '.$id.'');
 
             echo true;
         }
@@ -3016,7 +3068,7 @@ class mobile extends Controller
                 $stmt_order->execute(array($result['code'], $this->table, $data['id_member_r']));
                 $only_order = $stmt_order->fetch(PDO::FETCH_ASSOC);
                 $q = $result['quantity'] - $only_order['num'];
-
+ 				$data['cost_price'] = $result['avarage_cost'];
                 if ($q >= $number) {
 
 
@@ -3135,7 +3187,7 @@ class mobile extends Controller
             $stmt_order->execute(array($data['code'], $this->table, $data['id_member_r']));
             $only_order = $stmt_order->fetch(PDO::FETCH_ASSOC);
             $q = $price_2D['quantity'] - $only_order['num'];
-
+ 			$data['cost_price'] = $price_2D['avarage_cost'];
             if ($q >= $data['number']) {
 
                 $data['table'] = $this->table;
@@ -3177,7 +3229,7 @@ class mobile extends Controller
                         $data['price_dollars'] = $price_2D['wholesale_price2'];
 
                     } else if ($data['price_type'] == 3) {
-                        $data['price_dollars'] = $price_2D['cost_price'];
+                        $data['price_dollars'] = $price_2D['avarage_cost'];
                     } else {
                         $data['price_dollars'] = $price_2D['price_dollars'];
                     }
@@ -3663,7 +3715,7 @@ class mobile extends Controller
     }
 
 
- 
+
        public function processing_quantity($id)
     {
         $this->checkPermit('view_quantity', $this->folder);
@@ -3706,7 +3758,7 @@ class mobile extends Controller
                 'dt' => 10,
                 'formatter' => function ($id, $row) {
                     return "
- 
+
                    <div style='text-align: center;font-size: 23px;'>
                     <a href=" . url .'/'.$this->folder. "/edit_".$this->folder."/$id> <i class='fa fa-pencil-square-o' aria-hidden='true'></i> </a>
                     </div> ";

@@ -775,10 +775,10 @@ class computer extends Controller
                     ->val('strip_tags');
                 $form  ->post('location')
                     ->val('strip_tags');
-            
+
             	 $form->post('is_service')
                     ->val('strip_tags');
-            
+
 				$form->post('enter_serial')
 					->val('strip_tags');
                 $form  ->post('cuts')
@@ -1095,10 +1095,10 @@ class computer extends Controller
                     ->val('strip_tags');
                 $form  ->post('location')
                     ->val('strip_tags');
-              
+
                $form->post('is_service')
-                    ->val('strip_tags'); 
-            
+                    ->val('strip_tags');
+
 				$form->post('enter_serial')
 					->val('strip_tags');
                 $form  ->post('cuts')
@@ -1293,7 +1293,7 @@ class computer extends Controller
                 'dt'        => 4,
                 'formatter' => function($id, $row ) {
                     return "
- 
+
                    <div style='text-align: center;font-size: 23px;'>
                     <a href=".url."/computer/edit_computer/$id> <i class='fa fa-pencil-square-o' aria-hidden='true'></i> </a>
                     </div> ";
@@ -1304,7 +1304,7 @@ class computer extends Controller
                     if ($this->permit('copy_row', $this->folder)) {
                         return '
                    <button class="btn btn-warning btn-sm " onclick="copy_row('.$id.')"  type="button"  >  <i class="fa fa-clone"></i> <span>تكرار</span>  </button>
-               
+
                 ';
                     } else {
                         return $this->langControl('forbidden');
@@ -1389,55 +1389,72 @@ class computer extends Controller
 
     function delete_computer($id)
     {
-        if ($this->handleLogin()) {	
-        
+        if ($this->handleLogin()) {
+        	$check_qua=array();
             $ids_color = array();
         	$stmt_codes_sync=$this->db->prepare("SELECT id,code FROM `$this->code` where id_color in (select id from `$this->color` where id_item =? )");
             $stmt_codes_sync->execute(array($id));
-
-            $check_codes="( ";
-            while($row_codes = $stmt_codes_sync->fetch(PDO::FETCH_ASSOC))
+        	$rows = $stmt_codes_sync->fetchAll( PDO::FETCH_BOTH );
+	 		foreach ($rows as $row)
             {
-                $check_codes.='"'.$row_codes['code'].'",';
-            	$this->update_code($this->code,$row_codes['code'],$row_codes['id']);
+
+                $stmt_qua=$this->db->prepare("SELECT sum(`quantity`) as num FROM `{$this->excel}` WHERE `code`=?" );
+                $stmt_qua->execute(array($row['code']));
+                $result_qua=$stmt_qua->fetch(PDO::FETCH_ASSOC);
+                if($result_qua['num'] > 0){
+                    $check_qua[] = 0;
+                }
             }
-        
-             $check_codes=substr($check_codes,0,-1).')';
-        	 $this->Add_to_sync_schedule($id,'computer','delete_item', $check_codes);
-        
-			$stmt=$this->db->prepare("SELECT  *FROM `{$this->table}` WHERE `id`  = ?   " );
-			$stmt->execute(array($id));
-			$result=$stmt->fetch(PDO::FETCH_ASSOC);
 
-			$trace=new trace_site();
-			$oldData=$trace->old($id,$this->folder);
 
-			$trace->add($id,$this->folder,'delete',$result['title'],$result['title'],$oldData,'');
+            if(count($check_qua) > 0){
+                echo 0;
+            }else{
 
-			// $response = $this->db->delete($this->table, "`id`={$id}");
-			$this->update_is_delete($this->table, 'id = '.$id.'');
+            	$check_codes="( ";
+           	 	foreach ($rows as $row)
+            	{
+               	 	$check_codes.='"'.$row['code'].'",';
+            		$this->update_code($this->code,$row['code'],$row['id']);
+            	}
 
-            $c_id = $this->db->prepare("SELECT `id` FROM `$this->color`  WHERE  `id_item`=?");
-            $c_id->execute(array($id));
-        	 while($row_codes =$c_id->fetch(PDO::FETCH_ASSOC))
-            {
-                $ids_color[]=$row_codes['id'];
+             	$check_codes=substr($check_codes,0,-1).')';
+        	 	$this->Add_to_sync_schedule($id,'computer','delete_item', $check_codes);
+
+				$stmt=$this->db->prepare("SELECT  *FROM `{$this->table}` WHERE `id`  = ?   " );
+				$stmt->execute(array($id));
+				$result=$stmt->fetch(PDO::FETCH_ASSOC);
+
+				$trace=new trace_site();
+				$oldData=$trace->old($id,$this->folder);
+
+				$trace->add($id,$this->folder,'delete',$result['title'],$result['title'],$oldData,'');
+
+				// $response = $this->db->delete($this->table, "`id`={$id}");
+				$this->update_is_delete($this->table, 'id = '.$id.'');
+
+            	$c_id = $this->db->prepare("SELECT `id` FROM `$this->color`  WHERE  `id_item`=?");
+            	$c_id->execute(array($id));
+        	 	while($row_codes =$c_id->fetch(PDO::FETCH_ASSOC))
+            	{
+                	$ids_color[]=$row_codes['id'];
+            	}
+
+            	// $c_id_c = $c_id->fetch(PDO::FETCH_ASSOC)['id'];
+
+            	// $c = $this->db->prepare("DELETE FROM `$this->color`  WHERE  `id_item`=?");
+            	// $c->execute(array($id));
+        		$this->update_is_delete($this->color, 'id_item = '.$id.'');
+
+            	// $cd = $this->db->prepare("DELETE FROM `$this->code`  WHERE  `id_color`=?");
+            	// $cd->execute(array($c_id_c));
+
+        	 	for($i = 0; $i < count($ids_color); $i++){
+             		$this->update_is_delete($this->code, 'id_color = '.$ids_color[$i].' AND is_delete = 0');
+            	}
+
+        	 	echo 1;
             }
-        
-            // $c_id_c = $c_id->fetch(PDO::FETCH_ASSOC)['id'];
-
-            // $c = $this->db->prepare("DELETE FROM `$this->color`  WHERE  `id_item`=?");
-            // $c->execute(array($id));
-        	$this->update_is_delete($this->color, 'id_item = '.$id.'');
-
-            // $cd = $this->db->prepare("DELETE FROM `$this->code`  WHERE  `id_color`=?");
-            // $cd->execute(array($c_id_c));
-        
-        	 for($i = 0; $i < count($ids_color); $i++){
-             	$this->update_is_delete($this->code, 'id_color = '.$ids_color[$i].' AND is_delete = 0');
-            }
-        
-        	 
         }
     }
 
@@ -2080,7 +2097,7 @@ class computer extends Controller
     function remove_row_database($id)
     {
         if ($this->handleLogin() ) {
-        
+
 //         	$stmt_codes_sync=$this->db->prepare("SELECT code FROM `$this->code` where id_color =?");
 //             $stmt_codes_sync->execute(array($id));
 
@@ -2090,11 +2107,28 @@ class computer extends Controller
 //                 $check_codes[]=$row_codes['code'];
 //             }
 // 			 $codes = implode(",",$check_codes);
-        	
-//         	 $this->Add_to_sync_schedule($id,'computer','delete_color_code', $codes); 
-          
-             $this->update_is_delete($this->color, 'id = '.$id.'');
-			 $this->update_is_delete($this->code, 'id_color = '.$id.'');
+
+//         	 $this->Add_to_sync_schedule($id,'computer','delete_color_code', $codes);
+
+
+        	 $stmt = $this->db->prepare("SELECT `id`,`code`  FROM `{$this->code}` WHERE   `id_color`= ? ");
+             $stmt->execute(array($id));
+             $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+             $stmt_qua = $this->db->prepare("SELECT `quantity`  FROM `{$this->excel}` WHERE   `code`= ? ");
+             $stmt_qua->execute(array($result['code']));
+             $result_qua = $stmt_qua->fetch(PDO::FETCH_ASSOC);
+
+             if($result_qua['quantity'] > 0){
+                 echo 0;
+             }else{
+
+                 $this->update_is_delete($this->color, 'id = '.$id.'');
+                 $this->update_is_delete($this->code, 'id_color = '.$id.'');
+                 $this->update_code($this->code,$result['code'],$result['id']);
+                 $this->Add_to_sync_schedule($id,'mobile','delete_color_code', $result['code']);
+                 echo 1;
+             }
 //             $c= $this->db->prepare("DELETE FROM `$this->color`  WHERE  `id`=?");
 //             $c->execute(array($id));
 
@@ -2112,7 +2146,22 @@ class computer extends Controller
             // $c= $this->db->prepare("DELETE FROM `$this->code`  WHERE  `id`=?");
             // $c->execute(array($id));
             // echo true;
-         $this->update_is_delete($this->code, 'id = '.$id.'');
+        	$stmt = $this->db->prepare("SELECT `code`  FROM `{$this->code}` WHERE   `id`= ? ");
+            $stmt->execute(array($id));
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $stmt_qua = $this->db->prepare("SELECT `quantity`  FROM `{$this->excel}` WHERE   `code`= ? ");
+            $stmt_qua->execute(array($result['code']));
+            $result_qua = $stmt_qua->fetch(PDO::FETCH_ASSOC);
+
+            if($result_qua['quantity'] > 0){
+                echo 0;
+            }else{
+         		$this->update_is_delete($this->code, 'id = '.$id.'');
+              	$this->update_code($this->code,$result['code'],$id);
+                $this->Add_to_sync_schedule($id,$this->code,'delete_code', $result['code']);
+             echo 1;
+            }
         }
     }
 
@@ -2190,7 +2239,7 @@ class computer extends Controller
                 $stmt_order->execute(array($result['code'],$this->table,$data['id_member_r']));
                 $only_order=$stmt_order->fetch(PDO::FETCH_ASSOC);
                 $q= $result['quantity']  - $only_order['num'];
-
+				 $data['cost_price'] = $result['avarage_cost'];
                 if ($q >= $number) {
 
 
@@ -2322,7 +2371,7 @@ class computer extends Controller
             $stmt_order->execute(array($data['code'], $this->table, $data['id_member_r']));
             $only_order = $stmt_order->fetch(PDO::FETCH_ASSOC);
             $q = $price_2D['quantity'] - $only_order['num'];
-
+			 $data['cost_price'] = $price_2D['avarage_cost'];
             if ($q >= $data['number']) {
 
                 $data['table'] = $this->table;
@@ -2364,7 +2413,7 @@ class computer extends Controller
                         $data['price_dollars'] = $price_2D['wholesale_price2'];
 
                     } else if ($data['price_type'] == 3) {
-                        $data['price_dollars'] = $price_2D['cost_price'];
+                        $data['price_dollars'] = $price_2D['avarage_cost'];
                     } else {
                         $data['price_dollars'] = $price_2D['price_dollars'];
                     }
@@ -3107,7 +3156,7 @@ class computer extends Controller
                 'dt'        => 5,
                 'formatter' => function($id, $row ) {
                     return "
- 
+
                    <div style='text-align: center;font-size: 23px;'>
                     <a href=".url."/computer/edit_computer/$id> <i class='fa fa-pencil-square-o' aria-hidden='true'></i> </a>
                     </div> ";
@@ -3238,7 +3287,7 @@ class computer extends Controller
                 'dt' => 8,
                 'formatter' => function ($id, $row) {
                     return "
- 
+
                    <div style='text-align: center;font-size: 23px;'>
                     <a href=" . url .'/'.$this->folder. "/edit_".$this->folder."/$id> <i class='fa fa-pencil-square-o' aria-hidden='true'></i> </a>
                     </div> ";
@@ -3463,13 +3512,13 @@ class computer extends Controller
                             if ($ch_code->rowCount() < 1) {
 
 
-                            	
+
 
                                 $stmt = $this->db->prepare("SELECT * FROM {$this->table}  WHERE `title`=?");
                                 $stmt->execute(array($rowData[0][0]));
                                 if ($stmt->rowCount() > 0) {
                                     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-                                
+
                                  $update = $this->db->prepare("UPDATE `{$this->table}`  SET  `is_delete`=0   WHERE id = ?  ");
                                  $update->execute(array($result['id']));
 
@@ -3482,7 +3531,7 @@ class computer extends Controller
 
                                         $stmt_in = $this->db->prepare("INSERT INTO {$this->code} (`code`,`size`,`id_color`,`date`) VALUES(?,?,?,?)");
                                         $stmt_in->execute(array($rowData[0][2], $rowData[0][3], $resultc['id'], time() + 1));
-                                    
+
                                      	$updatec = $this->db->prepare("UPDATE `{$this->code}`  SET  `is_delete`=0   WHERE id = ?  ");
                                 		$updatec->execute(array($resultc['id']));
 

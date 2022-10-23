@@ -1368,11 +1368,13 @@ class Accessories extends Controller
 
         	$stmt_codes_sync=$this->db->prepare("SELECT id , code FROM `color_accessories` where id_item =?");
             $stmt_codes_sync->execute(array($id));
-            while($row_codes = $stmt_codes_sync->fetch(PDO::FETCH_ASSOC))
+
+            $rows = $stmt_codes_sync->fetchAll( PDO::FETCH_BOTH );
+            foreach ($rows as $row)
             {
 
                 $stmt_qua=$this->db->prepare("SELECT sum(`quantity`) as num FROM `excel_accessories` WHERE `code`=?" );
-                $stmt_qua->execute(array($row_codes['code']));
+                $stmt_qua->execute(array($row['code']));
                 $result_qua=$stmt_qua->fetch(PDO::FETCH_ASSOC);
                 if($result_qua['num'] > 0){
                     $check_qua[] = 0;
@@ -1384,11 +1386,13 @@ class Accessories extends Controller
                 echo 0;
             }else{
 
+                // $stmt_codes=$this->db->prepare("SELECT id , code FROM `color_accessories` where id_item =?");
+                // $stmt_codes->execute(array($id));
                 $check_codes="( ";
-                while($row_codes = $stmt_codes_sync->fetch(PDO::FETCH_ASSOC))
+                foreach ($rows as $row)
                 {
-                    $check_codes.='"'.$row_codes['code'].'",';
-                    $this->update_code('color_accessories',$row_codes['code'],$row_codes['id']);
+                    $check_codes.='"'.$row['code'].'",';
+                    $this->update_code('color_accessories',$row['code'],$row['id']);
                 }
 
                 $check_codes=substr($check_codes,0,-1).')';

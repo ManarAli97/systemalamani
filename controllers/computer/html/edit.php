@@ -1,5 +1,4 @@
 
-
 <br>
 <div class="row">
     <div class="col">
@@ -603,13 +602,21 @@
 
     function remove_row_database(id) {
         $.get( "<?php echo url.'/'.$this->folder ?>/remove_row_database/"+id, function( data ) {
+         if(data == 1){
             $('.removeRow_'+id).remove();
+          }else{
+                alert('لا يمكن حذف الباركود لانه يحتوي على كمية');
+            }
         });
     }
 
     function remove_sub_row_database(id) {
         $.get( "<?php echo url.'/'.$this->folder ?>/remove_sub_row_database/"+id, function( data ) {
+         if(data == 1){
             $('.removeRow_Code_'+id).remove();
+           }else{
+                alert('لا يمكن حذف الباركود لانه يحتوي على كمية');
+            }
         });
     }
 

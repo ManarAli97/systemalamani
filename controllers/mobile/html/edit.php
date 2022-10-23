@@ -222,7 +222,7 @@
                     </td>
 
                 </tr>
-                
+
                 <tr>
                     <td>
                         <div class="form-row">
@@ -414,7 +414,7 @@
 
                            <div class="col-lg-12">
                                 <div class="row">
-                                    
+
                                         <div class="col-12 tags_tags">
                                             باركودات بديلة
                                             <input    name="serial[<?php  echo $c_data['id'] ?>][<?php  echo $c_code['id'] ?>]" type="text"  class="form-control tags serial"     data-role="tagsinput" id="validationServer0_code"   value="<?php  echo $c_code['serial'] ?>"  />
@@ -473,12 +473,12 @@
                 <div class="row justify-content-md-center ">
                     <div class="col-md-auto">
                         <input  class="btn btn-primary" id="save_btn_card"  type="submit"  value="<?php  echo $this->langControl('save') ?>" name="submit">
- 
+
                         <?php    if ($this->permit('copy_row', $this->folder)) {  ?>
                         <button  class="btn btn-warning   " onclick="copy_row(<?php  echo  $id ?>)"  type="button"  >  <i class="fa fa-clone"></i> <span>تكرار</span>  </button>
                      <?php } ?>
-                
-                
+
+
                 </div>
                 </div>
             </div>
@@ -667,7 +667,7 @@
 
 
                             <div class="col-12 tags_tags">
-                  
+
                                   <label for="input-tags" class="col-sm-12 col-form-label"><span> باركودات بديلة </span>    </label>
                                  <input type="text"  name="serial[${x}][new${sub_count}]" class="form-control tags serial"     data-role="tagsinput" />
 
@@ -688,13 +688,22 @@
 
     function remove_row_database(id) {
         $.get( "<?php echo url.'/'.$this->folder ?>/remove_row_database/"+id, function( data ) {
-            $('.removeRow_'+id).remove();
+            if(data == 1){
+                $('.removeRow_'+id).remove();
+            }else{
+                alert('لا يمكن حذف الباركود لانه يحتوي على كمية');
+            }
         });
     }
 
+
     function remove_sub_row_database(id) {
         $.get( "<?php echo url.'/'.$this->folder ?>/remove_sub_row_database/"+id, function( data ) {
-            $('.removeRow_Code_'+id).remove();
+            if(data == 1){
+                $('.removeRow_Code_'+id).remove();
+            }else{
+                alert('لا يمكن حذف الباركود لانه يحتوي على كمية');
+            }
         });
     }
 

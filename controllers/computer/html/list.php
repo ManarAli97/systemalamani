@@ -1,4 +1,3 @@
-
 <script>
 var  table;
     $(document).ready(function() {
@@ -198,8 +197,12 @@ var  table;
     $('#save').on('click',function () {
         var  id= $('#save').val();
         $.get( "<?php echo url ?>/computer/delete_computer/"+id, function( data ) {
-            $('#row_'+id).remove();
-            $('#exampleModal').modal('hide')
+        	if(data == 1){
+            	$('#row_'+id).remove();
+            	$('#exampleModal').modal('hide');
+            }else{
+                alert('لا يمكن حذف الباركود لانه يحتوي على كمية');
+            }
         });
     });
  </script>

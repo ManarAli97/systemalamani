@@ -202,11 +202,16 @@
         modal.find('#save').val(recipient)
     });
 
+
     $('#save').on('click',function () {
         var  id= $('#save').val();
         $.get( "<?php echo url ?>/mobile/delete_mobile/"+id, function( data ) {
-            table.draw();
-            $('#exampleModal').modal('hide')
+            if(data == 1){
+                table.draw();
+                $('#exampleModal').modal('hide');
+            }else{
+                alert('لا يمكن حذف الباركود لانه يحتوي على كمية');
+            }
         });
     });
  </script>
