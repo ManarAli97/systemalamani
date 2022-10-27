@@ -4,11 +4,8 @@ class Account extends Controller {
     function __construct()
     {
         parent::__construct();
-        $this->account_catg = 'account_catg'; // purchase table name (تفاصيل المشتريات)
-        // $this->purchase_item = 'purchase_item'; // purchase_item table name (مواد الشراء)
-        // $this->supplier = 'supplier';  // supplier table name (الموردين)
-        // $this->source_request = 'source_request'; // source_request table name (مصدر الطلب ,دولة او محافظة)
-        // $this->type_shipping = 'type_shipping'; // type_Shipping table name (نوع الشحن)
+        $this->account_catg = 'account_catg';
+        $this->person = 'person';
         $this->menu=new Menu();
 
 
@@ -48,6 +45,20 @@ class Account extends Controller {
             FOREIGN KEY (`iduser`) REFERENCES user(id)
         ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
+        $this->db->query("CREATE TABLE IF NOT EXISTS `{$this->person}` (
+            `id` int(11) Unsigned  NOT NULL AUTO_INCREMENT,
+            `phone` varchar(50) NOT NULL,
+            `name` varchar(100) NOT NULL,
+            `job` varchar(50) NOT NULL,
+            `country` varchar(50) NOT NULL,
+            `city` varchar(50) NOT NULL,
+            `type_customer` varchar(50) NOT NULL,
+            `type_customer1` varchar(50) NOT NULL,
+            `iduser` int(4) NOT NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`iduser`) REFERENCES user(id),
+
+        ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
         return $this->db->cht(array($this->account_catg));
     }
