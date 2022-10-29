@@ -17,8 +17,9 @@ class Account extends Controller {
         /*
         * Create Table account_catg
         * Created 2022/10/12
-        *
+        * جدول خاص بفئات الحسابات
         */
+
         $this->db->query("CREATE TABLE IF NOT EXISTS `{$this->account_catg}` (
             `id` int(4) Unsigned  NOT NULL AUTO_INCREMENT ,
             `title` varchar(150) NOT NULL,
@@ -32,7 +33,7 @@ class Account extends Controller {
             FOREIGN KEY (`idbranch`) REFERENCES branch(id)
         ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
-
+        // جدول الفروع
         $this->db->query("CREATE TABLE IF NOT EXISTS `branch` (
             `id` int(4) Unsigned  NOT NULL AUTO_INCREMENT ,
             `title` varchar(150) NOT NULL,
@@ -45,19 +46,30 @@ class Account extends Controller {
             FOREIGN KEY (`iduser`) REFERENCES user(id)
         ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
+        // ......خاص بجميع المستخدمين و الزبائن و الموظفين و
         $this->db->query("CREATE TABLE IF NOT EXISTS `{$this->person}` (
             `id` int(11) Unsigned  NOT NULL AUTO_INCREMENT,
-            `phone` varchar(50) NOT NULL,
-            `name` varchar(100) NOT NULL,
-            `job` varchar(50) NOT NULL,
-            `country` varchar(50) NOT NULL,
-            `city` varchar(50) NOT NULL,
-            `type_customer` varchar(50) NOT NULL,
-            `type_customer1` varchar(50) NOT NULL,
+            `first_name` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `name` varchar(100)  COLLATE utf8_unicode_ci NOT NULL,
+            `phone` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `job` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `country` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `city` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `address` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `type_customer` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+            `type_customer12` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `uid` varchar(200)  COLLATE utf8_unicode_ci NOT NULL,
+            `login` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `brithday` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `gander` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `model` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `id_user_screen` int(11),
+            `note` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `xc` TINYINT(1) NOT NULL,
             `iduser` int(4) NOT NULL,
+            `date` bigint(20) NOT NULL,
             PRIMARY KEY (`id`),
-            FOREIGN KEY (`iduser`) REFERENCES user(id),
-
+            FOREIGN KEY (`iduser`) REFERENCES user(id)
         ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
         return $this->db->cht(array($this->account_catg));
@@ -98,6 +110,7 @@ class Account extends Controller {
         return $account;
     }
 
+
     public function check_child_account($id){
         $check = false;
         $stmt = $this->db->prepare("SELECT `id` FROM `{$this->account_catg}` WHERE active = 1 AND relid = ? LIMIT 1 ");
@@ -108,6 +121,7 @@ class Account extends Controller {
         return $check;
     }
 
+    // صفحة اضافة فئة
     public function add_catg_account($id = 0){
         $this->checkPermit('add_catg_account','account');
         $this->adminHeaderController($this->langControl('account'));
@@ -130,58 +144,12 @@ class Account extends Controller {
             $nameBranch[]=$row;
         }
 
-        // if (isset($_POST['submit'])) {
-        //     try {
-        //         $form = new  Form();
-        //         $form->post('name_categ')
-        //             ->val('strip_tags');
 
-        //         $form->post('main_catg')
-        //             ->val('strip_tags');
-
-        //         $form->post('sub_categ')
-        //             ->val('strip_tags');
-
-        //         $form->post('main_branch')
-        //             ->val('strip_tags');
-
-        //         $form->post('sub_branch')
-        //             ->val('strip_tags');
-
-
-        //         $form->submit();
-        //         $data = $form->fetch();
-
-        //         if (empty($this->error_form)) {
-        //             echo $data['main_catg'];
-        //             $relid =  0;
-        //             if($data['main_catg'] !='0' && $data['sub_categ'] == '0'){
-        //                 $relid =  $data['main_catg'];
-        //             }elseif($data['sub_categ'] == '0'){
-        //                 $relid =  $data['main_catg'];
-        //             }else{
-        //                 $relid =  $data['sub_categ'];
-        //             }
-
-        //             // $idbranch =  0;
-        //             // if($data['main_branch'] !=0){
-        //             //     $idbranch =  $data['sub_branch'];
-        //             // }
-
-        //             if($data['name_categ'] != ''){
-        //                 $stmt = $this->db->prepare("INSERT INTO `{$this->account_catg}` (`title`,`active`,`relid`,`iduser`,`date`) VALUE (?,?,?,?,?)");
-        //                 $stmt->execute(array($data['name_categ'],0,$relid,$this->userid,time()));
-        //             }
-        //         }
-
-        //     } catch (Exception $e) {
-        //         $this->error_form = json_decode($e->getMessage(), true);
-        //     }
-        // }
         require ($this->render($this->folder,'html','add_catg_account','php'));
         $this->adminFooterController();
     }
 
+    // اضافة الفئة الجديده
     public function create_account_catg(){
         $data = json_decode($_GET['jsonData'], true);
 
@@ -287,14 +255,98 @@ class Account extends Controller {
     // }
 
 
+    // صفحة اضافة حساب
     public function add_account($id=0){
         $this->checkPermit('add_account','account');
         $this->adminHeaderController($this->langControl('account'));
+
+        $nameCategory = array();
+        $name_catg =$this->db->prepare("SELECT `id`,`title` FROM `{$this->account_catg}` WHERE active = 1");
+        $name_catg->execute();
+
+        while ($row = $name_catg->fetch(PDO::FETCH_ASSOC))
+        {
+            $nameCategory[]=$row;
+        }
+
+
+        $nameBranch = array();
+        $name_branch =$this->db->prepare("SELECT `id`,`title` FROM `branch` WHERE active = 1");
+        $name_branch->execute();
+
+        while ($row = $name_branch->fetch(PDO::FETCH_ASSOC))
+        {
+            $nameBranch[]=$row;
+        }
+
+
+        // عرض العملات
+        $stmt_currency =$this->db->prepare("SELECT `id`,`name` FROM `currency`");
+        $stmt_currency->execute();
+        $currency=array();
+        while ($row_currency= $stmt_currency->fetch(PDO::FETCH_ASSOC))
+        {
+            $currency[]=$row_currency;
+        }
+
+
+        if (isset($_POST['submit'])) {
+            try {
+                $form = new  Form();
+
+                $form->post('name')
+                    ->val('strip_tags');
+
+                $form->post('phone')
+                    ->val('strip_tags');
+
+                $form->post('job')
+                    ->val('strip_tags');
+
+                $form->post('country')
+                    ->val('strip_tags');
+
+                $form->post('city')
+                    ->val('strip_tags');
+
+                $form->post('address')
+                    ->val('strip_tags');
+
+                $form->post('gander')
+                    ->val('strip_tags');
+
+                $form->post('brithday')
+                    ->val('strip_tags');
+
+                $form->post('note')
+                    ->val('strip_tags');
+
+
+
+                $form->submit();
+
+                $data = $form->fetch();
+
+                if (empty($this->error_form)) {
+
+                    $stmt = $this->db->prepare("INSERT INTO `{$this->person}`(`name`,`phone`,`job`,`country`,`city`,`address`,`gander`,`brithday`,`note`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?,?,?)");
+                    $stmt->execute(array($data['name'],$data['phone'],$data['job'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['brithday'],$data['note'],$this->userid,time()));
+
+                }
+
+            } catch (Exception $e) {
+
+                $this->error_form = json_decode($e->getMessage(), true);
+            }
+        }
 
         require ($this->render($this->folder,'html','add_account','php'));
         $this->adminFooterController();
     }
 
+
+
+    // عرض كل الزبائن
     public function view_user_account($id)
     {
 
@@ -303,6 +355,8 @@ class Account extends Controller {
         require ($this->render($this->folder,'html','view_user_account','php'));
         $this->adminFooterController();
     }
+
+
 
 
 
