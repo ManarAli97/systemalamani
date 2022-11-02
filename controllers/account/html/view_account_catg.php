@@ -12,7 +12,8 @@
     </div>
 </div>
 <br>
-<select name="main_catg"  id="main_catg" class="form-control  col-md-2  dropdown_filter selectpicker" data-live-search="true" onchange="location = this.value;" >
+<select name="name_catg"  id="name_catg" class="form-control  col-md-2  dropdown_filter selectpicker" data-live-search="true" onchange="location = this.value;" >
+    <option value = '0' name= ''> الكل</option>
     <?php foreach ($nameCategory as $key => $name) {   ?>
         <option  value="<?php  echo $name['id']?>"<?php  if ($name['id']==$id)  echo 'selected' ?>><?php  echo $name['title']?></option>
     <?php  } ?>
@@ -25,13 +26,12 @@
         <table  id="example" class="table table-striped display d-table"  >
             <thead>
                 <tr>
-                    <th> الاسم </th>
-                    <th> رقم الهاتف  </th>
-                    <th>  النوع </th>
-                    <th> الفرع  </th>
-                    <th>  اسم المستخدم</th>
-                    <th> التاريخ</th>
-                    <th>التعديل </th>
+                    <th> الفئة </th>
+                    <th> الفئة التابعه لها</th>
+                    <th> الفرع</th>
+                    <th> اسم المستخدم </th>
+                    <th> التاريخ </th>
+                    <th> التعديل </th>
                 </tr>
             </thead>
         </table>
@@ -39,11 +39,12 @@
 </div>
 <script>
     $(document).ready(function(){
+        // var id =  $('#name_catg').val();
 
         $('#example').DataTable( {
             "processing": true,
             "serverSide": true,
-            "ajax": "<?php echo url .'/'. $this->folder ?>/processing/<?php  echo $id?>",
+            "ajax": "<?php echo url .'/'. $this->folder ?>/processing_view_catg/<?php  echo $id?>",
             info:false,
             "fnDrawCallback": function() {
                 jQuery('.toggle-demo').bootstrapToggle();
@@ -80,7 +81,6 @@
 
         });
     });
-
 
 
 

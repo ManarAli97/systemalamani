@@ -159,7 +159,6 @@
                         <div class="col-lg-3 col-md-2  mb-4 mr-2  mr-4">
                             <label class="mr-sm-2" for="mth_goal_currency">عملة الهدف الشهري  </label>
                             <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="mth_goal_currency" id="mth_goal_currency" >
-                                <option value = '' name= ''> اختر اسم</option>
                                 <?php foreach ($currency as $key => $name) {   ?>
                                     <option    value="<?php  echo $name['id']?>" name='<?php  echo $name['name']?>'><?php  echo $name['name']?></option>
                                 <?php  } ?>
@@ -184,7 +183,6 @@
                             <div class="col-lg-3 col-md-2  mb-4 mr-2  mr-4">
                                 <label class="mr-sm-2" for="currency_debt_limit">عملة  حد الدين  </label>
                                 <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="currency_debt_limit" id="currency_debt_limit" >
-                                    <option value = '' name= ''> اختر اسم</option>
                                     <?php foreach ($currency as $key => $name) {   ?>
                                         <option    value="<?php  echo $name['id']?>" name='<?php  echo $name['name']?>'><?php  echo $name['name']?></option>
                                     <?php  } ?>

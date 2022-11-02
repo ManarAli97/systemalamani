@@ -152,7 +152,6 @@ class mobile extends Controller
         $breadcumbs = $this->Breadcumbs($this->category, $id);
         $data = $this->db->select("SELECT * from  {$this->category} WHERE  `relid` = {$id} AND {$this->is_delete} ");
         foreach ($data as $key => $dt) {
-
             $data[$key]['checked'] = ($dt['active'] == 1) ? 'checked' : null;
             if ($dt['img'] != 0) {
                 $data[$key]['img'] = $this->db->select("SELECT * from `files` WHERE `id`=:id AND `module`=:module LIMIT 1 ", array(':id' => $dt['img'], ':module' => $this->folder . '_cat'));

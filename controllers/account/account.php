@@ -27,11 +27,12 @@ class Account extends Controller {
         $this->db->query("CREATE TABLE IF NOT EXISTS `{$this->account_catg}` (
             `id` int(4) Unsigned  NOT NULL AUTO_INCREMENT ,
             `title` varchar(150) NOT NULL,
-            `active` TINYINT(1) NOT NULL,
+            `active` TINYINT(1) NOT NULL DEFAULT '1',
             `relid`  int(4) Unsigned  NOT NULL,
             `idbranch` int(4) Unsigned,
             `iduser` int(4) NOT NULL,
             `date` bigint(20) NOT NULL,
+            `date_update` bigint(20) NOT NULL DEFAULT '0',
             PRIMARY KEY (`id`),
             FOREIGN KEY (`iduser`) REFERENCES user(id),
             FOREIGN KEY (`idbranch`) REFERENCES branch(id)
@@ -41,11 +42,12 @@ class Account extends Controller {
         $this->db->query("CREATE TABLE IF NOT EXISTS `branch` (
             `id` int(4) Unsigned  NOT NULL AUTO_INCREMENT ,
             `title` varchar(150) NOT NULL,
-            `active` TINYINT(1) NOT NULL,
+            `active` TINYINT(1) NOT NULL DEFAULT '1',
             `relid`  int(4) Unsigned  NOT NULL,
+            `note` varchar(150) NOT NULL DEFAULT ' ',
             `iduser` int(4) NOT NULL,
             `date` bigint(20) NOT NULL,
-            `note` varchar(150) NOT NULL,
+            `date_update` bigint(20) NOT NULL DEFAULT '0',
             PRIMARY KEY (`id`),
             FOREIGN KEY (`iduser`) REFERENCES user(id)
         ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
@@ -76,6 +78,7 @@ class Account extends Controller {
             `stop` TINYINT(1) NOT NULL,
             `iduser` int(4) NOT NULL,
             `date` bigint(20) NOT NULL,
+            `date_update` bigint(20) NOT NULL DEFAULT '0',
             PRIMARY KEY (`id`),
             FOREIGN KEY (`iduser`) REFERENCES user(id)
         ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
@@ -85,15 +88,16 @@ class Account extends Controller {
             `id_info`  int(11) Unsigned  NOT NULL,
             `id_cat`  int(11) Unsigned  NOT NULL,
             `id_branch` int(4) Unsigned NOT NULL,
-            `mth_goal_amount` float NOT NULL,
-            `mth_goal_currency`  TINYINT(1) Unsigned  NOT NULL,
-            `duration_of_debt` float NOT NULL,
-            `max_debt_limit` float NOT NULL,
-            `currency_debt_limit` TINYINT(1) Unsigned  NOT NULL,
+            `mth_goal_amount` float NOT NULL DEFAULT '0',
+            `mth_goal_currency`  TINYINT(1) Unsigned,
+            `duration_of_debt` float NOT NULL  DEFAULT '0',
+            `max_debt_limit` float NOT NULL  DEFAULT '0',
+            `currency_debt_limit` TINYINT(1) Unsigned,
             `id_price_list` TINYINT(1) Unsigned NOT NULL,
             `id_price_style` TINYINT(1) Unsigned NOT NULL,
             `iduser` int(4) NOT NULL,
             `date` bigint(20) NOT NULL,
+            `date_update` bigint(20) NOT NULL,
             PRIMARY KEY (`id`),
             FOREIGN KEY (`iduser`) REFERENCES user(id),
             FOREIGN KEY (`id_info`) REFERENCES ac_general_info(id),
@@ -136,7 +140,7 @@ class Account extends Controller {
         $index->index();
     }
 
-    // عرض فئات الحسابات
+    //    headerعرض فئات الحسابات خاصة بال
     function account_catg($relid = 0)
     {
         $account = '';
@@ -217,7 +221,113 @@ class Account extends Controller {
         }
     }
 
-    // // الفئات التابعه للفئة الاصلية
+    // تعديل الفئة
+    public function edit_catg_account($id){
+        $this->checkPermit('edit_catg_account','account');
+        $this->adminHeaderController($this->langControl('account'));
+
+        $accountCatg = array();
+        $stmt_catg =$this->db->prepare("SELECT `id`,`title`,`idbranch` FROM `{$this->account_catg}` WHERE id = ?");
+        $stmt_catg->execute(array($id));
+
+        while ($row = $stmt_catg->fetch(PDO::FETCH_ASSOC))
+        {
+            $accountCatg[]=$row;
+        }
+
+
+        $nameBranch = array();
+        $name_branch =$this->db->prepare("SELECT `title`,`id` FROM `branch` WHERE active = 1");
+        $name_branch->execute();
+
+        while ($row = $name_branch->fetch(PDO::FETCH_ASSOC))
+        {
+            $nameBranch[]=$row;
+        }
+
+
+        require ($this->render($this->folder,'html','add_catg_account','php'));
+        $this->adminFooterController();
+    }
+
+    public function view_account_category($id = 0)
+    {
+        $this->checkPermit('view_account_category','account');
+        $this->adminHeaderController($this->langControl('account'));
+
+        $nameCategory = array();
+        $name_catg =$this->db->prepare("SELECT `title`,`id` FROM `{$this->account_catg}` WHERE active = 1");
+        $name_catg->execute();
+
+        while ($row = $name_catg->fetch(PDO::FETCH_ASSOC))
+        {
+            $nameCategory[]=$row;
+        }
+        require ($this->render($this->folder,'html','view_account_catg','php'));
+        $this->adminFooterController();
+    }
+
+
+    public function processing_view_catg($id = 0)
+    {
+        $table = "ac_account_catg";
+        $primaryKey = 'ac_account_catg.id';
+        $columns = array(
+            array( 'db' => 'ac_account_catg.title', 'dt' => 0 ),
+            array( 'db' => 'ac_account_catg.relid', 'dt' => 1,
+                'formatter' => function($id,$row) {
+                    return $this->getName('ac_account_catg', $id);
+                }
+            ),
+            array( 'db' => 'ac_account_catg.idbranch', 'dt' => 2,
+                'formatter' => function($id,$row) {
+                    return $this->getName('branch', $id);
+                }
+            ),
+            array( 'db' => 'ac_account_catg.iduser', 'dt' => 3 ,
+                'formatter' => function($id, $row ) {
+                    return  $this->UserInfo($id);
+                }
+            ),
+
+            array( 'db' => 'ac_account_catg.date', 'dt' => 4 ,
+                'formatter' => function($id, $row ) {
+                    return date( 'Y-m-d h:i A',$id);
+                }
+            ),
+            array( 'db' => 'ac_account_catg.id', 'dt' => 5,
+                'formatter' => function($id, $row ) {
+                    if ($this->permit('edit_account', $this->folder)) {
+                        return "<a href=".url."/account/edit_user_account/$id/$row[2]  style='text-align: center;font-size: 25px; margin-bottom:60px'> <i class='fa fa-pencil-square-o' aria-hidden='true'></i></a>";
+
+                    } else {
+                        return $this->langControl('forbidden');
+                    }
+                }
+            )
+        );
+        // SQL server connection information
+        $sql_details = array(
+            'user' => DB_USER,
+            'pass' => DB_PASS,
+            'db'   => DB_NAME,
+            'host' => DB_HOST,
+            'charset' => 'utf8'
+        );
+
+        $join = " ";
+        if($id != 0){
+            $whereAll = " `ac_account_catg`.`relid` = $id ";
+        }else{
+            $whereAll = " ac_account_catg.id != 0 ";
+        }
+        echo json_encode(
+            SSP::complex_join( $_GET, $sql_details, $table, $primaryKey, $columns, $join, null,$whereAll,null,null,1)
+        );
+    }
+
+
+    // الفئات التابعه للفئة الاصلية
     // public function get_sub_catg()
     // {
     //     $data = json_decode($_GET['jsonData'], true);
@@ -466,7 +576,7 @@ class Account extends Controller {
     }
 
 
-    // عرض كل الزبائن
+    // edit
     public function edit_user_account($id_account,$id=0){
         $this->checkPermit('edit_user_account','account');
         $this->adminHeaderController($this->langControl('account'));
@@ -475,7 +585,15 @@ class Account extends Controller {
 
 
         $infoAccount = array();
-        $stmt_account =$this->db->prepare("SELECT `name`,`phone`,`job`,`country`,`city`,`address`,`gander`,`brithday`,`note`,`active`,`stop` FROM `{$this->general_info}` WHERE id = ?");
+        $stmt_info =$this->db->prepare("SELECT `name`,`phone`,`job`,`country`,`city`,`address`,`gander`,`brithday`,`note`,`active`,`stop` FROM `{$this->general_info}` WHERE id = ?");
+        $stmt_info->execute(array($id_account));
+
+        while ($row_info = $stmt_info->fetch(PDO::FETCH_ASSOC))
+        {
+            $infoAccount[]=$row_info;
+        }
+
+        $stmt_account =$this->db->prepare("SELECT `id_cat`,`id_branch`,`mth_goal_amount`,`mth_goal_currency`,`duration_of_debt`,`max_debt_limit`,`currency_debt_limit`,`id_price_list`,`id_price_style` FROM `{$this->account}` WHERE `id_info` = ?");
         $stmt_account->execute(array($id_account));
 
         while ($row_account = $stmt_account->fetch(PDO::FETCH_ASSOC))
@@ -613,7 +731,12 @@ class Account extends Controller {
                 if (empty($this->error_form)) {
 
 
+                    $update = $this->db->prepare("UPDATE `{$this->general_info}` SET `name` = ?,`phone`= ?, `job`= ?,`country`= ?,`city`= ?,`address`= ?,`gander` = ?,`brithday` = ?,`note`= ?,`active`= ?,`stop`= ?,`iduser`=? ,`date_update` =?  WHERE `id` = ?");
+                    $update->execute(array($data['name'],$data['phone'],$data['job'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['brithday'],$data['note'],$data['state'],$data['stop'],$this->userid,time(),$id_account));
 
+
+                    $updatee = $this->db->prepare("UPDATE `{$this->account}` SET `id_cat` = ?,`id_branch`= ?,`mth_goal_amount`= ?,`mth_goal_currency`= ?,`duration_of_debt`= ?,`max_debt_limit`= ?,`currency_debt_limit`= ?,`id_price_list`= ?,`id_price_style`= ?,`iduser` = ?,`date_update` = ?  WHERE `id_info` = ?");
+                    $updatee->execute(array($data['type_account'],$data['branch'],$data['mth_goal_amount'],$data['mth_goal_currency'],$data['duration_of_debt'],$data['max_debt_limit'],$data['currency_debt_limit'],$data['price_list'],$data['price_style'],$this->userid,time(),$id_account));
 
                     $this->lightRedirect(url."/".$this->folder."/view_user_account/$id");
                 }
@@ -633,6 +756,17 @@ class Account extends Controller {
     {
         $this->checkPermit('view_user_account','account');
         $this->adminHeaderController($this->langControl('account'));
+
+        $nameCategory = array();
+        $name_catg =$this->db->prepare("SELECT `title`,`id` FROM `{$this->account_catg}` WHERE active = 1");
+        $name_catg->execute();
+
+        while ($row = $name_catg->fetch(PDO::FETCH_ASSOC))
+        {
+            $nameCategory[]=$row;
+        }
+
+
 
         require ($this->render($this->folder,'html','view_user_account','php'));
         $this->adminFooterController();
@@ -693,6 +827,7 @@ class Account extends Controller {
             SSP::complex_join( $_GET, $sql_details, $table, $primaryKey, $columns, $join, null,$whereAll,null,null,1)
         );
     }
+
 
     // ترجع الفئات التابعه للفئة الاصلية
 

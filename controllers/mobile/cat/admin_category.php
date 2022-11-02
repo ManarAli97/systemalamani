@@ -27,7 +27,6 @@
 <?php foreach ($data as $cat) { ?>
 
 
-
         <div class="col-auto card_<?php echo $cat['id'] ?>"  >
     <div class="card" >
         <a  href="<?php echo url ?>/mobile/list_mobile/<?php echo $cat['id'] ?>">

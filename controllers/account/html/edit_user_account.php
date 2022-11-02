@@ -14,7 +14,7 @@
 
 
 <div class="content">
-    <form  action="<?php echo url.'/'.$this->folder ?>/add_account/<?php echo $id ?>" method="post" enctype="multipart/form-data">
+    <form  action="<?php echo url.'/'.$this->folder ?>/edit_user_account/<?php echo $id_account ?>/<?php echo $id ?>" method="post" enctype="multipart/form-data">
 
         <div class="panel-heading">
             <ul class="nav nav-pills mb-3">
@@ -37,17 +37,17 @@
                     <div class="col-lg-1 col-md-2"></div>
                         <div class="col-lg-3 col-md-2 mr-4">
                             <label class="mr-sm-2 mb-0" for="name"> الاسم </label>
-                            <input type="text" name="name"  class="form-control" id="name" value="<?php echo $infoAccount[0]['name'] ?>" autocomplete="off" required>
+                            <input type="text" name="name" value="<?php echo $infoAccount[0]['name'] ?>"  class="form-control" id="name"  autocomplete="off" required>
                         </div>
 
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2 mb-0" for="phone"> رقم الهاتف </label>
-                            <input type="text" name="phone"  class="form-control" id="phone" value="<?php echo $infoAccount[0]['phone'] ?>" autocomplete="off" minlength="10" required>
+                            <input type="text" name="phone" value="<?php echo $infoAccount[0]['phone'] ?>"  class="form-control" id="phone"  autocomplete="off" minlength="10" required>
                         </div>
 
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2  mb-0" for="job"> المهنة </label>
-                            <input type="text" name="job"  class="form-control" id="job" value="<?php echo $infoAccount[0]['job'] ?>" autocomplete="off">
+                            <input type="text" name="job" value="<?php echo $infoAccount[0]['job'] ?>" class="form-control" id="job"  autocomplete="off">
                         </div>
                         <div class="col-lg-1 col-md-2"></div>
 
@@ -58,15 +58,15 @@
 
                         <div class="col-lg-3 col-md-2 mr-4">
                             <label class="mr-sm-2  mb-0" for="country"> الدولة </label>
-                            <input type="text" name="country"  class="form-control" id="country" value="<?php echo $infoAccount[0]['country'] ?>"  autocomplete="off" >
+                            <input type="text" name="country"  value="<?php echo $infoAccount[0]['country'] ?>" class="form-control" id="country"   autocomplete="off" >
                         </div>
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2  mb-0" for="city"> المحافظة </label>
-                            <input type="text" name="city"  class="form-control" id="city" value="<?php echo $infoAccount[0]['city'] ?>" autocomplete="off" >
+                            <input type="text" name="city"  value="<?php echo $infoAccount[0]['city'] ?>" class="form-control" id="city"  autocomplete="off" >
                         </div>
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2  mb-0" for="address"> المنطقة</label>
-                            <input type="text" name="address"  class="form-control" id="address"  autocomplete="off" >
+                            <input type="text" name="address" value="<?php echo $infoAccount[0]['address'] ?>"  class="form-control" id="address" autocomplete="off" >
                         </div>
                         <div class="col-lg-1 col-md-2"></div>
                     </div>
@@ -77,22 +77,22 @@
                             <div class="form-group">
                                 <label style=" font-size: 18px;margin-left: 22px;"> الجنس </label>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="customRadioInline1" name="gander" value="ذكر" class="custom-control-input" >
+                                    <input type="radio" id="customRadioInline1" name="gander" value="ذكر" <?php if($infoAccount[0]['gander'] == "ذكر") echo 'checked' ?> class="custom-control-input" >
                                     <label  class="custom-control-label" for="customRadioInline1">ذكر</label>
                                 </div>
                                 <div class="custom-control custom-radio custom-control-inline">
-                                    <input type="radio" id="customRadioInline2" name="gander" value="انثى" class="custom-control-input" >
+                                    <input type="radio" id="customRadioInline2" name="gander" value="انثى" <?php if($infoAccount[0]['gander'] == "انثى") echo 'checked' ?>  class="custom-control-input" >
                                     <label  class="custom-control-label" for="customRadioInline2">انثى</label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2  mb-0" for="brithday"> تاريخ الميلاد</label>
-                            <input type="date" name="brithday"  class="form-control" id="brithday"  autocomplete="off" >
+                            <input type="date" name="brithday" value="<?php echo $infoAccount[0]['brithday'] ?>"  class="form-control" id="brithday" autocomplete="off" >
                         </div>
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2  mb-0" for="note"> ملاحظة</label>
-                            <textarea  name="note" class="form-control" id="note" cols="60" style="width:272px"></textarea>
+                            <textarea  name="note" class="form-control" id="note" cols="60" style="width:272px"><?php echo $infoAccount[0]['note'] ?> </textarea>
                         </div>
                         <div class="col-lg-1 col-md-2"></div>
                     </div>
@@ -102,12 +102,12 @@
                         <div class="form-group">
                                 <label style=" font-size: 15px;margin-left: 5px;"> الحالة  </label>
                                 <input type="hidden"  name="state"  value="0" >
-                            <input type="checkbox" id="state" name="state" data-toggle="toggle" data-style="slow" value="1" <?php if ($infoAccount[0]['active']  == 1)  echo 'checked' ?> >
+                            <input type="checkbox" id="state" name="state" value="1"  data-toggle="toggle" data-style="slow" data-size="small" <?php if ($infoAccount[0]['active']  == 1)  echo 'checked' ?>   >
                         </div>
                         <div class="form-group">
                                 <label style=" font-size: 15px;margin-left: 5px;margin-right: 16px;"> منع التعامل </label>
                                 <input type="hidden"  name="stop"  value="0"    >
-                                <input type="checkbox"  id="stop" name="stop"  value="1" data-toggle="toggle" datax-stylex="iosx" data-size="small"  >
+                                <input type="checkbox"  id="stop" name="stop"  value="1" <?php if ($infoAccount[0]['stop']  == 1)  echo 'checked' ?> data-toggle="toggle" datax-stylex="iosx" data-size="small"  >
                         </div>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                             <label class="mr-sm-2" for="type_account">  نوع الحساب </label>
                             <select class=" form-control dropdown_filter selectpicker" data-live-search="true" name="type_account" id="type_account">
                                 <?php foreach ($nameCategory as $key => $name) {   ?>
-                                    <option  value="<?php  echo $name['id']?>"<?php  if ($name['id']==$id)  echo 'selected' ?>><?php  echo $name['title']?></option>
+                                    <option  value="<?php  echo $name['id']?>"<?php  if ($name['id']==$infoAccount[1]['id_cat'])  echo 'selected' ?>><?php  echo $name['title']?></option>
                                 <?php  } ?>
                             </select>
                         </div>
@@ -133,7 +133,7 @@
                             <label class="mr-sm-2" for="branch">  الفرع  </label>
                             <select class=" form-control dropdown_filter selectpicker" data-live-search="true" name="branch" id="branch">
                                 <?php foreach ($nameBranch as $key => $name) {   ?>
-                                    <option  value="<?php  echo $name['id']?>"><?php  echo $name['title']?></option>
+                                    <option  value="<?php  echo $name['id']?>"<?php  if ($name['id']==$infoAccount[1]['id_branch'])  echo 'selected' ?>><?php  echo $name['title']?></option>
                                 <?php  } ?>
                             </select>
                         </div>
@@ -142,7 +142,7 @@
                             <label class="mr-sm-2" for="price_list"> نمط الاسعار </label>
                             <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="price_list" id="price_list">
                                 <?php foreach ($priceList as $key => $value) {   ?>
-                                    <option    value="<?php  echo $value['id']?>" name='<?php  echo $value['title']?>'><?php  echo $value['title']?></option>
+                                    <option    value="<?php  echo $value['id']?>" <?php  if ($value['id']==$infoAccount[1]['id_price_list'])  echo 'selected' ?> ><?php  echo $value['title']?></option>
                                 <?php  } ?>
                             </select>
                         </div>
@@ -153,22 +153,21 @@
                         <div class="col-lg-1 col-md-2"></div>
                         <div class="col-lg-3 col-md-2 mr-4">
                             <label class="mr-sm-2" for="mth_goal_amount"> مبلغ الهدف الشهري </label>
-                            <input type="number" name="mth_goal_amount"  class="form-control" id="mth_goal_amount"  >
+                            <input type="number" name="mth_goal_amount" value="<?php echo $infoAccount[1]['mth_goal_amount'] ?>" class="form-control" id="mth_goal_amount"  >
                         </div>
 
                         <div class="col-lg-3 col-md-2  mb-4 mr-2  mr-4">
                             <label class="mr-sm-2" for="mth_goal_currency">عملة الهدف الشهري  </label>
                             <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="mth_goal_currency" id="mth_goal_currency" >
-                                <option value = '' name= ''> اختر اسم</option>
                                 <?php foreach ($currency as $key => $name) {   ?>
-                                    <option    value="<?php  echo $name['id']?>" name='<?php  echo $name['name']?>'><?php  echo $name['name']?></option>
+                                    <option    value="<?php  echo $name['id']?>" <?php  if ($name['id']==$infoAccount[1]['mth_goal_currency'])  echo 'selected' ?>><?php  echo $name['name']?></option>
                                 <?php  } ?>
                             </select>
                         </div>
 
                         <div class="col-lg-3 col-md-2 mr-4">
                             <label class="mr-sm-2" for="duration_of_debt"> مدة الدين </label>
-                            <input type="number" name="duration_of_debt"  class="form-control" id="duration_of_debt"  >
+                            <input type="number" name="duration_of_debt" value="<?php echo $infoAccount[1]['duration_of_debt'] ?>" class="form-control" id="duration_of_debt"  >
                         </div>
                         <div class="col-lg-1 col-md-2"></div>
                     </div>
@@ -177,16 +176,15 @@
                         <div class="col-lg-1 col-md-2"></div>
                             <div class="col-lg-3 col-md-2 mr-4">
                                 <label class="mr-sm-2" for="max_debt_limit"> حد الدين الاعلى</label>
-                                <input type="number" name="max_debt_limit"  class="form-control" id="max_debt_limit"  >
+                                <input type="number" name="max_debt_limit" value="<?php echo $infoAccount[1]['max_debt_limit'] ?>" class="form-control" id="max_debt_limit"  >
                             </div>
 
 
                             <div class="col-lg-3 col-md-2  mb-4 mr-2  mr-4">
                                 <label class="mr-sm-2" for="currency_debt_limit">عملة  حد الدين  </label>
                                 <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="currency_debt_limit" id="currency_debt_limit" >
-                                    <option value = '' name= ''> اختر اسم</option>
                                     <?php foreach ($currency as $key => $name) {   ?>
-                                        <option    value="<?php  echo $name['id']?>" name='<?php  echo $name['name']?>'><?php  echo $name['name']?></option>
+                                        <option    value="<?php  echo $name['id']?>" <?php  if ($name['id']==$infoAccount[1]['currency_debt_limit'])  echo 'selected' ?>><?php  echo $name['name']?></option>
                                     <?php  } ?>
                                 </select>
                             </div>
@@ -195,7 +193,7 @@
                                 <label class="mr-sm-2" for="price_style"> نوع الدفع  </label>
                                 <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="price_style" id="price_style" >
                                     <?php foreach ($priceStyle as $key => $value) {   ?>
-                                        <option    value="<?php  echo $value['id']?>" name='<?php  echo $value['title']?>'><?php  echo $value['title']?></option>
+                                        <option    value="<?php  echo $value['id']?>" <?php  if ($value['id']==$infoAccount[1]['id_price_style'])  echo 'selected' ?> ><?php  echo $value['title']?></option>
                                     <?php  } ?>
                                 </select>
                             </div>

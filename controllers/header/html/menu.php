@@ -455,9 +455,16 @@
     <?php  }  ?>
     <?php  if ($this->permit('account','account')) {  ?>
           <li class="account">
-          <a href="#"> دليل الحسابات  </a>
-            <a href="<?php echo  url ?>/account/add_catg_account"  class="account" data-toggle="tooltip" data-placement="top" title="<?php echo $this->langControl('add_category')  ?>"><i class="fa  fa-folder" aria-hidden="true"></i></a>
-            <a href="<?php echo  url ?>/account/add_account"  class="account" data-toggle="tooltip" data-placement="top" title="اضافة حساب"><i class="fa fa-plus" aria-hidden="true"></i></a>
+            <a href="#"> دليل الحسابات  </a>
+            <?php  if ($this->permit('add_catg_account','account')) {  ?>
+                <a href="<?php echo  url ?>/account/add_catg_account"  class="account" data-toggle="tooltip" data-placement="top" title="<?php echo $this->langControl('add_category')  ?>"><i class="fa  fa-folder" aria-hidden="true"></i></a>
+            <?php } ?>
+            <?php  if ($this->permit('add_account','account')) {  ?>
+                <a href="<?php echo  url ?>/account/add_account"  class="account" data-toggle="tooltip" data-placement="top" title="اضافة حساب"><i class="fa fa-plus" aria-hidden="true"></i></a>
+            <?php } ?>
+            <?php  if ($this->permit('view_account_category','account')) {  ?>
+                <a href="<?php echo  url ?>/account/view_account_category/"  class="account" data-toggle="tooltip" data-placement="top" title="<?php echo $this->langControl('view_account_category')  ?>"><i class="fa fa-th-large" aria-hidden="true"></i></a>
+            <?php } ?>
             <?php  echo  $accountCatg?>
         </li>
     <?php  }  ?>
