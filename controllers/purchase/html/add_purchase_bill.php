@@ -618,7 +618,7 @@
                 });
             }
 
-            // end of keyup
+
             $('#title_'+id ).on('input',function() {
                 category = $('#category_'+id).val();
                 title = $('#title_'+id).val();

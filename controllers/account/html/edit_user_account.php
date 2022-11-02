@@ -37,17 +37,17 @@
                     <div class="col-lg-1 col-md-2"></div>
                         <div class="col-lg-3 col-md-2 mr-4">
                             <label class="mr-sm-2 mb-0" for="name"> الاسم </label>
-                            <input type="text" name="name"  class="form-control" id="name"  autocomplete="off" required>
+                            <input type="text" name="name"  class="form-control" id="name" value="<?php echo $infoAccount[0]['name'] ?>" autocomplete="off" required>
                         </div>
 
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2 mb-0" for="phone"> رقم الهاتف </label>
-                            <input type="text" name="phone"  class="form-control" id="phone"  autocomplete="off" minlength="10" required>
+                            <input type="text" name="phone"  class="form-control" id="phone" value="<?php echo $infoAccount[0]['phone'] ?>" autocomplete="off" minlength="10" required>
                         </div>
 
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2  mb-0" for="job"> المهنة </label>
-                            <input type="text" name="job"  class="form-control" id="job"  autocomplete="off">
+                            <input type="text" name="job"  class="form-control" id="job" value="<?php echo $infoAccount[0]['job'] ?>" autocomplete="off">
                         </div>
                         <div class="col-lg-1 col-md-2"></div>
 
@@ -58,11 +58,11 @@
 
                         <div class="col-lg-3 col-md-2 mr-4">
                             <label class="mr-sm-2  mb-0" for="country"> الدولة </label>
-                            <input type="text" name="country"  class="form-control" id="country"  autocomplete="off" >
+                            <input type="text" name="country"  class="form-control" id="country" value="<?php echo $infoAccount[0]['country'] ?>"  autocomplete="off" >
                         </div>
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2  mb-0" for="city"> المحافظة </label>
-                            <input type="text" name="city"  class="form-control" id="city"  autocomplete="off" >
+                            <input type="text" name="city"  class="form-control" id="city" value="<?php echo $infoAccount[0]['city'] ?>" autocomplete="off" >
                         </div>
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2  mb-0" for="address"> المنطقة</label>
@@ -100,14 +100,14 @@
                     <div class="form-row row  mb-2">
                         <div class="col-lg-1 col-md-2"></div>
                         <div class="form-group">
-                            <label style=" font-size: 15px;margin-left: 5px;"> الحالة  </label>
-                            <input type="hidden"  name="state"  value="0" >
-                            <input type="checkbox" id="state" name="state"  value="1"  data-toggle="toggle" data-style="slow" checked >
+                                <label style=" font-size: 15px;margin-left: 5px;"> الحالة  </label>
+                                <input type="hidden"  name="state"  value="0" >
+                            <input type="checkbox" id="state" name="state" data-toggle="toggle" data-style="slow" value="1" <?php if ($infoAccount[0]['active']  == 1)  echo 'checked' ?> >
                         </div>
                         <div class="form-group">
-                            <label style=" font-size: 15px;margin-left: 5px;margin-right: 16px;"> منع التعامل </label>
-                            <input type="hidden"  name="stop"  value="0"    >
-                            <input type="checkbox"  id="stop" name="stop"  value="1" data-toggle="toggle" datax-stylex="iosx" data-size="small"  >
+                                <label style=" font-size: 15px;margin-left: 5px;margin-right: 16px;"> منع التعامل </label>
+                                <input type="hidden"  name="stop"  value="0"    >
+                                <input type="checkbox"  id="stop" name="stop"  value="1" data-toggle="toggle" datax-stylex="iosx" data-size="small"  >
                         </div>
                     </div>
                 </div>
