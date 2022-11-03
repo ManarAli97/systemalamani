@@ -7,7 +7,7 @@
         $('#example thead tr').clone(true).appendTo( '#example thead' );
         $('#example thead tr:eq(1) th').each( function (i) {
 
-            if (i===2  ) {
+            if (i===2) {
                 $(this).html('<input class="form-control" type="text" placeholder="بحث" />');
 
                 $('input', this).on('keyup change', function () {
@@ -25,9 +25,6 @@
             }
 
         } );
-
-
-
 
         var selected = [];
 
