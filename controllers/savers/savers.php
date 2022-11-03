@@ -1370,7 +1370,6 @@ use type_cover,feature_cover;
                 'formatter' => function ($d, $row) {
                     return date('Y-m-d ', $d);
                 }
-
             ),
             array(
                 'db' => 'id',

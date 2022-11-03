@@ -5,7 +5,7 @@
         <span></span>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page" ><?php  echo $this->langControl('account') ?> </li>
+                <li class="breadcrumb-item active" aria-current="page" ><?php  echo $this->langControl('view_catg_account') ?> </li>
             </ol>
         </nav>
         <hr>
@@ -29,6 +29,7 @@
                     <th> الفئة </th>
                     <th> الفئة التابعه لها</th>
                     <th> الفرع</th>
+                    <th> الحالة</th>
                     <th> اسم المستخدم </th>
                     <th> التاريخ </th>
                     <th> التعديل </th>
@@ -39,7 +40,6 @@
 </div>
 <script>
     $(document).ready(function(){
-        // var id =  $('#name_catg').val();
 
         $('#example').DataTable( {
             "processing": true,
@@ -84,7 +84,13 @@
 
 
 
+    function state_catg(e,id) {
 
+        var state=$(e).is( ':checked' )? 1:0;
+        $.get("<?php echo url ?>/account/state_catg_account/"+state+'/'+id, function(data){
+            console.log(data)
+        });
+    }
 
 
 
@@ -105,13 +111,9 @@
     }
     table thead tr
     {
-
-
         white-space: nowrap;
-        background-color: rgba(121,169,197,0.92) !important;
-        color: #fff;
+        color: #000;
         text-align: center;
-
     }
     table tbody tr td
     {

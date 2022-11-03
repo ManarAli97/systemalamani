@@ -5,7 +5,7 @@
         <span></span>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page" ><?php  echo $this->langControl('account') ?> </li>
+                <li class="breadcrumb-item active" aria-current="page" ><?php  echo $this->langControl('view_user_account') ?> </li>
             </ol>
         </nav>
         <hr>
@@ -105,19 +105,14 @@
     }
     table thead tr
     {
-
-
         white-space: nowrap;
-        background-color: rgba(121,169,197,0.92) !important;
-        color: #fff;
+        color: #000;
         text-align: center;
-
     }
     table tbody tr td
     {
-     text-align: center;
-       white-space: nowrap;
-        /* height : 50px !important; */
+        text-align: center;
+        white-space: nowrap;
         font-size:16px;
     }
     table tbody  tr:nth-child(odd) {

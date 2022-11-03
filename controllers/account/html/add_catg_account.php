@@ -28,7 +28,6 @@
                     </select>
 
                     <select name="main_branch"  id="main_branch" class="custom-select  col-md-2 list_menu_categ">
-                        <option value="0" selected> الفرع </option>
                         <?php foreach ($nameBranch as $key => $name) {   ?>
                             <option  value="<?php  echo $name['id']?>"><?php  echo $name['title']?></option>
                         <?php  } ?>

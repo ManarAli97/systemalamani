@@ -5,7 +5,7 @@
         <span></span>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item active" aria-current="page" ><?php  echo $this->langControl('add_catg_account') ?> </li>
+                <li class="breadcrumb-item active" aria-current="page" ><?php  echo $this->langControl('edit_catg_account') ?> </li>
             </ol>
         </nav>
         <hr>
@@ -13,7 +13,7 @@
 </div>
 <div class="row">
     <div class="col">
-        <form  action="" method="" enctype="multipart/form-data">
+        <form  action="<?php echo url.'/'.$this->folder ?>/edit_catg_account/<?php echo $id ?>" method="post" enctype="multipart/form-data">
             <div class="container-fluid" id="expand_menu">
                 <div class="row selec_catg">
                     <div class="col-lg-3 col-md-3">
@@ -28,7 +28,6 @@
                     </select>
 
                     <select name="main_branch"  id="main_branch" class="custom-select  col-md-2 list_menu_categ">
-                        <option value="0" selected> الفرع </option>
                         <?php foreach ($nameBranch as $key => $name) {   ?>
                             <option  value="<?php  echo $name['id']?>"<?php  if ($name['id']==$accountCatg[0]['idbranch'])  echo 'selected' ?>><?php  echo $name['title']?></option>
                         <?php  } ?>
@@ -39,7 +38,7 @@
 
 
             <div class="row justify-content-md-center  mt-4">
-                <input class="btn btn-primary" id="save" value="<?php  echo $this->langControl('save') ?>">
+                <input type="submit" name="submit" class="btn btn-primary" id="save" value="<?php  echo $this->langControl('save') ?>">
             </div>
         </form>
     </div>
@@ -50,25 +49,30 @@
 
 
 
-    $('#save').on('click',function () {
-        var name = $('#name_categ').val();
-        var relid = $('#main_catg').val();
+    // $('#save').on('click',function () {
+    //     var name = $('#name_categ').val();
+    //     var relid = $('#main_catg').val();
+    //     var idbranch = $('#main_branch').val();
+    //     console.log(name);
+    //     console.log(relid);
+    //     console.log(idbranch);
+    //     var data={'name':name,'relid':relid,'idbranch':idbranch};
+    //     if(name != ''){
+    //         $.get( "< ?php echo url .'/'.$this->folder ?>/create_account_catg",{jsonData: JSON.stringify(data)},function(result) {
+    //             console.log(result);
+    //             if(result == 1){
+    //                 alert(' تمت الاضافة');
+    //                 location.reload();
+    //             }else{
+    //                 alert('لم تتم الاضافة');
+    //             }
+    //         });
+    //     }
+    // });
+
+    $('#main_branch').on('change',function () {
         var idbranch = $('#main_branch').val();
-        console.log(name);
-        console.log(relid);
         console.log(idbranch);
-        var data={'name':name,'relid':relid,'idbranch':idbranch};
-        if(name != ''){
-            $.get( "<?php echo url .'/'.$this->folder ?>/create_account_catg",{jsonData: JSON.stringify(data)},function(result) {
-                console.log(result);
-                if(result == 1){
-                    alert(' تمت الاضافة');
-                    location.reload();
-                }else{
-                    alert('لم تتم الاضافة');
-                }
-            });
-        }
     });
 
 </script>

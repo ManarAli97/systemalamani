@@ -27,9 +27,9 @@ class Account extends Controller {
         $this->db->query("CREATE TABLE IF NOT EXISTS `{$this->account_catg}` (
             `id` int(4) Unsigned  NOT NULL AUTO_INCREMENT ,
             `title` varchar(150) NOT NULL,
-            `active` TINYINT(1) NOT NULL DEFAULT '1',
             `relid`  int(4) Unsigned  NOT NULL,
             `idbranch` int(4) Unsigned,
+            `active` TINYINT(1) NOT NULL DEFAULT '1',
             `iduser` int(4) NOT NULL,
             `date` bigint(20) NOT NULL,
             `date_update` bigint(20) NOT NULL DEFAULT '0',
@@ -227,13 +227,23 @@ class Account extends Controller {
         $this->adminHeaderController($this->langControl('account'));
 
         $accountCatg = array();
-        $stmt_catg =$this->db->prepare("SELECT `id`,`title`,`idbranch` FROM `{$this->account_catg}` WHERE id = ?");
+        $stmt_catg =$this->db->prepare("SELECT `id`,`title`,`relid`,`idbranch` FROM `{$this->account_catg}` WHERE id = ?");
         $stmt_catg->execute(array($id));
 
         while ($row = $stmt_catg->fetch(PDO::FETCH_ASSOC))
         {
             $accountCatg[]=$row;
         }
+
+        $nameCategory = array();
+        $name_catg =$this->db->prepare("SELECT `title`,`id` FROM `{$this->account_catg}` WHERE active = 1");
+        $name_catg->execute();
+
+        while ($row = $name_catg->fetch(PDO::FETCH_ASSOC))
+        {
+            $nameCategory[]=$row;
+        }
+
 
 
         $nameBranch = array();
@@ -245,8 +255,41 @@ class Account extends Controller {
             $nameBranch[]=$row;
         }
 
+        if (isset($_POST['submit'])) {
+            try {
+                $form = new  Form();
 
-        require ($this->render($this->folder,'html','add_catg_account','php'));
+                $form->post('name_categ')
+                    ->val('strip_tags');
+
+                $form->post('main_catg')
+                    ->val('strip_tags');
+
+                $form->post('main_branch')
+                    ->val('strip_tags');
+
+
+                $form->submit();
+
+                $data = $form->fetch();
+
+                if (empty($this->error_form)) {
+
+
+                    $update = $this->db->prepare("UPDATE `{$this->account_catg}` SET `title` = ?,`relid`= ?,`idbranch`= ?,`iduser`=?,`date_update`=?  WHERE `id` = ?");
+                    $update->execute(array($data['name_categ'],$data['main_catg'],$data['main_branch'],$this->userid,time(),$id));
+
+
+                    $this->lightRedirect(url."/".$this->folder."/view_account_category");
+                }
+
+            } catch (Exception $e) {
+
+                $this->error_form = json_decode($e->getMessage(), true);
+            }
+        }
+
+        require ($this->render($this->folder,'html','edit_catg_account','php'));
         $this->adminFooterController();
     }
 
@@ -289,19 +332,25 @@ class Account extends Controller {
                     return  $this->UserInfo($id);
                 }
             ),
+            array(
+                'db' => 'ac_account_catg.id','dt' => 4,
+                'formatter' => function ($id, $row) {
+                    return " <div style='text-align: center'><input {$this->checkState($id)} class='toggle-demo' onchange='state_catg(this,$id)' type='checkbox' data-on='On' data-off='Off' id='toggle-event'    data-toggle='toggle' data-style='ios' data-onstyle='success' data-size='small'></div> ";
+                }
+            ),
 
-            array( 'db' => 'ac_account_catg.date', 'dt' => 4 ,
+            array( 'db' => 'ac_account_catg.date', 'dt' => 5 ,
                 'formatter' => function($id, $row ) {
                     return date( 'Y-m-d h:i A',$id);
                 }
             ),
-            array( 'db' => 'ac_account_catg.id', 'dt' => 5,
+            array( 'db' => 'ac_account_catg.id', 'dt' => 6,
                 'formatter' => function($id, $row ) {
-                    if ($this->permit('edit_account', $this->folder)) {
-                        return "<a href=".url."/account/edit_user_account/$id/$row[2]  style='text-align: center;font-size: 25px; margin-bottom:60px'> <i class='fa fa-pencil-square-o' aria-hidden='true'></i></a>";
+                    if ($this->permit('edit_catg_account', $this->folder)) {
+                        return "<a href=".url."/account/edit_catg_account/$id/$row[2]  style='text-align: center;font-size: 25px; margin-bottom:60px'> <i class='fa fa-pencil-square-o' aria-hidden='true'></i></a>";
 
                     } else {
-                        return $this->langControl('forbidden');
+                        return 'لا تمتلك صلاحية';
                     }
                 }
             )
@@ -807,7 +856,7 @@ class Account extends Controller {
                         return "<a href=".url."/account/edit_user_account/$id/$row[2]  style='text-align: center;font-size: 25px; margin-bottom:60px'> <i class='fa fa-pencil-square-o' aria-hidden='true'></i></a>";
 
                     } else {
-                        return $this->langControl('forbidden');
+                        return 'لا تمتلك صلاحية';
                     }
                 }
             )
@@ -890,5 +939,46 @@ class Account extends Controller {
         }
         return $title;
     }
+
+    public function checkState($id)
+    {
+
+        $stmt = $this->db->prepare("SELECT * FROM `{$this->account_catg}` WHERE `id` = ? AND `active` = 1 ");
+        $stmt->execute(array($id));
+        if ($stmt->rowCount() > 0) {
+            return 'checked';
+        } else {
+            return '';
+        }
+    }
+
+
+    public function state_catg_account($v_, $id_)
+	{
+		if ($this->handleLogin()) {
+			if (is_numeric($v_) && is_numeric($id_)) {
+				$v = $v_;
+				$id = $id_;
+			} else {
+				$v = 0;
+				$id = 0;
+			}
+
+			$stmt=$this->db->prepare("SELECT  *FROM `{$this->account_catg}` WHERE `id`  = ?" );
+			$stmt->execute(array($id));
+			$result=$stmt->fetch(PDO::FETCH_ASSOC);
+
+			// $trace=new trace_site();
+			// $oldData=$trace->old($id,$this->folder);
+
+			$data = $this->db->update($this->account_catg, array('active' => $v), "`id`={$id}");
+
+			// $newData=$trace->neaw($id,$this->folder);
+			// $trace->add($id,$this->folder,'active',$result['title'],$result['title'],$oldData,$newData);
+
+
+		}
+
+	}
 
 }
