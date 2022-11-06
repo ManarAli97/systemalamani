@@ -10,3 +10,7 @@ public/ar/content_img
 *.PNG
 *.GIF
 *.JPEG
+*.zip
+*.ZIP
+*.RAR
+*.rar
