@@ -751,21 +751,21 @@ class User extends Controller
         $columns = array(
 
             array( 'db' => 'username', 'dt' => 0 ),
-            array( 'db' => 'uuid', 'dt' => 1 ,
+            // array( 'db' => 'uuid', 'dt' => 1 ,
 
-                'formatter' => function($id, $row ) {
-               if($this->permit('password',$this->folder))
-                {
-                    $p=explode('_',$id);
-                     return $p[0];
-                }else{
-                   return "*******";
-               }
+            //     'formatter' => function($id, $row ) {
+            //    if($this->permit('password',$this->folder))
+            //     {
+            //         $p=explode('_',$id);
+            //          return $p[0];
+            //     }else{
+            //        return "*******";
+            //    }
 
-                }
-                ),
-            array( 'db' => 'role', 'dt' => 2 ),
-            array( 'db' => 'idGroup', 'dt' => 3,
+            //     }
+            //     ),
+            array( 'db' => 'role', 'dt' =>1 ),
+            array( 'db' => 'idGroup', 'dt' => 2,
                'formatter' => function($id, $row ) {
                     return $this->get_group_by_id($id);
                   }
@@ -775,18 +775,18 @@ class User extends Controller
 
             array(
                 'db'        => 'hash',
-                'dt'        => 4,
+                'dt'        => 3,
                 'formatter' => function($id, $row ) {
                     return  "
                     <a target='_blank' download='qr user-{$row[0]}' href='https://chart.googleapis.com/chart?choe=UTF-8&chs=300x300&cht=qr&chl={$id}&username={$row[0]}'><img src='https://chart.googleapis.com/chart?choe=UTF-8&chs=50x50&cht=qr&chl={$id}'></a>
                     ";
                 }
             ),
-            array( 'db' => 'number', 'dt' => 5 ),
-            array( 'db' => 'print', 'dt' => 6 ),
+            array( 'db' => 'number', 'dt' => 4 ),
+            array( 'db' => 'print', 'dt' => 5 ),
             array(
                 'db' => 'id',
-                'dt' =>7,
+                'dt' =>6,
                 'formatter' => function ($id, $row) {
                     if ($this->permit('visible_edit_price', $this->folder)) {
                         return "
@@ -801,7 +801,7 @@ class User extends Controller
             ),
             array(
                 'db' => 'id',
-                'dt' =>8,
+                'dt' =>7,
                 'formatter' => function ($id, $row) {
                     if ($this->permit('active', $this->folder)) {
                         return "
@@ -816,7 +816,7 @@ class User extends Controller
             ),
             array(
                 'db' => 'id',
-                'dt' =>9,
+                'dt' =>8,
                 'formatter' => function ($id, $row) {
                     if ($this->permit('jard_and_correction', $this->folder)) {
                         return "
@@ -831,7 +831,7 @@ class User extends Controller
             ),
             array(
                 'db' => 'id',
-                'dt' =>10,
+                'dt' =>9,
                 'formatter' => function ($id, $row) {
                     if ($this->permit('delete_serial_sale', $this->folder)) {
                         return "
@@ -846,7 +846,7 @@ class User extends Controller
             ),
             array(
                 'db'        => 'id',
-                'dt'        => 11,
+                'dt'        => 10,
                 'formatter' => function($id, $row ) {
                     return "
                    <div style='text-align: center;font-size: 23px;'>
@@ -856,11 +856,11 @@ class User extends Controller
             ),
             array(
                 'db'        => 'id',
-                'dt'        => 12,
+                'dt'        => 11,
                 'formatter' => function($id, $row ) {
                     return "
                    <div style='text-align: center'>
-                    <button class='btn class_delete_row'  data-toggle='modal' data-target='#exampleModal' data-id='{$id}' data-title='{$row[0]}' data-role='{$row[2]}'   >
+                    <button class='btn class_delete_row'  data-toggle='modal' data-target='#exampleModal' data-id='{$id}' data-title='{$row[0]}' data-role='{$row[1]}'   >
                     <i class='fa fa-trash-o' aria-hidden='true'></i></i>
                          </button>
                     </div> ";
@@ -868,7 +868,7 @@ class User extends Controller
             ),
             array(
                 'db'        => 'id',
-                'dt'        => 13,
+                'dt'        => 12,
                 'formatter' => function($id, $row ) {
                     return "
                    <div style='text-align: center;font-size: 23px;'>
@@ -876,7 +876,7 @@ class User extends Controller
                     </div> ";
                 }
             ),
-            array(  'db' => 'id', 'dt'=>14)
+            array(  'db' => 'id', 'dt'=>13)
 
 
         );

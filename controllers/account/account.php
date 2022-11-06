@@ -9,6 +9,8 @@ class Account extends Controller {
         $this->account = 'ac_account';              // هذا الجدول خاصة بمعلومات الحساب الاضافية
         $this->price_list = 'ac_price_list';        //(مفرد , جملة, جملة الجملة)قائمة الاسعار
         $this->price_style = 'ac_price_style';      // نقدي , نقدي و اجل , اجل ,اقساط
+        $this->boxes = 'ac_boxes';                  // صناديق
+        $this->balance = 'ac_balance';              // الرصيد
 
         $this->menu=new Menu();
 
@@ -127,6 +129,29 @@ class Account extends Controller {
             `date` bigint(20) NOT NULL,
             PRIMARY KEY (`id`),
             FOREIGN KEY (`iduser`) REFERENCES user(id)
+        ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+
+        $this->db->query("CREATE TABLE IF NOT EXISTS `{$this->boxes}` (
+            `id` int(11) Unsigned  NOT NULL AUTO_INCREMENT,
+            `title` varchar(50) NOT NULL,
+            `id_info`  int(11) Unsigned  NOT NULL,
+            `iduser` int(4) NOT NULL,
+            `date` bigint(20) NOT NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`iduser`) REFERENCES user(id),
+            FOREIGN KEY (`id_info`) REFERENCES ac_general_info(id)
+        ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+
+        $this->db->query("CREATE TABLE IF NOT EXISTS `{$this->balance}` (
+            `id` int(11) Unsigned  NOT NULL AUTO_INCREMENT,
+            `id_box`  int(11) Unsigned  NOT NULL,
+            `currency`  TINYINT(1) Unsigned,
+            `amount` float NOT NULL,
+            `iduser` int(4) NOT NULL,
+            `date` bigint(20) NOT NULL,
+            PRIMARY KEY (`id`),
+            FOREIGN KEY (`iduser`) REFERENCES user(id),
+            FOREIGN KEY (`id_box`) REFERENCES ac_boxes(id)
         ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
 

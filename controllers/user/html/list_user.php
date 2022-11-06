@@ -73,7 +73,7 @@
                 <thead>
                 <tr>
                     <th>  اسم المستخدم</th>
-                    <th> الرمز </th>
+                    <!-- <th> الرمز </th> -->
                     <th>الدور</th>
                     <th>المجموعة</th>
                     <th>QR</th>
@@ -174,7 +174,7 @@
 
             modal.find('.modal-title').text('<?php  echo $this->langControl("are_you_sure") ?> ? ' );
             modal.find('#save').css('display','block')
- 
+
         modal.find('.modal-body').text(title);
         modal.find('#save').val(recipient)
     });
