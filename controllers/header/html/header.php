@@ -124,9 +124,9 @@
             font-family: 'DroidArabicKufi';
 
         }
-    
-    
-    
+
+
+
     	/*Style offers every day*/
 	.ribbon_offers {
     	position: absolute;
@@ -169,7 +169,7 @@
     	text-decoration:none;
 	}
 
-	
+
 
     </style>
 
@@ -258,10 +258,10 @@
 
         }
 
- 
-    
-    
-    
+
+
+
+
         if (localStorage.getItem("uuid")  !== '1000' ) {
 
             if (localStorage.getItem("counter")) {
@@ -305,7 +305,7 @@
         }
 
 
-    
+
 
 
         var refreshIntervalId='';
@@ -2658,7 +2658,7 @@
                                 margin-right: 15px;
                                 font-size: 13px;
                             }
-                        	
+
                           span.cat_search {
                                 background: red;
                                 color: #fff;
@@ -3673,7 +3673,6 @@
 
                     </div>
                     <div class="tab-pane   show active" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-
                         <form id="new_customers" action="<?php  echo url ?>/customers/new_customers" method="post">
                             <br>
 

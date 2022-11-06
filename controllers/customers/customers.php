@@ -1,6 +1,6 @@
 <?php
 class customers extends Controller
-{ 
+{
     function __construct()
     {
         parent::__construct();
@@ -661,10 +661,43 @@ class customers extends Controller
             $data['login'] = 'website';
             $data['country'] = 'العراق';
             $data['xc'] = 0;
+
+
             $stmtx = $this->db->insert($this->table, $data);
             $last_id = $this->db->lastInsertId($this->table);
+
+
+            $stmt_info = $this->db->prepare("INSERT INTO `ac_general_info`(`name`,`phone`,`country`,`city`,`login`,`active`,`stop`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?)");
+            $stmt_info->execute(array($data['name'],$data['phone'],$data['country'],'كربلاء',$data['login'],1,0,$this->userid,time()));
+
+            $getLastId = $this->db->prepare("SELECT `id` FROM `ac_general_info` WHERE `iduser`= ? ORDER BY `id` DESC");
+            $getLastId->execute(array($this->userid));
+            $row_id = $getLastId->fetch(PDO::FETCH_ASSOC);
+            $lastId = $row_id['id'];
+
+            $getIdCat = $this->db->prepare("SELECT `id` FROM `ac_account_catg` WHERE `title`=? ");
+            $getIdCat->execute(array('الزبائن'));
+            $row_cat = $getIdCat->fetch(PDO::FETCH_ASSOC);
+            $id_cat = $row_cat['id'];
+
+            $getPriceList = $this->db->prepare("SELECT `id` FROM `ac_price_list` WHERE `title`=? ");
+            $getPriceList->execute(array('مفرد'));
+            $row_list = $getPriceList->fetch(PDO::FETCH_ASSOC);
+            $price_list = $row_list['id'];
+
+            $getPriceStyle = $this->db->prepare("SELECT `id` FROM `ac_price_style` WHERE `title`=? ");
+            $getPriceStyle->execute(array('نقدي'));
+            $row_style = $getPriceStyle->fetch(PDO::FETCH_ASSOC);
+            $price_style = $row_style['id'];
+
+
+            $stmt_account = $this->db->prepare("INSERT INTO `ac_account` (`id_info`,`id_cat`,`id_branch`,`id_price_list`,`id_price_style`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?)");
+            $stmt_account->execute(array($lastId,$id_cat,1,$price_list,$price_style,$this->userid,time()));
+
+
             $stmt = $this->db->prepare("SELECT *FROM `register_user` WHERE `id`=? limit 1");
             $stmt->execute(array($last_id));
+
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $id_user = $result['id'];
             $dollar = 0;
@@ -780,13 +813,13 @@ class customers extends Controller
                     } else {
                         return date('Y-m-d h:i A', $d);
                     }
-                    
+
                 }
             ),
             array('db' => 'user_called', 'dt' => 4,
             'formatter' => function ($d, $row) {
                 return $this->UserInfo($d);
-                
+
             }
             ),
             array('db' => 'note_called', 'dt' => 5),
@@ -837,7 +870,7 @@ class customers extends Controller
             ,
             'formatter' => function ($d, $row) {
                 return $this->UserInfo($d);
-                
+
             }),
             // array('db' => 'note_called', 'dt' => 4),
             // array(
@@ -855,7 +888,7 @@ class customers extends Controller
                                 <button class='btn btn-primary btn-pg'  data-toggle='modal' data-target='#exampleModal' data-id='{$id}' data-title='{$row[0]}'   >
                                 <i class='fa fa-edit' aria-hidden='true'></i>
                                 </button>
-                            </div> 
+                            </div>
                             ";
                     // } else {
                     //     return $this->langControl('forbidden');
@@ -931,7 +964,7 @@ class customers extends Controller
             array('db' => 'user_called', 'dt' => 4,
             'formatter' => function ($d, $row) {
                 return $this->UserInfo($d);
-                
+
             }
             ),
             array('db' => 'note_called', 'dt' => 5),
@@ -949,7 +982,7 @@ class customers extends Controller
             ,
             'formatter' => function ($d, $row) {
                 return $this->UserInfo($d);
-                
+
             }),
             array('db' => 'note_check', 'dt' => 8),
             array(
@@ -962,7 +995,7 @@ class customers extends Controller
                     }
                 }
             ),
-            array( 
+            array(
                 'db' => 'note_after_compensation',
                 'dt' =>10,
                 'formatter' => function($id, $row ) {
@@ -992,18 +1025,18 @@ class customers extends Controller
     {
         $note = $_POST['value1'];
         $id = $_POST['value2'];
-        
+
         $sqlQ = $this->db->prepare("SELECT * FROM customers_compensation  WHERE `id`=?");
         $sqlQ->execute(array($id));
-      
+
         $stmt = $this->db->prepare("update  customers_compensation set note_after_compensation=? where id=?");
         $stmt->execute(array($note,$id));
         $this->addFoundTracking($id,"note_after_compensation",$note);
     }
-    
+
     /**
-     * هاي الدالة تضيف اي حركة صارت على جدول اطلب مالم تجده 
-     *  */ 
+     * هاي الدالة تضيف اي حركة صارت على جدول اطلب مالم تجده
+     *  */
     public function addFoundTracking($IdFound,$actionType,$theValue)
     {
         $stmt = $this->db->prepare("INSERT INTO `found_tracking`( `id_found`, `action_type`, `user_id`,the_value) VALUES (?,?,?,?)");
@@ -1033,10 +1066,10 @@ class customers extends Controller
         if($found_data = $found->fetch(PDO::FETCH_ASSOC))
             return  "
             <div style='text-align: center;font-size: 18px;'>
-                <span>{$this->UserInfo( $found_data['user_id'])}</span> 
-            </div> " 
+                <span>{$this->UserInfo( $found_data['user_id'])}</span>
+            </div> "
             ;
-        else 
+        else
             return "";
     }
 
@@ -1093,14 +1126,14 @@ class customers extends Controller
 
             $stmt = $this->db->prepare("SELECT id FROM `user`  WHERE  username = ? and password = ?");
             $stmt->execute(array($username,$this->HASH_key('sha256', $password . trim($username), HASH_PASSWORD_KEY)));
-            if ($stmt->rowCount() > 0) 
+            if ($stmt->rowCount() > 0)
             {
                 $id=$stmt->fetch(PDO::FETCH_ASSOC);
                 $data = ["id" => $id['id'] ];
                 $JSON_data = json_encode($data);
                 print_r($JSON_data);
             }
-            else 
+            else
             {
                 $data = ["id" => "0" ];
                 $JSON_data = json_encode($data);
@@ -1114,7 +1147,7 @@ class customers extends Controller
         if(isset($_POST['phone']) && isset($_POST['userid'])){
             $data['date'] = time();
             $data['phone'] = $_POST['phone'];
-            $data['userid'] = $_POST['userid']; 
+            $data['userid'] = $_POST['userid'];
             $stmt = $this->db->insert('customer_con', $data);
         	echo json_encode($data['userid']);
         }
@@ -1128,7 +1161,7 @@ class customers extends Controller
         require($this->render($this->folder, 'html', 'customer_report', 'php'));
         $this->adminFooterController();
     }
-    
+
     function search_phone_customer()
     {
         $stmt = $this->db->prepare("SELECT phone  FROM `customer_con`  WHERE userid =? ORDER BY `id` DESC limit 1");
@@ -1167,7 +1200,7 @@ class customers extends Controller
         echo json_encode(
             SSP::complex($_GET, $sql_details, $table, $primaryKey, $columns , null ,$whereall)
         );
-        
+
     }
 
     function staff_evaluation($id_cus)
@@ -1218,7 +1251,7 @@ class customers extends Controller
 
 
         echo json_encode(SSP::complex_join($_GET, $sql_details, $table, $primaryKey, $columns, $join, null, $whereAll,null,null,1));
-        
+
     }
 
     function note_user($id_cus)
@@ -1308,7 +1341,7 @@ class customers extends Controller
             array('db' => 'user_called', 'dt' => 4,
             'formatter' => function ($d, $row) {
                 return $this->UserInfo($d);
-                
+
             }
             ),
             array('db' => 'note_called', 'dt' => 5),
@@ -1326,7 +1359,7 @@ class customers extends Controller
             ,
             'formatter' => function ($d, $row) {
                 return $this->UserInfo($d);
-                
+
             }),
             array('db' => 'note_check', 'dt' => 8),
             array(
@@ -1508,7 +1541,7 @@ class customers extends Controller
         $group="GROUP BY cart_shop_all.number_bill";
 
         echo json_encode(SSP::complex_join($_GET, $sql_details, $table, $primaryKey, $columns, $join, null, $whereAll,null,$group,1));
-        
+
     }
 
     function sum_price($number_bill)
@@ -1526,7 +1559,7 @@ class customers extends Controller
     function all_orders_bill($number_bill,$table){
         $stmt = $this->db->prepare("SELECT `cart_shop_all`.* ,title FROM `cart_shop_all` inner JOIN {$table} ON  `cart_shop_all`.id_item = $table.id WHERE `number_bill`=?");
         $stmt->execute(array($number_bill));
-        $result = '<table  style="background: #e0e0eb; border: 2px solid #f2f2f2;"> 
+        $result = '<table  style="background: #e0e0eb; border: 2px solid #f2f2f2;">
                     <tr style="background: #f2f2f2;">
                         <td>اسم المنتج</td>
                         <td>القسم</td>

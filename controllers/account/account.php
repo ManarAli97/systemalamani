@@ -89,7 +89,7 @@ class Account extends Controller {
             `id` int(11) Unsigned  NOT NULL AUTO_INCREMENT,
             `id_info`  int(11) Unsigned  NOT NULL,
             `id_cat`  int(11) Unsigned  NOT NULL,
-            `id_branch` int(4) Unsigned NOT NULL,
+            `id_branch` int(4) Unsigned,
             `mth_goal_amount` float NOT NULL DEFAULT '0',
             `mth_goal_currency`  TINYINT(1) Unsigned,
             `duration_of_debt` float NOT NULL  DEFAULT '0',
@@ -626,9 +626,9 @@ class Account extends Controller {
                 $data = $form->fetch();
 
                 if (empty($this->error_form)) {
-
-                    $stmt = $this->db->prepare("INSERT INTO `{$this->general_info}`(`name`,`phone`,`job`,`country`,`city`,`address`,`gander`,`brithday`,`note`,`active`,`stop`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                    $stmt->execute(array($data['name'],$data['phone'],$data['job'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['brithday'],$data['note'],$data['state'],$data['stop'],$this->userid,time()));
+                    $data['login'] = 'website';
+                    $stmt = $this->db->prepare("INSERT INTO `{$this->general_info}`(`name`,`phone`,`job`,`country`,`city`,`address`,`login`,`gander`,`brithday`,`note`,`active`,`stop`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    $stmt->execute(array($data['name'],$data['phone'],$data['job'],$data['country'],$data['city'],$data['address'],$data['login'],$data['gander'],$data['brithday'],$data['note'],$data['state'],$data['stop'],$this->userid,time()));
 
                     $getLastId = $this->db->prepare("SELECT `id` FROM `{$this->general_info}` WHERE `iduser`=? ORDER BY `id` DESC");
                     $getLastId->execute(array($this->userid));
