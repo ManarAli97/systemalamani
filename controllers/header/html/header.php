@@ -3676,6 +3676,11 @@
                         <form id="new_customers" action="<?php  echo url ?>/customers/new_customers" method="post">
                             <br>
 
+                            <div class="custom-control custom-radio custom-control-inline ml-4 mr-4" style="margin-top:30px;" >
+                                <input type="checkbox"  name="without_number" value="1" class="custom-control-input " id="without_number">
+
+                                <label class="custom-control-label" for="without_number" > بدون رقم</label>
+                            </div>
                             <div class="form-group">
                                 <label for="exampleInputname1">  الاسم  </label>
                                 <input  autocomplete="off"   name="name" type="text"  class="form-control" id="exampleInputname1" required  aria-describedby="nameHelp"  >
@@ -3694,6 +3699,14 @@
                                     $("#exampleInputphone2").on("input", function() {
                                         $("#count_phone_2").text(this.value.length);
                                     });
+                                    $('#exampleInputphone2').val('00000000000');
+                                        $('#exampleInputphone2').attr("readonly", true);
+                                    if ($('#without_number').is(":checked"))
+                                    {
+                                        $('#exampleInputphone2').val('00000000000');
+                                        $('#exampleInputphone2').attr("readonly", true);
+
+                                    }
                                 </script>
 
                             </div>
