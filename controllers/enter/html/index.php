@@ -670,14 +670,14 @@
                                                     <option value="دهوك">دهوك</option>
                                                     <option value="القادسية">القادسية</option>
                                                     <option value="ديالى">ديالى</option>
-                                                    <option value="ذي قار">ذي قار</option>
+                                                    <option value="ذي قار"> ذي قار </option>
                                                     <option value="السليمانية">السليمانية</option>
-                                                    <option value="صلاح الدين">صلاح الدين</option>
+                                                    <option value="صلاح الدين"> صلاح الدين </option>
                                                     <option value="كركوك">كركوك</option>
-                                                    <option selected value="كربلاء المقدسة">كربلاء المقدسة</option>
+                                                    <option selected value="كربلاء المقدسة"> كربلاء المقدسة </option>
                                                     <option value="المثنى">المثنى</option>
                                                     <option value="ميسان">ميسان</option>
-                                                    <option value="النجف الأشرف">النجف الأشرف</option>
+                                                    <option value="النجف الأشرف"> النجف الأشرف </option>
                                                     <option value="نينوى">نينوى</option>
                                                     <option value="واسط">واسط</option>
                                                 </select>

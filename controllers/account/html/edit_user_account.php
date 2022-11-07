@@ -159,6 +159,7 @@
                         <div class="col-lg-3 col-md-2  mb-4 mr-2  mr-4">
                             <label class="mr-sm-2" for="mth_goal_currency">عملة الهدف الشهري  </label>
                             <select class="form-control dropdown_filter selectpicker" data-live-search="true" name="mth_goal_currency" id="mth_goal_currency" >
+
                                 <?php foreach ($currency as $key => $name) {   ?>
                                     <option    value="<?php  echo $name['id']?>" <?php  if ($name['id']==$infoAccount[1]['mth_goal_currency'])  echo 'selected' ?>><?php  echo $name['name']?></option>
                                 <?php  } ?>

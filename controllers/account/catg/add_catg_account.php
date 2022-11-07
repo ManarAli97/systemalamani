@@ -63,6 +63,9 @@
                 if(result == 1){
                     alert(' تمت الاضافة');
                     location.reload();
+                }else if(result == 2){
+                    alert(' الفئة موجودة ');
+                    $('#name_categ').val('');
                 }else{
                     alert('لم تتم الاضافة');
                 }

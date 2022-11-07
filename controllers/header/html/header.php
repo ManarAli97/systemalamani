@@ -3441,7 +3441,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">  تاكيد الطلب بستخدام   </h5>
+                <h5 class="modal-title" id="exampleModalLabel">  تأكيد الطلب باستخدام   </h5>
 
             </div>
             <div class="modal-body">
@@ -3451,17 +3451,18 @@
                     <li class="nav-item">
                         <a class="nav-link active_qr_g"   id="home-tab" data-toggle="tab"  onclick="openWebCam()" href="#home" role="tab" aria-controls="home" aria-selected="true">QR</a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" id="profile-tab" data-toggle="tab"  onclick="closeWebCam()" href="#profile" role="tab" aria-controls="profile" aria-selected="false">رقم الهاتف</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
-                        <a class="nav-link active activeAfterCloseWebCam"  id="contact-tab"  onclick="closeWebCam()" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">  زبون جديد   </a>
+                        <a class="nav-link active activeAfterCloseWebCam"  id="contact-tab"  onclick="closeWebCam()" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">   رقم الهاتف   </a>
                     </li>
                 </ul>
                 <div class="tab-content" id="myTabContent">
+                    <!-- home -->
                     <div class="tab-pane  " id="home" role="tabpanel" aria-labelledby="home-tab">
 
-                        <form id="readqrfromdevice" method="get" action="<?php  echo url ?>/customers/byqr">
+                        <form id="readqrfromdevice" method="get" action="< ?php  echo url ?>/customers/byqr">
                             <input name="qr"    inputmode="none"    style="width: 0;height: 0;padding: 0;margin: 0;box-shadow: unset;outline: unset;border: 0"     autocomplete="off"  id="id_readqr" class="form-control" required>
                         </form>
                         <div class="resultErrorcam"></div>
@@ -3642,7 +3643,9 @@
 
 
                     </div>
-                    <div class="tab-pane  " id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <!-- home-->
+                    <!-- profile -->
+                    <!-- <div class="tab-pane  " id="profile" role="tabpanel" aria-labelledby="profile-tab">
                         <form id="byphone" action="<?php  echo url ?>/customers/byphone" method="post">
                             <br>
 
@@ -3671,21 +3674,18 @@
                             </div>
                         </form>
 
-                    </div>
+                    </div> -->
+                    <!-- profile -->
                     <div class="tab-pane   show active" id="contact" role="tabpanel" aria-labelledby="contact-tab">
                         <form id="new_customers" action="<?php  echo url ?>/customers/new_customers" method="post">
                             <br>
 
-                            <div class="custom-control custom-radio custom-control-inline ml-4 mr-4" style="margin-top:30px;" >
+                            <div class="custom-control custom-radio custom-control-inline mb-4" style="margin-top:30px;" >
                                 <input type="checkbox"  name="without_number" value="1" class="custom-control-input " id="without_number">
 
                                 <label class="custom-control-label" for="without_number" > بدون رقم</label>
                             </div>
-                            <div class="form-group">
-                                <label for="exampleInputname1">  الاسم  </label>
-                                <input  autocomplete="off"   name="name" type="text"  class="form-control" id="exampleInputname1" required  aria-describedby="nameHelp"  >
 
-                            </div>
                             <div class="form-group">
                                 <label for="exampleInputphone2"> رقم هاتف    </label>
 
@@ -3695,20 +3695,54 @@
                                         <div class="input-group-text" id="count_phone_2">0</div>
                                     </div>
                                 </div>
+
+
                                 <script>
                                     $("#exampleInputphone2").on("input", function() {
                                         $("#count_phone_2").text(this.value.length);
                                     });
-                                    $('#exampleInputphone2').val('00000000000');
-                                        $('#exampleInputphone2').attr("readonly", true);
-                                    if ($('#without_number').is(":checked"))
-                                    {
-                                        $('#exampleInputphone2').val('00000000000');
-                                        $('#exampleInputphone2').attr("readonly", true);
 
-                                    }
+                                    checkBox = document.getElementById('without_number').addEventListener('click', event => {
+                                        if(event.target.checked) {
+                                            $('#exampleInputphone2').val('00000000000');
+                                            $('#exampleInputphone2').attr("readonly", true);
+                                        }
+                                        if(event.target.checked == false ) {
+                                            $('#exampleInputphone2').val('');
+                                            $('#exampleInputphone2').attr("readonly", false);
+                                        }
+                                    });
+
+
+                                    $( "#exampleInputphone2" ).keyup(function() {
+
+                                        var phone= $('#exampleInputphone2').val();
+                                        if((phone.length == 11) && (phone !='00000000000') ){
+                                            $.get( "<?php echo url ?>/customers/get_customer_name_by_phone/"+phone, function(data) {
+                                                $("#exampleInputname1").val(data);
+                                            });
+                                        }
+                                    });
+
+                                    $( "#input-group-text" ).click(function() {
+                                        console.log('m');
+                                    });
+
                                 </script>
 
+                            </div>
+
+                            <!-- <div class="form-group">
+                                <label for="exampleInputname1">  الاسم  </label>
+                                <input  autocomplete="off"   name="name" type="text"  class="form-control" id="exampleInputname1" required  aria-describedby="nameHelp"  >
+                            </div> -->
+
+
+                            <div class="input-group mb-3">
+                                <input name="name" type="text"  class="form-control" id="exampleInputname1" required  aria-describedby="nameHelp" aria-label="Text input with checkbox" autocomplete="off">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-secondary" type="button">Button</button>
+                                </div>
                             </div>
 
                             <hr>

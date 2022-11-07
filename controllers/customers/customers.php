@@ -120,10 +120,12 @@ class customers extends Controller
                 $data['birthday'] = $data['year'] . '-' . $data['month'] . '-' . $data['day'];
                 $answer = array();
                 $data['xc'] = 1;
+
+                $check = true;
                 if (empty($this->error_form)) {
                     $stmt2 = $this->db->prepare("SELECT *FROM `register_user` WHERE `phone`=? AND xc=1  AND city <> ''  AND gander <> ''");
                     $stmt2->execute(array($data['phone']));
-                    if ($stmt2->rowCount() > 0) {
+                    if ($stmt2->rowCount() > 0){
                         $result =  $stmt2->fetch(PDO::FETCH_ASSOC);
                         $data['uid'] = $result['uid'];
                         $stmt = $this->db->update($this->table, array_diff_key($data, ['about_company' => "delete", 'forAnswerThat' => "delete", 'after_video' => "delete", 'note' => "delete", 'day' => "delete", 'month' => "delete", 'year' => "delete"]), "phone={$data['phone']}  AND city <> ''  AND gander <> ''");
@@ -135,6 +137,52 @@ class customers extends Controller
                         $_SESSION['new_register'] = $last_id;
                         echo json_encode(array('done' => array('done' =>  $data['uid'])), JSON_FORCE_OBJECT);
                     }
+
+
+                    //manar
+                    if($data['phone'] != '00000000000'){
+                        $check_num = $this->db->prepare("SELECT `id` FROM `ac_general_info` WHERE `phone`=? limit 1");
+                        $check_num->execute(array($data['phone']));
+
+                        $result_num = $check_num->fetch(PDO::FETCH_ASSOC);
+                        if ($check_num->rowCount() > 0) {
+                            $check = false;
+                        }
+                    }
+                    if($check == true){
+                        $stmt_info = $this->db->prepare("INSERT INTO `ac_general_info`(`name`,`phone`,`country`,`city`,`login`,`active`,`stop`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?)");
+                        $stmt_info->execute(array($data['name'],$data['phone'],$data['country'],$data['city'],$data['login'],1,0,$this->userid,time()));
+
+                        $getLastId = $this->db->prepare("SELECT `id` FROM `ac_general_info` WHERE `iduser`= ? ORDER BY `id` DESC");
+                        $getLastId->execute(array($this->userid));
+                        $row_id = $getLastId->fetch(PDO::FETCH_ASSOC);
+
+                        $lastId = $row_id['id'];
+
+                        $getIdCat = $this->db->prepare("SELECT `id` FROM `ac_account_catg` WHERE `title`=? ");
+                        $getIdCat->execute(array($data['city']));
+                        $row_cat = $getIdCat->fetch(PDO::FETCH_ASSOC);
+                        $id_cat = $row_cat['id'];
+
+                        $getPriceList = $this->db->prepare("SELECT `id` FROM `ac_price_list` WHERE `title`=? ");
+                        $getPriceList->execute(array('مفرد'));
+                        $row_list = $getPriceList->fetch(PDO::FETCH_ASSOC);
+                        $price_list = $row_list['id'];
+
+                        $getPriceStyle = $this->db->prepare("SELECT `id` FROM `ac_price_style` WHERE `title`=? ");
+                        $getPriceStyle->execute(array('نقدي'));
+                        $row_style = $getPriceStyle->fetch(PDO::FETCH_ASSOC);
+                        $price_style = $row_style['id'];
+
+
+                        $stmt_account = $this->db->prepare("INSERT INTO `ac_account` (`id_info`,`id_cat`,`id_branch`,`id_price_list`,`id_price_style`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?)");
+                        $stmt_account->execute(array($lastId,$id_cat,1,$price_list,$price_style,$this->userid,time()));
+                    }
+
+
+
+
+
                 }
             } catch (Exception $e) {
                 $this->error_form = $e->getMessage();
@@ -408,6 +456,7 @@ class customers extends Controller
             usleep($v);
             $uuid = $this->isUuid();
             $phone = trim($_POST['phone']);
+
             $stmt = $this->db->prepare("SELECT *FROM `register_user` WHERE `phone`=? limit 1");
             $stmt->execute(array($phone));
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -662,40 +711,65 @@ class customers extends Controller
             $data['country'] = 'العراق';
             $data['xc'] = 0;
 
+            $check = true;
 
-            $stmtx = $this->db->insert($this->table, $data);
-            $last_id = $this->db->lastInsertId($this->table);
+            if($data['phone'] != '00000000000'){
+                $stmt_check = $this->db->prepare("SELECT `id` FROM `register_user` where phone=? ORDER BY `xc` DESC limit 1");
+                $stmt_check->execute(array($data['phone']));
+                if($stmt_check->rowCount() > 0){
+                    $result_ch = $stmt_check->fetch(PDO::FETCH_ASSOC);
+                    $last_id = $result_ch['id'];
+                }else{
+                    $stmtx = $this->db->insert($this->table, $data);
+                    $last_id = $this->db->lastInsertId($this->table);
+                }
+
+            }else{
+                $stmtx = $this->db->insert($this->table, $data);
+                $last_id = $this->db->lastInsertId($this->table);
+            }
+
+            //  هذا الجزء خاص باضافة المعلومات لجدول الخاص بالحسابات
+            if($data['phone'] != '00000000000'){
+                $check_num = $this->db->prepare("SELECT `id` FROM `ac_general_info` WHERE `phone`=? limit 1");
+                $check_num->execute(array($data['phone']));
+
+                $result_num = $check_num->fetch(PDO::FETCH_ASSOC);
+                if ($check_num->rowCount() > 0) {
+                    $check = false;
+                }
+            }
+            if($check == true){
+                $stmt_info = $this->db->prepare("INSERT INTO `ac_general_info`(`name`,`phone`,`country`,`city`,`login`,`active`,`stop`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?)");
+                $stmt_info->execute(array($data['name'],$data['phone'],$data['country'],'كربلاء',$data['login'],1,0,$this->userid,time()));
+
+                $getLastId = $this->db->prepare("SELECT `id` FROM `ac_general_info` WHERE `iduser`= ? ORDER BY `id` DESC");
+                $getLastId->execute(array($this->userid));
+                $row_id = $getLastId->fetch(PDO::FETCH_ASSOC);
+
+                $lastId = $row_id['id'];
+
+                $getIdCat = $this->db->prepare("SELECT `id` FROM `ac_account_catg` WHERE `title`=? ");
+                $getIdCat->execute(array('الزبائن'));
+                $row_cat = $getIdCat->fetch(PDO::FETCH_ASSOC);
+                $id_cat = $row_cat['id'];
+
+                $getPriceList = $this->db->prepare("SELECT `id` FROM `ac_price_list` WHERE `title`=? ");
+                $getPriceList->execute(array('مفرد'));
+                $row_list = $getPriceList->fetch(PDO::FETCH_ASSOC);
+                $price_list = $row_list['id'];
+
+                $getPriceStyle = $this->db->prepare("SELECT `id` FROM `ac_price_style` WHERE `title`=? ");
+                $getPriceStyle->execute(array('نقدي'));
+                $row_style = $getPriceStyle->fetch(PDO::FETCH_ASSOC);
+                $price_style = $row_style['id'];
 
 
-            $stmt_info = $this->db->prepare("INSERT INTO `ac_general_info`(`name`,`phone`,`country`,`city`,`login`,`active`,`stop`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?)");
-            $stmt_info->execute(array($data['name'],$data['phone'],$data['country'],'كربلاء',$data['login'],1,0,$this->userid,time()));
+                $stmt_account = $this->db->prepare("INSERT INTO `ac_account` (`id_info`,`id_cat`,`id_branch`,`id_price_list`,`id_price_style`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?)");
+                $stmt_account->execute(array($lastId,$id_cat,1,$price_list,$price_style,$this->userid,time()));
+            }
 
-            $getLastId = $this->db->prepare("SELECT `id` FROM `ac_general_info` WHERE `iduser`= ? ORDER BY `id` DESC");
-            $getLastId->execute(array($this->userid));
-            $row_id = $getLastId->fetch(PDO::FETCH_ASSOC);
-            $lastId = $row_id['id'];
-
-            $getIdCat = $this->db->prepare("SELECT `id` FROM `ac_account_catg` WHERE `title`=? ");
-            $getIdCat->execute(array('الزبائن'));
-            $row_cat = $getIdCat->fetch(PDO::FETCH_ASSOC);
-            $id_cat = $row_cat['id'];
-
-            $getPriceList = $this->db->prepare("SELECT `id` FROM `ac_price_list` WHERE `title`=? ");
-            $getPriceList->execute(array('مفرد'));
-            $row_list = $getPriceList->fetch(PDO::FETCH_ASSOC);
-            $price_list = $row_list['id'];
-
-            $getPriceStyle = $this->db->prepare("SELECT `id` FROM `ac_price_style` WHERE `title`=? ");
-            $getPriceStyle->execute(array('نقدي'));
-            $row_style = $getPriceStyle->fetch(PDO::FETCH_ASSOC);
-            $price_style = $row_style['id'];
-
-
-            $stmt_account = $this->db->prepare("INSERT INTO `ac_account` (`id_info`,`id_cat`,`id_branch`,`id_price_list`,`id_price_style`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?)");
-            $stmt_account->execute(array($lastId,$id_cat,1,$price_list,$price_style,$this->userid,time()));
-
-
-            $stmt = $this->db->prepare("SELECT *FROM `register_user` WHERE `id`=? limit 1");
+            $stmt = $this->db->prepare("SELECT `id` FROM `register_user` WHERE `id`=? limit 1");
             $stmt->execute(array($last_id));
 
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -787,7 +861,20 @@ class customers extends Controller
         }
     }
 
+    public function get_customer_name_by_phone($phone)
+     {
+         $result= '';
+         $stmt = $this->db->prepare("SELECT `name` FROM `register_user` where phone=? ORDER BY `xc` DESC limit 1");
+         $stmt->execute(array($phone));
+         if($stmt->rowCount() > 0){
+             $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
+                 $result=$row['name'];
+
+
+         }
+         echo $result;
+     }
     // customers_compensation
     function customers_compensation_index()
     {

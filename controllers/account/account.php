@@ -66,16 +66,11 @@ class Account extends Controller {
             `country` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `city` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `address` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
-            `type_customer` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-            `type_customer12` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
-            `uid` varchar(200)  COLLATE utf8_unicode_ci NOT NULL,
-            `login` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `brithday` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `gander` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `model` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `id_user_screen` int(11),
             `note` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
-            `xc` TINYINT(1) NOT NULL,
             `active` TINYINT(1) NOT NULL,
             `stop` TINYINT(1) NOT NULL,
             `iduser` int(4) NOT NULL,
@@ -229,20 +224,29 @@ class Account extends Controller {
         }
 
 
-        require ($this->render($this->folder,'html','add_catg_account','php'));
+        require ($this->render($this->folder,'catg','add_catg_account','php'));
         $this->adminFooterController();
     }
 
     // اضافة الفئة الجديده
     public function create_account_catg(){
         $data = json_decode($_GET['jsonData'], true);
+        $data['name']= trim($data['name'],'');
+        $data['relid']= trim($data['relid'],'');
+        $data['idbranch']= trim($data['idbranch'],'');
 
-        $stmt = $this->db->prepare("INSERT INTO `{$this->account_catg}`(`title`,`active`,`relid`,`idbranch`,`iduser`,`date`) VALUE (?,?,?,?,?,?)");
-        $stmt->execute(array($data['name'],1,$data['relid'],$data['idbranch'],$this->userid,time()));
-        if($stmt->rowCount() > 0){
-            echo 1;
+        $name_catg =$this->db->prepare("SELECT `id` FROM `{$this->account_catg}` WHERE title = ?");
+        $name_catg->execute(array($data['name']));
+        if($name_catg->rowCount() > 0){
+            echo 2;
         }else{
-            echo 0;
+            $stmt = $this->db->prepare("INSERT INTO `{$this->account_catg}`(`title`,`active`,`relid`,`idbranch`,`iduser`,`date`) VALUE (?,?,?,?,?,?)");
+            $stmt->execute(array($data['name'],1,$data['relid'],$data['idbranch'],$this->userid,time()));
+            if($stmt->rowCount() > 0){
+                echo 1;
+            }else{
+                echo 0;
+            }
         }
     }
 
@@ -314,7 +318,7 @@ class Account extends Controller {
             }
         }
 
-        require ($this->render($this->folder,'html','edit_catg_account','php'));
+        require ($this->render($this->folder,'catg','edit_catg_account','php'));
         $this->adminFooterController();
     }
 
@@ -331,7 +335,7 @@ class Account extends Controller {
         {
             $nameCategory[]=$row;
         }
-        require ($this->render($this->folder,'html','view_account_catg','php'));
+        require ($this->render($this->folder,'catg','view_account_catg','php'));
         $this->adminFooterController();
     }
 
@@ -515,7 +519,6 @@ class Account extends Controller {
                 $nameCategory = $row_name;
             }
         }
-
 
         $nameBranch = array();
         $name_branch =$this->db->prepare("SELECT `id`,`title` FROM `branch` WHERE active = 1");
