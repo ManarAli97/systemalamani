@@ -3737,7 +3737,7 @@
                                 });
 
 
-                                $( "#exampleInputphone2" ).keyup(function() {
+                                $( "#exampleInputphone2" ).on('input',function() {
 
                                     var phone= $('#exampleInputphone2').val();
                                     if((phone.length == 11) && (phone !='00000000000') ){
