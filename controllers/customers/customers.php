@@ -448,97 +448,98 @@ class customers extends Controller
             }
         }
     }
-    function byphone()
-    {
-        if ($this->handleLogin()) {
-            $k = array_rand($this->sleepx);
-            $v = $this->sleepx[$k];
-            usleep($v);
-            $uuid = $this->isUuid();
-            $phone = trim($_POST['phone']);
 
-            $stmt = $this->db->prepare("SELECT *FROM `register_user` WHERE `phone`=? limit 1");
-            $stmt->execute(array($phone));
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $id_user = $result['id'];
-            $dollar = 0;
-            $stmt = $this->db->prepare("SELECT *FROM `dollar_price`  WHERE `active` = 1  ORDER BY `id` DESC  LIMIT 1");
-            $stmt->execute();
-            if ($stmt->rowCount() > 0) {
-                $resultDollar = $stmt->fetch(PDO::FETCH_ASSOC);
-                $dollar = $resultDollar['dollar'];
-            }
-            if (!empty($result)) {
-                if ($_SESSION['direct'] == 3) {
-                    $stmt_uuid = $this->db->prepare("UPDATE `cart_shop_active` SET `date`=?,`id_member_r` = ? ,`direct`=? ,`user_direct`=?,`prepared` = ?,`dollar_exchange`=?  WHERE `id_member_r`=? AND `buy` = 0 AND `status`=0");
-                    $stmt_uuid->execute(array(time(), $id_user, $_SESSION['direct'], $this->userid, 1, $dollar, $uuid));
-                } else {
-                    $stmt_uuid = $this->db->prepare("UPDATE `cart_shop_active` SET `date`=?,`id_member_r` = ? ,`direct`=? ,`user_direct`=?,`dollar_exchange`=? WHERE `id_member_r`=? AND `buy` = 0 AND `status`=0");
-                    $stmt_uuid->execute(array(time(), $id_user, $_SESSION['direct'], $this->userid, $dollar, $uuid));
-                }
-                $mobile = new mobile();
-                $stmt_date = $this->db->prepare("UPDATE `cart_shop_active` SET `date_req` = ?  WHERE `id_member_r`=? AND `buy` = 0 AND `status`=0");
-                $stmt_date->execute(array(time(), $id_user));
-                $stmt1 = $mobile->getAllContentFromCar_new($id_user);
-                while ($row = $stmt1->fetch(PDO::FETCH_ASSOC)) {
-                    $table = $row['table'];
-                    $number = $row['number'];
-                    $this->set_quantity_order($table, $row['id_item'], $row['code'], $number);
-                    if ($row['offers']) {
-                        $this->check_one_itemoffers($row['id_offer']);
-                    }
-                    $stmt_get_item = $this->db->prepare("SELECT *FROM `{$row['table']}` WHERE id = ?  LIMIT 1");
-                    $stmt_get_item->execute(array($row['id_item']));
-                    $item = $stmt_get_item->fetch();
-                    $row['title'] = $item['title'];
-                    $row['img'] = $this->save_file . $row['image'];
-                }
-                /*   $x = $this->db->prepare("SELECT *FROM `cart_shop_active` WHERE `id_member_r`=? AND  `prepared` = 0 AND `accountant`=0 AND `buy` =1 ");
-                $x->execute(array($id_user));
-                if ($x->rowCount() > 0) {
-                    $stmtNb = $this->db->prepare("SELECT *FROM `cart_shop_active` WHERE `id_member_r`=? AND `prepared` = 0  AND `accountant`=0 AND `buy` =1  order by `number_bill` DESC LIMIT 1");
-                    $stmtNb->execute(array($id_user));
-                    if ($stmtNb->rowCount() > 0) {
-                        $r = $stmtNb->fetch(PDO::FETCH_ASSOC);
-                        $number_bill = $r['number_bill'];
-                    }
-                } else {
-                    $stmtNb = $this->db->prepare("SELECT *FROM `cart_shop_active`  ORDER BY `number_bill` DESC   LIMIT 1");
-                    $stmtNb->execute();
-                    if ($stmtNb->rowCount() > 0) {
-                        $r = $stmtNb->fetch(PDO::FETCH_ASSOC);
-                        $number_bill = $r['number_bill'] + 1;
-                    } else {
-                        $number_bill = 1;
-                    }
-                }
-                */
-                $number_bill = $this->getNumberBill(4);
-                $stmt1 = $this->db->prepare("UPDATE `cart_shop_active` SET `buy` = 1 ,`number_bill`=? WHERE `id_member_r`=? AND `buy` = 0 ");
-                $stmt1->execute(array($number_bill, $id_user));
-                $stmt2 = $this->db->prepare("UPDATE `register_user` SET `date_req` =  ?  WHERE `id` = ?  ");
-                $stmt2->execute(array(time(), $id_user));
-                $stmtt = $this->db->prepare("SELECT *FROM `cart_shop_active` WHERE   `number_bill` = ? ");
-                $stmtt->execute(array($number_bill));
-                $oldData = array();
-                while ($rowt = $stmtt->fetch(PDO::FETCH_ASSOC)) {
-                    $oldData[] = $rowt;
-                }
-                if ($_SESSION['direct'] == 3) {
-                    $trace = new trace();
-                    $trace->addtrace('cart_shop_active', 'محاسب مباشر- اضافة طلب جيد -  بستخدام رفم الهاتف      ', json_encode($oldData), json_encode(array()), ' اضافة طلب بواسطة المحاسب المباشر رقم الفاتورة ' . $number_bill, $number_bill);
-                } else if ($_SESSION['direct'] == 2) {
-                    $trace = new trace();
-                    $trace->addtrace('cart_shop_active', 'مجهز مباشر- اضافة طلب جيد -    بستخدام رفم الهاتف       ', json_encode($oldData), json_encode(array()), ' اضافة طلب بواسطة المجهز المباشر رقم الفاتورة ' . $number_bill, $number_bill);
-                } else {
-                    $trace = new trace();
-                    $trace->addtrace('cart_shop_active', 'بائع مباشر- اضافة طلب جيد -     بستخدام رفم الهاتف      ', json_encode($oldData), json_encode(array()), ' اضافة طلب بواسطة البائع المباشر رقم الفاتورة ' . $number_bill, $number_bill);
-                }
-                echo $_SESSION['direct'];
-                Session::set('uuid', $this->uuid(4));
-            }
-        }
-    }
+    // function byphone()
+    // {
+    //     if ($this->handleLogin()) {
+    //         $k = array_rand($this->sleepx);
+    //         $v = $this->sleepx[$k];
+    //         usleep($v);
+    //         $uuid = $this->isUuid();
+    //         $phone = trim($_POST['phone']);
+
+    //         $stmt = $this->db->prepare("SELECT *FROM `register_user` WHERE `phone`=? limit 1");
+    //         $stmt->execute(array($phone));
+    //         $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    //         $id_user = $result['id'];
+    //         $dollar = 0;
+    //         $stmt = $this->db->prepare("SELECT *FROM `dollar_price`  WHERE `active` = 1  ORDER BY `id` DESC  LIMIT 1");
+    //         $stmt->execute();
+    //         if ($stmt->rowCount() > 0) {
+    //             $resultDollar = $stmt->fetch(PDO::FETCH_ASSOC);
+    //             $dollar = $resultDollar['dollar'];
+    //         }
+    //         if (!empty($result)) {
+    //             if ($_SESSION['direct'] == 3) {
+    //                 $stmt_uuid = $this->db->prepare("UPDATE `cart_shop_active` SET `date`=?,`id_member_r` = ? ,`direct`=? ,`user_direct`=?,`prepared` = ?,`dollar_exchange`=?  WHERE `id_member_r`=? AND `buy` = 0 AND `status`=0");
+    //                 $stmt_uuid->execute(array(time(), $id_user, $_SESSION['direct'], $this->userid, 1, $dollar, $uuid));
+    //             } else {
+    //                 $stmt_uuid = $this->db->prepare("UPDATE `cart_shop_active` SET `date`=?,`id_member_r` = ? ,`direct`=? ,`user_direct`=?,`dollar_exchange`=? WHERE `id_member_r`=? AND `buy` = 0 AND `status`=0");
+    //                 $stmt_uuid->execute(array(time(), $id_user, $_SESSION['direct'], $this->userid, $dollar, $uuid));
+    //             }
+    //             $mobile = new mobile();
+    //             $stmt_date = $this->db->prepare("UPDATE `cart_shop_active` SET `date_req` = ?  WHERE `id_member_r`=? AND `buy` = 0 AND `status`=0");
+    //             $stmt_date->execute(array(time(), $id_user));
+    //             $stmt1 = $mobile->getAllContentFromCar_new($id_user);
+    //             while ($row = $stmt1->fetch(PDO::FETCH_ASSOC)) {
+    //                 $table = $row['table'];
+    //                 $number = $row['number'];
+    //                 $this->set_quantity_order($table, $row['id_item'], $row['code'], $number);
+    //                 if ($row['offers']) {
+    //                     $this->check_one_itemoffers($row['id_offer']);
+    //                 }
+    //                 $stmt_get_item = $this->db->prepare("SELECT *FROM `{$row['table']}` WHERE id = ?  LIMIT 1");
+    //                 $stmt_get_item->execute(array($row['id_item']));
+    //                 $item = $stmt_get_item->fetch();
+    //                 $row['title'] = $item['title'];
+    //                 $row['img'] = $this->save_file . $row['image'];
+    //             }
+    //             /*   $x = $this->db->prepare("SELECT *FROM `cart_shop_active` WHERE `id_member_r`=? AND  `prepared` = 0 AND `accountant`=0 AND `buy` =1 ");
+    //             $x->execute(array($id_user));
+    //             if ($x->rowCount() > 0) {
+    //                 $stmtNb = $this->db->prepare("SELECT *FROM `cart_shop_active` WHERE `id_member_r`=? AND `prepared` = 0  AND `accountant`=0 AND `buy` =1  order by `number_bill` DESC LIMIT 1");
+    //                 $stmtNb->execute(array($id_user));
+    //                 if ($stmtNb->rowCount() > 0) {
+    //                     $r = $stmtNb->fetch(PDO::FETCH_ASSOC);
+    //                     $number_bill = $r['number_bill'];
+    //                 }
+    //             } else {
+    //                 $stmtNb = $this->db->prepare("SELECT *FROM `cart_shop_active`  ORDER BY `number_bill` DESC   LIMIT 1");
+    //                 $stmtNb->execute();
+    //                 if ($stmtNb->rowCount() > 0) {
+    //                     $r = $stmtNb->fetch(PDO::FETCH_ASSOC);
+    //                     $number_bill = $r['number_bill'] + 1;
+    //                 } else {
+    //                     $number_bill = 1;
+    //                 }
+    //             }
+    //             */
+    //             $number_bill = $this->getNumberBill(4);
+    //             $stmt1 = $this->db->prepare("UPDATE `cart_shop_active` SET `buy` = 1 ,`number_bill`=? WHERE `id_member_r`=? AND `buy` = 0 ");
+    //             $stmt1->execute(array($number_bill, $id_user));
+    //             $stmt2 = $this->db->prepare("UPDATE `register_user` SET `date_req` =  ?  WHERE `id` = ?  ");
+    //             $stmt2->execute(array(time(), $id_user));
+    //             $stmtt = $this->db->prepare("SELECT *FROM `cart_shop_active` WHERE   `number_bill` = ? ");
+    //             $stmtt->execute(array($number_bill));
+    //             $oldData = array();
+    //             while ($rowt = $stmtt->fetch(PDO::FETCH_ASSOC)) {
+    //                 $oldData[] = $rowt;
+    //             }
+    //             if ($_SESSION['direct'] == 3) {
+    //                 $trace = new trace();
+    //                 $trace->addtrace('cart_shop_active', 'محاسب مباشر- اضافة طلب جيد -  بستخدام رفم الهاتف      ', json_encode($oldData), json_encode(array()), ' اضافة طلب بواسطة المحاسب المباشر رقم الفاتورة ' . $number_bill, $number_bill);
+    //             } else if ($_SESSION['direct'] == 2) {
+    //                 $trace = new trace();
+    //                 $trace->addtrace('cart_shop_active', 'مجهز مباشر- اضافة طلب جيد -    بستخدام رفم الهاتف       ', json_encode($oldData), json_encode(array()), ' اضافة طلب بواسطة المجهز المباشر رقم الفاتورة ' . $number_bill, $number_bill);
+    //             } else {
+    //                 $trace = new trace();
+    //                 $trace->addtrace('cart_shop_active', 'بائع مباشر- اضافة طلب جيد -     بستخدام رفم الهاتف      ', json_encode($oldData), json_encode(array()), ' اضافة طلب بواسطة البائع المباشر رقم الفاتورة ' . $number_bill, $number_bill);
+    //             }
+    //             echo $_SESSION['direct'];
+    //             Session::set('uuid', $this->uuid(4));
+    //         }
+    //     }
+    // }
     function byqr()
     {
         if ($this->handleLogin()) {
@@ -710,6 +711,7 @@ class customers extends Controller
             $data['login'] = 'website';
             $data['country'] = 'العراق';
             $data['xc'] = 0;
+            $data['is_edit'] = $_POST['is_edit'];
 
             $check = true;
 
@@ -719,6 +721,10 @@ class customers extends Controller
                 if($stmt_check->rowCount() > 0){
                     $result_ch = $stmt_check->fetch(PDO::FETCH_ASSOC);
                     $last_id = $result_ch['id'];
+                    if($data['is_edit'] == '1'){
+                        $update_name = $this->db->prepare("UPDATE `register_user` SET `name`=? WHERE `id`=? ");
+                        $update_name->execute(array($data['name'],$last_id));
+                    }
                 }else{
                     $stmtx = $this->db->insert($this->table, $data);
                     $last_id = $this->db->lastInsertId($this->table);

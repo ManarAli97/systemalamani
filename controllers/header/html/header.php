@@ -3698,50 +3698,20 @@
 
 
                                 <script>
-                                    $("#exampleInputphone2").on("input", function() {
-                                        $("#count_phone_2").text(this.value.length);
-                                    });
 
-                                    checkBox = document.getElementById('without_number').addEventListener('click', event => {
-                                        if(event.target.checked) {
-                                            $('#exampleInputphone2').val('00000000000');
-                                            $('#exampleInputphone2').attr("readonly", true);
-                                        }
-                                        if(event.target.checked == false ) {
-                                            $('#exampleInputphone2').val('');
-                                            $('#exampleInputphone2').attr("readonly", false);
-                                        }
-                                    });
-
-
-                                    $( "#exampleInputphone2" ).keyup(function() {
-
-                                        var phone= $('#exampleInputphone2').val();
-                                        if((phone.length == 11) && (phone !='00000000000') ){
-                                            $.get( "<?php echo url ?>/customers/get_customer_name_by_phone/"+phone, function(data) {
-                                                $("#exampleInputname1").val(data);
-                                            });
-                                        }
-                                    });
-
-                                    $( "#input-group-text" ).click(function() {
-                                        console.log('m');
-                                    });
 
                                 </script>
 
                             </div>
 
-                            <!-- <div class="form-group">
-                                <label for="exampleInputname1">  الاسم  </label>
-                                <input  autocomplete="off"   name="name" type="text"  class="form-control" id="exampleInputname1" required  aria-describedby="nameHelp"  >
-                            </div> -->
+
 
 
                             <div class="input-group mb-3">
                                 <input name="name" type="text"  class="form-control" id="exampleInputname1" required  aria-describedby="nameHelp" aria-label="Text input with checkbox" autocomplete="off">
                                 <div class="input-group-prepend">
-                                    <button class="btn btn-outline-secondary" type="button">Button</button>
+                                    <button type="button"  id="button_edit" class="btn " style="background-color:#e9ecef"><i class='fa fa-pencil'></i> </button>
+                                    <input  type="hidden" value='0' name="is_edit" id="is_edit">
                                 </div>
                             </div>
 
@@ -3749,6 +3719,40 @@
                             <div style="text-align: center">
                                 <button  type="submit" id="new_customers_btn_send_order" class="btn btn-primary">  موافق  </button>
                             </div>
+
+                            <script>
+                                $("#exampleInputphone2").on("input", function() {
+                                    $("#count_phone_2").text(this.value.length);
+                                });
+
+                                checkBox = document.getElementById('without_number').addEventListener('click', event => {
+                                    if(event.target.checked) {
+                                        $('#exampleInputphone2').val('00000000000');
+                                        $('#exampleInputphone2').attr("readonly", true);
+                                    }
+                                    if(event.target.checked == false ) {
+                                        $('#exampleInputphone2').val('');
+                                        $('#exampleInputphone2').attr("readonly", false);
+                                    }
+                                });
+
+
+                                $( "#exampleInputphone2" ).keyup(function() {
+
+                                    var phone= $('#exampleInputphone2').val();
+                                    if((phone.length == 11) && (phone !='00000000000') ){
+                                        $.get( "<?php echo url ?>/customers/get_customer_name_by_phone/"+phone, function(data) {
+                                            $("#exampleInputname1").val(data);
+                                            $('#exampleInputname1').attr("readonly", true);
+                                        });
+                                    }
+                                });
+
+                                 $( "#button_edit" ).on('click',function() {
+                                        $('#is_edit').val('1');
+                                        $('#exampleInputname1').attr("readonly", false);
+                                    });
+                            </script>
                         </form>
 
 
