@@ -49,7 +49,7 @@ class Controller
     public $print_devices=array('1'=>'print 1','2'=>'print 2','3'=>'print 3');
     public $model_big_q=array('network','camera'); //اقسام ذات كميات كبيرة بالتجهيز
     public $is_delete=" is_delete = 0 ";
- public $check_name_category = 0;
+    public $check_name_category = 0;
 
     function __construct()
     {

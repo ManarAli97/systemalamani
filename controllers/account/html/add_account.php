@@ -42,7 +42,7 @@
 
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2 mb-0" for="phone"> رقم الهاتف </label>
-                            <input type="text" name="phone"  class="form-control" id="phone"  autocomplete="off" minlength="10" required>
+                            <input type="number" name="phone"  class="form-control" id="phone"  autocomplete="off" minlength="10" required>
                         </div>
 
                         <div class="col-lg-3 col-md-2  mr-4">
