@@ -87,8 +87,8 @@
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-2  mr-4">
-                            <label class="mr-sm-2  mb-0" for="brithday"> تاريخ الميلاد</label>
-                            <input type="date" name="brithday" value="<?php echo $infoAccount[0]['brithday'] ?>"  class="form-control" id="brithday" autocomplete="off" >
+                            <label class="mr-sm-2  mb-0" for="birthday"> تاريخ الميلاد</label>
+                            <input type="date" name="birthday" value="<?php echo $infoAccount[0]['birthday'] ?>"  class="form-control" id="birthday" autocomplete="off" >
                         </div>
                         <div class="col-lg-3 col-md-2  mr-4">
                             <label class="mr-sm-2  mb-0" for="note"> ملاحظة</label>

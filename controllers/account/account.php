@@ -66,7 +66,7 @@ class Account extends Controller {
             `country` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `city` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `address` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
-            `brithday` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
+            `birthday` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `gander` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `note` varchar(50)  COLLATE utf8_unicode_ci NOT NULL,
             `active` TINYINT(1) NOT NULL,
@@ -503,6 +503,7 @@ class Account extends Controller {
 
         $nameCategory = array();
         $id_account = 0;
+
         // ترجع الفئات التابعه للفئة الاصلية
         $nameCategory= $this->get_name_rel_catg($id);
 
@@ -582,7 +583,7 @@ class Account extends Controller {
                 $form->post('gander')
                     ->val('strip_tags');
 
-                $form->post('brithday')
+                $form->post('birthday')
                     ->val('strip_tags');
 
                 $form->post('note')
@@ -628,8 +629,8 @@ class Account extends Controller {
 
                 if (empty($this->error_form)) {
                     $data['login'] = 'website';
-                    $stmt = $this->db->prepare("INSERT INTO `{$this->general_info}`(`name`,`phone`,`job`,`country`,`city`,`address`,`gander`,`brithday`,`note`,`active`,`stop`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?)");
-                    $stmt->execute(array($data['name'],$data['phone'],$data['job'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['brithday'],$data['note'],$data['state'],$data['stop'],$this->userid,time()));
+                    $stmt = $this->db->prepare("INSERT INTO `{$this->general_info}`(`name`,`phone`,`job`,`country`,`city`,`address`,`gander`,`birthday`,`note`,`active`,`stop`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                    $stmt->execute(array($data['name'],$data['phone'],$data['job'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['birthday'],$data['note'],$data['state'],$data['stop'],$this->userid,time()));
 
                     $getLastId = $this->db->prepare("SELECT `id` FROM `{$this->general_info}` WHERE `iduser`=? ORDER BY `id` DESC");
                     $getLastId->execute(array($this->userid));
@@ -639,18 +640,20 @@ class Account extends Controller {
                     $stmt_account = $this->db->prepare("INSERT INTO `{$this->account}`(`id_info`,`id_cat`,`id_branch`,`mth_goal_amount`,`mth_goal_currency`,`duration_of_debt`,`max_debt_limit`,`currency_debt_limit`,`id_price_list`,`id_price_style`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?,?,?,?)");
                     $stmt_account->execute(array($lastId,$data['type_account'],$data['branch'],$data['mth_goal_amount'],$data['mth_goal_currency'],$data['duration_of_debt'],$data['max_debt_limit'],$data['currency_debt_limit'],$data['price_list'],$data['price_style'],$this->userid,time()));
 
-                    // $result_check = $this->check_name_category($data['type_account']);
-                    // if($result_check == 1){
-                    //     $check_user = $this->db->prepare("SELECT `id` FROM `register_user` WHERE `phone`=? ");
-                    //     $check_user->execute(array($data['phone']));
-                    //     if($check_user->rowCount() > 0){
-                    //         $update_customer = $this->db->prepare("UPDATE  `register_user` SET  `name`=?,`job` = ?,`country`=? ,`city` = ?,`address`= ?,`gander`= ?,`brithday`= ?,`iduser`= ?,`date`= ? WHERE  `phone` = ?");
-                    //         $update_customer->execute(array($data['name'],$data['job'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['brithday'],$this->userid,time(),$data['phone']));
-                    //     }else{
-                    //         $stmt_customer = $this->db->prepare("INSERT INTO `register_user` (`name`,`username`,`phone`,`job`,`country`,`city`,`address`,`login`,`gander`,`brithday`,`iduser`,`date`) VALUE (?,?,?,?,?,?,?,?,?,?,?,?)");
-                    //         $stmt_customer->execute(array($data['name'],$data['phone'],$data['phone'],$data['job'],$data['country'],$data['city'],$data['address'],$data['login'],$data['gander'],$data['brithday'],$this->userid,time()));
-                    //     }
-                    // }
+
+                    // register_userاذا الفئة زبائن او فئة تابعه للزبائن يضيفها بجدول ال
+                    $result_check = $this->check_id_catge($data['type_account']);
+                    if($result_check == 1){
+                        $check_user = $this->db->prepare("SELECT `id` FROM `register_user` WHERE `phone`=? ");
+                        $check_user->execute(array($data['phone']));
+                        if($check_user->rowCount() > 0){
+                            $update_customer = $this->db->prepare("UPDATE  `register_user` SET  `name`=?,`username` =?,`country`=? ,`city`= ?,`address`= ?,`gander`= ?,`birthday`= ?,`date`= ? WHERE  `phone` = ?");
+                            $update_customer->execute(array($data['name'],$data['phone'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['birthday'],time(),$data['phone']));
+                        }else{
+                            $stmt_customer = $this->db->prepare("INSERT INTO `register_user` (`name`,`username`,`phone`,`country`,`city`,`address`,`gander`,`birthday`,`date`) VALUE (?,?,?,?,?,?,?,?,?)");
+                            $stmt_customer->execute(array($data['name'],$data['phone'],$data['phone'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['birthday'],time()));
+                        }
+                    }
                 }
 
             } catch (Exception $e) {
@@ -670,14 +673,14 @@ class Account extends Controller {
         $this->adminHeaderController($this->langControl('account'));
 
         $nameCategory = array();
-
-
+        $phoneBeforeUpdate = '';
         $infoAccount = array();
-        $stmt_info =$this->db->prepare("SELECT `name`,`phone`,`job`,`country`,`city`,`address`,`gander`,`brithday`,`note`,`active`,`stop` FROM `{$this->general_info}` WHERE id = ?");
+        $stmt_info =$this->db->prepare("SELECT `name`,`phone`,`job`,`country`,`city`,`address`,`gander`,`birthday`,`note`,`active`,`stop` FROM `{$this->general_info}` WHERE id = ?");
         $stmt_info->execute(array($id_account));
 
         while ($row_info = $stmt_info->fetch(PDO::FETCH_ASSOC))
         {
+            $phoneBeforeUpdate = $row_info['phone'];
             $infoAccount[]=$row_info;
         }
 
@@ -746,7 +749,6 @@ class Account extends Controller {
         }
 
 
-
         if (isset($_POST['submit'])) {
             try {
                 $form = new  Form();
@@ -772,7 +774,7 @@ class Account extends Controller {
                 $form->post('gander')
                     ->val('strip_tags');
 
-                $form->post('brithday')
+                $form->post('birthday')
                     ->val('strip_tags');
 
                 $form->post('note')
@@ -819,12 +821,26 @@ class Account extends Controller {
                 if (empty($this->error_form)) {
 
 
-                    $update = $this->db->prepare("UPDATE `{$this->general_info}` SET `name` = ?,`phone`= ?, `job`= ?,`country`= ?,`city`= ?,`address`= ?,`gander` = ?,`brithday` = ?,`note`= ?,`active`= ?,`stop`= ?,`iduser`=? ,`date_update` =?  WHERE `id` = ?");
-                    $update->execute(array($data['name'],$data['phone'],$data['job'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['brithday'],$data['note'],$data['state'],$data['stop'],$this->userid,time(),$id_account));
+                    $update = $this->db->prepare("UPDATE `{$this->general_info}` SET `name` = ?,`phone`= ?, `job`= ?,`country`= ?,`city`= ?,`address`= ?,`gander` = ?,`birthday` = ?,`note`= ?,`active`= ?,`stop`= ?,`iduser`=? ,`date_update` =?  WHERE `id` = ?");
+                    $update->execute(array($data['name'],$data['phone'],$data['job'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['birthday'],$data['note'],$data['state'],$data['stop'],$this->userid,time(),$id_account));
 
 
                     $updatee = $this->db->prepare("UPDATE `{$this->account}` SET `id_cat` = ?,`id_branch`= ?,`mth_goal_amount`= ?,`mth_goal_currency`= ?,`duration_of_debt`= ?,`max_debt_limit`= ?,`currency_debt_limit`= ?,`id_price_list`= ?,`id_price_style`= ?,`iduser` = ?,`date_update` = ?  WHERE `id_info` = ?");
                     $updatee->execute(array($data['type_account'],$data['branch'],$data['mth_goal_amount'],$data['mth_goal_currency'],$data['duration_of_debt'],$data['max_debt_limit'],$data['currency_debt_limit'],$data['price_list'],$data['price_style'],$this->userid,time(),$id_account));
+
+
+                    $result_check = $this->check_id_catge($data['type_account']);
+                    if($result_check == 1){
+                        $check_user = $this->db->prepare("SELECT `id` FROM `register_user` WHERE `phone`=? ");
+                        $check_user->execute(array($phoneBeforeUpdate));
+                        if($check_user->rowCount() > 0){
+                            $update_customer = $this->db->prepare("UPDATE  `register_user` SET  `name`=?,`username` =?,`phone` = ?,`country`=? ,`city`= ?,`address`= ?,`gander`= ?,`birthday`= ?,`date`= ? WHERE  `phone` = ?");
+                            $update_customer->execute(array($data['name'],$data['phone'],$data['phone'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['birthday'],time(),$phoneBeforeUpdate));
+                        }else{
+                            $stmt_customer = $this->db->prepare("INSERT INTO `register_user` (`name`,`username`,`phone`,`country`,`city`,`address`,`gander`,`birthday`,`date`) VALUE (?,?,?,?,?,?,?,?,?)");
+                            $stmt_customer->execute(array($data['name'],$data['phone'],$data['phone'],$data['country'],$data['city'],$data['address'],$data['gander'],$data['birthday'],time()));
+                        }
+                    }
 
                     $this->lightRedirect(url."/".$this->folder."/view_user_account/$id");
                 }
@@ -1023,7 +1039,7 @@ class Account extends Controller {
 
     public function check_id_catge($id){
 
-        $stmt_catg_acc = $this->db->prepare("SELECT * FROM `category_accessories` WHERE id = ? LIMIT 1");
+        $stmt_catg_acc = $this->db->prepare("SELECT `title`,`relid` FROM `{$this->account_catg}` WHERE id = ? LIMIT 1");
         $stmt_catg_acc->execute(array($id));
 
 
